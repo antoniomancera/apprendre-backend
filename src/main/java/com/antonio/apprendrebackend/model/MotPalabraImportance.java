@@ -3,23 +3,18 @@ package com.antonio.apprendrebackend.model;
 import jakarta.persistence.*;
 
 @Entity
-public class MotPalabraHistorial {
+public class MotPalabraImportance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne
+    @OneToOne()
     @JoinColumn(name = "motPalabra_id")
     private MotPalabra motPalabra;
+    private Integer importanceIndex;
 
-    private Integer importance;
-
-    public MotPalabraHistorial() {
-    }
-
-    public MotPalabraHistorial(MotPalabra motPalabra, Integer importance) {
+    public MotPalabraImportance(MotPalabra motPalabra, Integer importanceIndex) {
         this.motPalabra = motPalabra;
-        this.importance = importance;
+        this.importanceIndex = importanceIndex;
     }
 
     public MotPalabra getMotPalabra() {
@@ -30,11 +25,11 @@ public class MotPalabraHistorial {
         this.motPalabra = motPalabra;
     }
 
-    public Integer getImportance() {
-        return importance;
+    public Integer getImportanceIndex() {
+        return importanceIndex;
     }
 
-    public void setImportance(Integer importance) {
-        this.importance = importance;
+    public void setImportanceIndex(Integer importanceIndex) {
+        this.importanceIndex = importanceIndex;
     }
 }
