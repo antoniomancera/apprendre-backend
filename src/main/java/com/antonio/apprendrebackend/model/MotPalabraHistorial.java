@@ -2,13 +2,16 @@ package com.antonio.apprendrebackend.model;
 
 import jakarta.persistence.*;
 
+@Entity
 public class MotPalabraHistorial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToMany()
+
+    @ManyToOne
     @JoinColumn(name = "motPalabra_id")
     private MotPalabra motPalabra;
+
     private Integer importance;
 
     public MotPalabraHistorial() {

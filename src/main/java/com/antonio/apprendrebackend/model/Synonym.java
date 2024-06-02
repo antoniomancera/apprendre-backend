@@ -2,18 +2,18 @@ package com.antonio.apprendrebackend.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-public class MotPalabraPhrase {
+public class Synonym {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "mot_palabra_id")
+    @JoinColumn(name = "motPalabra_id")
     private MotPalabra motPalabra;
 
-    @ManyToOne
-    @JoinColumn(name = "phrase_id")
-    private Phrase phrase;
-
+    @ManyToMany
+    private List<Synonym> synonyms;
 }
