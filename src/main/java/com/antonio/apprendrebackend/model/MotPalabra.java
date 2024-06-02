@@ -20,6 +20,7 @@ public class MotPalabra {
 
     private Integer intentos;
     private Integer aciertos;
+    private Integer importanceIndex;
 
     @OneToMany(mappedBy = "motPalabra")
     private List<MotPalabraPhrase> phrases;

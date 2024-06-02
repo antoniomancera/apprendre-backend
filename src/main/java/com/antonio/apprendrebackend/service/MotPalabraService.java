@@ -1,7 +1,9 @@
 package com.antonio.apprendrebackend.service;
 
-import com.antonio.apprendrebackend.model.MotPalabraPhrase;
+import com.antonio.apprendrebackend.model.MotPalabra;
+
+import java.util.Optional;
 
 public interface MotPalabraService {
-    MotPalabraPhrase selectRandomMotPalabraPhrase();
+    Optional<MotPalabra> selectRandomMotPalabraPhrase();
 }
