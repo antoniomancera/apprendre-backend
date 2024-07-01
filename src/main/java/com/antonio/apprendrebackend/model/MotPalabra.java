@@ -3,6 +3,7 @@ package com.antonio.apprendrebackend.model;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Random;
 
 @Entity
 public class MotPalabra {
@@ -17,24 +18,31 @@ public class MotPalabra {
     @ManyToOne
     @JoinColumn(name = "palabra_id")
     private Palabra palabra;
-
-    private Integer intentos;
-    private Integer aciertos;
+    private Integer attempts;
+    private Integer successes;
     private Integer importanceIndex;
 
     @OneToMany(mappedBy = "motPalabra")
     private List<MotPalabraPhrase> phrases;
 
     public MotPalabra() {
-        this.intentos = intentos;
-        this.aciertos = aciertos;
+        this.attempts = 0;
+        this.successes = 0;
     }
 
     public MotPalabra(Mot mot, Palabra palabra) {
         this.mot = mot;
         this.palabra = palabra;
-        this.intentos = 0;
-        this.aciertos = 0;
+        this.attempts = 0;
+        this.successes = 0;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Mot getMot() {
@@ -53,20 +61,28 @@ public class MotPalabra {
         this.palabra = palabra;
     }
 
-    public Integer getIntentos() {
-        return intentos;
+    public Integer getAttempts() {
+        return attempts;
     }
 
-    public void setIntentos(Integer intentos) {
-        this.intentos = intentos;
+    public void setAttempts(Integer attempts) {
+        this.attempts = attempts;
     }
 
-    public Integer getAciertos() {
-        return aciertos;
+    public Integer getSuccesses() {
+        return successes;
     }
 
-    public void setAciertos(Integer aciertos) {
-        this.aciertos = aciertos;
+    public void setSuccesses(Integer successes) {
+        this.successes = successes;
+    }
+
+    public Integer getImportanceIndex() {
+        return importanceIndex;
+    }
+
+    public void setImportanceIndex(Integer importanceIndex) {
+        this.importanceIndex = importanceIndex;
     }
 
     public List<MotPalabraPhrase> getPhrases() {
@@ -75,5 +91,26 @@ public class MotPalabra {
 
     public void setPhrases(List<MotPalabraPhrase> phrases) {
         this.phrases = phrases;
+    }
+
+    @Override
+    public String toString() {
+        return "MotPalabra{" +
+                "id=" + id +
+                ", mot=" + mot +
+                ", palabra=" + palabra +
+                ", attempts=" + attempts +
+                ", successes=" + successes +
+                ", importanceIndex=" + importanceIndex +
+                ", phrases=" + phrases +
+                '}';
+    }
+
+    public MotPalabraPhrase getRandomPhrase() {
+        if (phrases == null || phrases.isEmpty()) {
+            return null;
+        }
+        Random rand = new Random();
+        return phrases.get(rand.nextInt(phrases.size()));
     }
 }

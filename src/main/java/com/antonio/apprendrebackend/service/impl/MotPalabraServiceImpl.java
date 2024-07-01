@@ -1,6 +1,8 @@
 package com.antonio.apprendrebackend.service.impl;
 
 
+import com.antonio.apprendrebackend.dto.MotPalabraDTO;
+import com.antonio.apprendrebackend.mapper.MotPalabraMapper;
 import com.antonio.apprendrebackend.model.MotPalabra;
 import com.antonio.apprendrebackend.model.MotPalabraPool;
 import com.antonio.apprendrebackend.repository.MotPalabraPoolRepository;
@@ -9,7 +11,6 @@ import com.antonio.apprendrebackend.service.MotPalabraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class MotPalabraServiceImpl implements MotPalabraService {
@@ -18,12 +19,31 @@ public class MotPalabraServiceImpl implements MotPalabraService {
     @Autowired
     MotPalabraRepository motPalabraRepository;
 
+    @Autowired
+    private MotPalabraMapper motPalabraMapper;
+
     @Override
-    public Optional<MotPalabra> selectRandomMotPalabraPhrase() {
+    public MotPalabraDTO getRandomMotPalabraPhrase() {
         MotPalabraPool motPalabraPool = motPalabraPoolRepository.findRandomMotPalabraPool();
 
-        Optional<MotPalabra> motPalabra = motPalabraRepository.findById(motPalabraPool.getMotPalabra().getMot().getId());
+        System.out.println(
+                motPalabraPool.toString());
 
-        return motPalabra;
+        if (motPalabraPool == null) {
+            return null;
+        }
+
+        MotPalabra motPalabra = motPalabraPool.getMotPalabra();
+
+        if (motPalabra == null) {
+            return null;
+        }
+
+        MotPalabraDTO motPalabraDTO = motPalabraMapper.toDTO(motPalabra);
+
+        System.out.println(
+                motPalabraDTO.toString());
+
+        return motPalabraDTO;
     }
 }

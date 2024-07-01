@@ -16,4 +16,7 @@ public class MotPalabraPhrase {
     @JoinColumn(name = "phrase_id")
     private Phrase phrase;
 
+    public Phrase getPhrase() {
+        return phrase;
+    }
 }

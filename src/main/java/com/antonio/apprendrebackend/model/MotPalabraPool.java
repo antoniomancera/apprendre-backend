@@ -12,7 +12,7 @@ public class MotPalabraPool {
     @ManyToOne
     @JoinColumn(name = "motPalabra_id", nullable = false)
     private MotPalabra motPalabra;
-    
+
     public Integer getId() {
         return id;
     }
@@ -27,6 +27,14 @@ public class MotPalabraPool {
 
     public void setMotPalabra(MotPalabra motPalabra) {
         this.motPalabra = motPalabra;
+    }
+
+    @Override
+    public String toString() {
+        return "MotPalabraPool{" +
+                "id=" + id +
+                ", motPalabra=" + motPalabra.toString() +
+                '}';
     }
 }
 
