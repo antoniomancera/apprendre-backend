@@ -1,17 +1,10 @@
-package com.antonio.apprendrebackend.model;
+package com.antonio.apprendrebackend.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-public class Phrase {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PhraseDTO {
     private Integer id;
     private String phraseEs;
     private String phraseFr;
     private String description;
-    private Integer intentos;
-    private Integer aciertos;
 
     public Integer getId() {
         return id;
@@ -45,31 +38,13 @@ public class Phrase {
         this.description = description;
     }
 
-    public Integer getIntentos() {
-        return intentos;
-    }
-
-    public void setIntentos(Integer intentos) {
-        this.intentos = intentos;
-    }
-
-    public Integer getAciertos() {
-        return aciertos;
-    }
-
-    public void setAciertos(Integer aciertos) {
-        this.aciertos = aciertos;
-    }
-
     @Override
     public String toString() {
-        return "Phrase{" +
+        return "PhraseDTO{" +
                 "id=" + id +
                 ", phraseEs='" + phraseEs + '\'' +
                 ", phraseFr='" + phraseFr + '\'' +
                 ", description='" + description + '\'' +
-                ", intentos=" + intentos +
-                ", aciertos=" + aciertos +
                 '}';
     }
 }
