@@ -1,8 +1,6 @@
 package com.antonio.apprendrebackend.mapper;
 
-import com.antonio.apprendrebackend.dto.MotPalabraDTO;
 import com.antonio.apprendrebackend.dto.PhraseDTO;
-import com.antonio.apprendrebackend.model.MotPalabra;
 import com.antonio.apprendrebackend.model.Phrase;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
