@@ -3,18 +3,19 @@ package com.antonio.apprendrebackend.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Mot {
+public class WordSp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
 
-    public Mot(String name) {
-        this.name = name;
+
+    public WordSp() {
     }
 
-    public Mot() {
+    public WordSp(String name) {
+        this.name = name;
     }
 
     public Integer getId() {
@@ -33,12 +34,5 @@ public class Mot {
         this.name = name;
     }
 
-
-    @Override
-    public String toString() {
-        return "Mot{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
+    
 }

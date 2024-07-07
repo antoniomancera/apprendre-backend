@@ -3,14 +3,14 @@ package com.antonio.apprendrebackend.model;
 import jakarta.persistence.*;
 
 @Entity
-public class MotPalabraPhrase {
+public class WordTranslationPhrase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "mot_palabra_id")
-    private MotPalabra motPalabra;
+    @JoinColumn(name = "wordTranslation_id")
+    private WordTranslation wordTranslation;
 
     @ManyToOne
     @JoinColumn(name = "phrase_id")

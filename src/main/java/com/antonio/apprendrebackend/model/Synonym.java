@@ -11,8 +11,8 @@ public class Synonym {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "motPalabra_id")
-    private MotPalabra motPalabra;
+    @JoinColumn(name = "wordTranslation_id")
+    private WordTranslation wordTranslation;
 
     @ManyToMany
     private List<Synonym> synonyms;

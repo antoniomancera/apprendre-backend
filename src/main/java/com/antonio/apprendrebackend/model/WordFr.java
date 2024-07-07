@@ -3,19 +3,18 @@ package com.antonio.apprendrebackend.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Palabra {
+public class WordFr {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
 
-
-    public Palabra() {
+    public WordFr(String name) {
+        this.name = name;
     }
 
-    public Palabra(String name) {
-        this.name = name;
+    public WordFr() {
     }
 
     public Integer getId() {
@@ -35,11 +34,4 @@ public class Palabra {
     }
 
 
-    @Override
-    public String toString() {
-        return "Palabra{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

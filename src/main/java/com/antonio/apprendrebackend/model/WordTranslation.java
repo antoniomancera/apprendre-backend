@@ -6,33 +6,33 @@ import java.util.List;
 import java.util.Random;
 
 @Entity
-public class MotPalabra {
+public class WordTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "mot_id")
-    private Mot mot;
+    @JoinColumn(name = "word_fr_id")
+    private WordFr wordFr;
 
     @ManyToOne
-    @JoinColumn(name = "palabra_id")
-    private Palabra palabra;
+    @JoinColumn(name = "word_es_id")
+    private WordSp wordSp;
     private Integer attempts;
     private Integer successes;
     private Integer importanceIndex;
 
-    @OneToMany(mappedBy = "motPalabra")
-    private List<MotPalabraPhrase> phrases;
+    @OneToMany(mappedBy = "wordTranslation")
+    private List<WordTranslationPhrase> phrases;
 
-    public MotPalabra() {
+    public WordTranslation() {
         this.attempts = 0;
         this.successes = 0;
     }
 
-    public MotPalabra(Mot mot, Palabra palabra) {
-        this.mot = mot;
-        this.palabra = palabra;
+    public WordTranslation(WordFr wordFr, WordSp wordSp) {
+        this.wordFr = wordFr;
+        this.wordSp = wordSp;
         this.attempts = 0;
         this.successes = 0;
     }
@@ -45,20 +45,20 @@ public class MotPalabra {
         this.id = id;
     }
 
-    public Mot getMot() {
-        return mot;
+    public WordFr getWordFr() {
+        return wordFr;
     }
 
-    public void setMot(Mot mot) {
-        this.mot = mot;
+    public void setWordFr(WordFr wordFr) {
+        this.wordFr = wordFr;
     }
 
-    public Palabra getPalabra() {
-        return palabra;
+    public WordSp getWordSp() {
+        return wordSp;
     }
 
-    public void setPalabra(Palabra palabra) {
-        this.palabra = palabra;
+    public void setWordSp(WordSp wordSp) {
+        this.wordSp = wordSp;
     }
 
     public Integer getAttempts() {
@@ -85,28 +85,15 @@ public class MotPalabra {
         this.importanceIndex = importanceIndex;
     }
 
-    public List<MotPalabraPhrase> getPhrases() {
+    public List<WordTranslationPhrase> getPhrases() {
         return phrases;
     }
 
-    public void setPhrases(List<MotPalabraPhrase> phrases) {
+    public void setPhrases(List<WordTranslationPhrase> phrases) {
         this.phrases = phrases;
     }
 
-    @Override
-    public String toString() {
-        return "MotPalabra{" +
-                "id=" + id +
-                ", mot=" + mot +
-                ", palabra=" + palabra +
-                ", attempts=" + attempts +
-                ", successes=" + successes +
-                ", importanceIndex=" + importanceIndex +
-                ", phrases=" + phrases +
-                '}';
-    }
-
-    public MotPalabraPhrase getRandomPhrase() {
+    public WordTranslationPhrase getRandomPhrase() {
         if (phrases == null || phrases.isEmpty()) {
             return null;
         }
