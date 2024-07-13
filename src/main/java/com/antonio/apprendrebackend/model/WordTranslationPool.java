@@ -21,6 +21,13 @@ public class WordTranslationPool {
         this.id = id;
     }
 
+    public WordTranslationPool() {
+    }
+
+    public WordTranslationPool(WordTranslation wordTranslation) {
+        this.wordTranslation = wordTranslation;
+    }
+
     public WordTranslation getWordTranslation() {
         return wordTranslation;
     }
