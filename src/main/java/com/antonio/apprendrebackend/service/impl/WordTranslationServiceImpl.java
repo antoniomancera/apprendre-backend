@@ -7,6 +7,7 @@ import com.antonio.apprendrebackend.model.WordTranslation;
 import com.antonio.apprendrebackend.model.WordTranslationPool;
 import com.antonio.apprendrebackend.repository.WordTranslationPoolRepository;
 import com.antonio.apprendrebackend.repository.WordTranslationRepository;
+import com.antonio.apprendrebackend.service.WordTranslationPoolService;
 import com.antonio.apprendrebackend.service.WordTranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,16 +19,19 @@ public class WordTranslationServiceImpl implements WordTranslationService {
     WordTranslationPoolRepository wordTranslationPoolRepository;
     @Autowired
     WordTranslationRepository wordTranslationRepository;
-
     @Autowired
-    private WordTranslationMapper wordTranslationMapper;
+    WordTranslationMapper wordTranslationMapper;
+    @Autowired
+    WordTranslationPoolService wordTranslationPoolService;
 
     @Override
-    public WordTranslationDTO getRandomWordTranslationPhrase() {
+    public WordTranslationDTO getRandomWordTranslation() {
         WordTranslationPool wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPool();
 
-        System.out.println(
-                wordTranslationPool.toString());
+        if (wordTranslationPool == null) {
+            wordTranslationPoolService.generateWordTranslationPoolEntries();
+            wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPool();
+        }
 
         if (wordTranslationPool == null) {
             return null;
@@ -35,15 +39,6 @@ public class WordTranslationServiceImpl implements WordTranslationService {
 
         WordTranslation wordTranslation = wordTranslationPool.getWordTranslation();
 
-        if (wordTranslation == null) {
-            return null;
-        }
-
-        WordTranslationDTO wordTranslationDTO = wordTranslationMapper.toDTO(wordTranslation);
-
-        System.out.println(
-                wordTranslationDTO.toString());
-
-        return wordTranslationDTO;
+        return wordTranslationMapper.toDTO(wordTranslation);
     }
 }

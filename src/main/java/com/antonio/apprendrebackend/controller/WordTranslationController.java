@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/wordTranslation")
 public class WordTranslationController {
     @Autowired
-    private WordTranslationService wordTranslationService;
+    WordTranslationService wordTranslationService;
 
 
     @GetMapping(path = "/getRandom")
     public @ResponseBody ResponseEntity<?> getRandomWordTranslationPhrase() {
-        WordTranslationDTO wordTranslationDTO = wordTranslationService.getRandomWordTranslationPhrase();
+        WordTranslationDTO wordTranslationDTO = wordTranslationService.getRandomWordTranslation();
         if (wordTranslationDTO == null) {
             ErrorResponse errorResponse = new ErrorResponse("No se ha encontrado WordTranslation", ErrorCode.WORD_TRANSLATION_NOT_FOUND);
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
