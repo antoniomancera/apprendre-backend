@@ -12,6 +12,18 @@ public class WordTranslationDTO {
     private Integer successes;
     private PhraseDTO phrase;
 
+    public WordTranslationDTO() {
+    }
+
+    public WordTranslationDTO(Integer id, WordFr wordFr, WordSp wordSp, Integer attempts, Integer successes, PhraseDTO phrase) {
+        this.id = id;
+        this.wordFr = wordFr;
+        this.wordSp = wordSp;
+        this.attempts = attempts;
+        this.successes = successes;
+        this.phrase = phrase;
+    }
+
     public Integer getId() {
         return id;
     }
