@@ -10,8 +10,8 @@ public class Phrase {
     private String phraseEs;
     private String phraseFr;
     private String description;
-    private Integer intentos;
-    private Integer aciertos;
+    private Integer attempts;
+    private Integer successes;
 
     public Integer getId() {
         return id;
@@ -45,20 +45,20 @@ public class Phrase {
         this.description = description;
     }
 
-    public Integer getIntentos() {
-        return intentos;
+    public Integer getAttempts() {
+        return attempts;
     }
 
-    public void setIntentos(Integer intentos) {
-        this.intentos = intentos;
+    public void setAttempts(Integer attempts) {
+        this.attempts = attempts;
     }
 
-    public Integer getAciertos() {
-        return aciertos;
+    public Integer getSuccesses() {
+        return successes;
     }
 
-    public void setAciertos(Integer aciertos) {
-        this.aciertos = aciertos;
+    public void setSuccesses(Integer successes) {
+        this.successes = successes;
     }
 
     @Override
@@ -68,8 +68,8 @@ public class Phrase {
                 ", phraseEs='" + phraseEs + '\'' +
                 ", phraseFr='" + phraseFr + '\'' +
                 ", description='" + description + '\'' +
-                ", intentos=" + intentos +
-                ", aciertos=" + aciertos +
+                ", attempts=" + attempts +
+                ", aciertos=" + successes +
                 '}';
     }
 }
