@@ -28,8 +28,8 @@ public class WordTranslationController {
         return new ResponseEntity<>(wordTranslationDTO, HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/attempts")
-    public @ResponseBody ResponseEntity<?> attemptsWordTranslation(@RequestParam int wordId, int phraseId, boolean success) {
+    @PutMapping(path = "/attempts/{wordId}")
+    public @ResponseBody ResponseEntity<?> attemptsWordTranslation(@PathVariable int wordId, @RequestParam int phraseId, @RequestParam boolean success) {
         WordTranslationDTO wordTranslationDTO = wordTranslationService.attemptsWordTranslation(wordId, phraseId, success);
         if (wordTranslationDTO == null) {
             ErrorResponse errorResponse = new ErrorResponse("No se ha encontrado WordTranslation o phrase", ErrorCode.PHRASE_NOT_FOUND);
@@ -39,5 +39,5 @@ public class WordTranslationController {
         return new ResponseEntity<>(wordTranslationDTO, HttpStatus.CREATED);
     }
 
-
+    
 }
