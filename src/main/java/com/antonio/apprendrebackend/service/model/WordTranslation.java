@@ -18,12 +18,18 @@ public class WordTranslation {
     @ManyToOne
     @JoinColumn(name = "word_es_id")
     private WordSp wordSp;
+
+    @OneToMany(mappedBy = "wordTranslation")
+    private List<WordTranslationPhrase> phrases;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id")
+    private Type type;
+
     private Integer attempts;
     private Integer successes;
     private Integer importanceIndex;
 
-    @OneToMany(mappedBy = "wordTranslation")
-    private List<WordTranslationPhrase> phrases;
 
     public WordTranslation() {
         this.attempts = 0;
@@ -91,6 +97,14 @@ public class WordTranslation {
 
     public void setPhrases(List<WordTranslationPhrase> phrases) {
         this.phrases = phrases;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public WordTranslationPhrase getRandomPhrase() {

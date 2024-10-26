@@ -12,14 +12,20 @@ public class WordTranslationHistorial {
     @JoinColumn(name = "wordTranslation_id")
     private WordTranslation wordTranslation;
 
-    private Integer importance;
+    private Integer importanceIndex;
+
+    private Long date;
+
+    private Integer successes;
 
     public WordTranslationHistorial() {
     }
 
-    public WordTranslationHistorial(WordTranslation wordTranslation, Integer importance) {
+    public WordTranslationHistorial(WordTranslation wordTranslation, Integer importanceIndex, Long date, Integer successes) {
         this.wordTranslation = wordTranslation;
-        this.importance = importance;
+        this.importanceIndex = importanceIndex;
+        this.date = date;
+        this.successes = successes;
     }
 
     public Integer getId() {
@@ -38,11 +44,11 @@ public class WordTranslationHistorial {
         this.wordTranslation = wordTranslation;
     }
 
-    public Integer getImportance() {
-        return importance;
+    public Long getDate() {
+        return date;
     }
 
-    public void setImportance(Integer importance) {
-        this.importance = importance;
+    public void setDate(Long date) {
+        this.date = date;
     }
 }
