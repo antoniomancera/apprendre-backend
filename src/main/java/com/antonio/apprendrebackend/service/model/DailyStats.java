@@ -2,21 +2,20 @@ package com.antonio.apprendrebackend.service.model;
 
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DailyStats {
     private LocalDate date;
-    private List<WordTranslationHistorial> historialDay;
+    private int totalAttempts;
+    private int totalSuccesses;
 
     public DailyStats(LocalDate date) {
         this.date = date;
-        this.historialDay = new ArrayList<>();
     }
 
-    public DailyStats(LocalDate date, List<WordTranslationHistorial> historialDay) {
+    public DailyStats(LocalDate date, int totalAttempts, int totalSuccesses) {
         this.date = date;
-        this.historialDay = historialDay;
+        this.totalAttempts = totalAttempts;
+        this.totalSuccesses = totalSuccesses;
     }
 
     public LocalDate getDate() {
@@ -27,11 +26,19 @@ public class DailyStats {
         this.date = date;
     }
 
-    public List<WordTranslationHistorial> getHistorialDay() {
-        return historialDay;
+    public int getTotalAttempts() {
+        return totalAttempts;
     }
 
-    public void setHistorialDay(List<WordTranslationHistorial> historialDay) {
-        this.historialDay = historialDay;
+    public void setTotalAttempts(int totalAttempts) {
+        this.totalAttempts = totalAttempts;
+    }
+
+    public int getTotalSuccesses() {
+        return totalSuccesses;
+    }
+
+    public void setTotalSuccesses(int totalSuccesses) {
+        this.totalSuccesses = totalSuccesses;
     }
 }

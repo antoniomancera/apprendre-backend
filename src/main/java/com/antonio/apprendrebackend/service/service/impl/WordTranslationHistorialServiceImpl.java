@@ -22,21 +22,11 @@ public class WordTranslationHistorialServiceImpl implements WordTranslationHisto
     WordTranslationHistorialRepository wordTranslationHistorialRepository;
 
     @Override
-    public List<DailyStats> getWordTranslationHistorialLastWeek() {
+    public List<WordTranslationHistorial> getWordTranslationHistorialLastWeek() {
         LocalDate today = LocalDate.now();
         long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        List<WordTranslationHistorial> historialLastweek = wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis);
-        Map<LocalDate, DailyStats> dailyStatsMap = new HashMap<>();
-
-        for (WordTranslationHistorial historialDay : historialLastweek) {
-            LocalDate date = Instant.ofEpochMilli(historialDay.getDate())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-            DailyStats stat = dailyStatsMap.computeIfAbsent(date, k -> new DailyStats(date));
-            stat.getHistorialDay().add(historialDay);
-        }
-        return new ArrayList<>(dailyStatsMap.values());
+        return wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis);
     }
 }
