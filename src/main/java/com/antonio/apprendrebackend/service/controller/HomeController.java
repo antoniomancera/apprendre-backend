@@ -21,7 +21,7 @@ public class HomeController {
     @Autowired
     HomeService homeService;
 
-    @GetMapping(path = "")
+    @GetMapping
     public @ResponseBody ResponseEntity<?> getHome() {
         Home home = homeService.getHome();
         if (home == null) {

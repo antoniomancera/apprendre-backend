@@ -6,5 +6,5 @@ import com.antonio.apprendrebackend.service.model.WordTranslationHistorial;
 import java.util.List;
 
 public interface WordTranslationHistorialService {
-    List<DailyStats> getWordTranslationHistorialLastWeek();
+    List<WordTranslationHistorial> getWordTranslationHistorialLastWeek();
 }
