@@ -4,5 +4,7 @@ import com.antonio.apprendrebackend.service.model.Goal;
 import org.springframework.data.repository.CrudRepository;
 
 public interface GoalRepository extends CrudRepository<Goal, Integer> {
-    Goal findFirstByOrderByDateDesc();
+    Goal findFirstByOrderByBeginDateDesc();
+
+    Goal findByEndDateNull();
 }

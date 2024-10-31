@@ -51,4 +51,12 @@ public class WordTranslationHistorial {
     public void setDate(Long date) {
         this.date = date;
     }
+
+    public Integer getSuccesses() {
+        return successes;
+    }
+
+    public void setSuccesses(Integer successes) {
+        this.successes = successes;
+    }
 }
