@@ -1,10 +1,12 @@
 package com.antonio.apprendrebackend.service.model;
 
+import com.antonio.apprendrebackend.service.dto.GoalDTO;
+
 import java.util.List;
 
 public class Home {
     List<DailyStats> weekStats;
-    Goal goal;
+    GoalDTO goal;
 
 
     public List<DailyStats> getWeekStats() {
@@ -15,11 +17,11 @@ public class Home {
         this.weekStats = weekStats;
     }
 
-    public Goal getGoal() {
+    public GoalDTO getGoal() {
         return goal;
     }
 
-    public void setGoal(Goal goal) {
+    public void setGoal(GoalDTO goal) {
         this.goal = goal;
     }
 

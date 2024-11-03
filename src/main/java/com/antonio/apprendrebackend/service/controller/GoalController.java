@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.controller;
 
+import com.antonio.apprendrebackend.service.dto.GoalDTO;
 import com.antonio.apprendrebackend.service.model.ErrorResponse;
 import com.antonio.apprendrebackend.service.model.Goal;
 import com.antonio.apprendrebackend.service.service.GoalService;
@@ -18,10 +19,9 @@ public class GoalController {
 
     @PostMapping
     public @ResponseBody ResponseEntity<?> createGoal(
-            @RequestParam(required = false, defaultValue = "0") Integer attempts,
-            @RequestParam(required = false, defaultValue = "0.0") Double successesAccuracy) {
-        Goal goal = goalService.createGoal(attempts, successesAccuracy);
-        if (goal == null) {
+            @RequestBody GoalDTO goal) {
+        Goal createdGoal = goalService.createGoal(goal.getAttempts(), goal.getSuccessesAccuracy());
+        if (createdGoal == null) {
             ErrorResponse errorResponse = new ErrorResponse("no se ha creado el GOAL", ErrorCode.GOAL_NOT_CREATED);
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
