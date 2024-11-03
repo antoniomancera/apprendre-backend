@@ -1,8 +1,12 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Phrase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,54 +16,6 @@ public class Phrase {
     private String description;
     private Integer attempts;
     private Integer successes;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getPhraseEs() {
-        return phraseEs;
-    }
-
-    public void setPhraseEs(String phraseEs) {
-        this.phraseEs = phraseEs;
-    }
-
-    public String getPhraseFr() {
-        return phraseFr;
-    }
-
-    public void setPhraseFr(String phraseFr) {
-        this.phraseFr = phraseFr;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getAttempts() {
-        return attempts;
-    }
-
-    public void setAttempts(Integer attempts) {
-        this.attempts = attempts;
-    }
-
-    public Integer getSuccesses() {
-        return successes;
-    }
-
-    public void setSuccesses(Integer successes) {
-        this.successes = successes;
-    }
 
     @Override
     public String toString() {
