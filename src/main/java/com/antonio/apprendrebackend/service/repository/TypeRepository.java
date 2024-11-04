@@ -8,5 +8,5 @@ import java.util.Optional;
 
 
 public interface TypeRepository extends CrudRepository<Type, Integer> {
-    Optional<Type> findByTypeEnum(Type.TypeEnum typeEnum);
+    Optional<Type> findByType(Type.TypeEnum typeEnum);
 }

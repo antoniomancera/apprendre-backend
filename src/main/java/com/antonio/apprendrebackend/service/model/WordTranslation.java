@@ -26,6 +26,14 @@ public class WordTranslation {
     @JoinColumn(name = "type_id")
     private Type type;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "level_id")
+    private Level level;
+
     private Integer attempts;
     private Integer successes;
     private Integer importanceIndex;

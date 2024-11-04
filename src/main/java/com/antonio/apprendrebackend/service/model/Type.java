@@ -1,8 +1,12 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Type {
     public enum TypeEnum {
         SUSTANTIVE, VERB, ADJECTIVE, ADVERB, PRONOUN, PREPOSITION, CONJUNCTION, INTERJECTION
@@ -12,43 +16,14 @@ public class Type {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String typeName;
 
     @Enumerated(EnumType.STRING)
-    private TypeEnum typeEnum;
+    private TypeEnum type;
 
     public Type() {
     }
 
-    public Type(String typeName, TypeEnum typeEnum) {
-        this.typeName = typeName;
-        this.typeEnum = typeEnum;
+    public Type(TypeEnum type) {
+        this.type = type;
     }
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
-    public TypeEnum getTypeEnum() {
-        return typeEnum;
-    }
-
-    public void setTypeEnum(TypeEnum typeEnum) {
-        this.typeEnum = typeEnum;
-    }
-
-
 }
