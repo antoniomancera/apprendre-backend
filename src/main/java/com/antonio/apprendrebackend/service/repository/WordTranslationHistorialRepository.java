@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface WordTranslationHistorialRepository extends CrudRepository<WordTranslationHistorial, Integer> {
     List<WordTranslationHistorial> findByDateGreaterThanEqualAndDateLessThan(Long start, Long end);
+    
+    WordTranslationHistorial findFirstByOrderByDateDesc();
 }
