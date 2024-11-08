@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.model;
 
+import com.antonio.apprendrebackend.service.dto.DeckDTO;
 import com.antonio.apprendrebackend.service.dto.GoalDTO;
 import com.antonio.apprendrebackend.service.dto.UserInfoDTO;
 import lombok.Getter;
@@ -16,4 +17,6 @@ public class Home {
     List<DailyStats> weekStats;
     GoalDTO goal;
     UserInfoDTO userInfo;
+    List<DeckDTO> decks;
+    Integer lastDeckId;
 }

@@ -1,31 +1,38 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
+import com.antonio.apprendrebackend.service.dto.DeckDTO;
+import com.antonio.apprendrebackend.service.mapper.DeckMapper;
 import com.antonio.apprendrebackend.service.mapper.GoalMapper;
 import com.antonio.apprendrebackend.service.mapper.UserInfoMapper;
 import com.antonio.apprendrebackend.service.model.Home;
-import com.antonio.apprendrebackend.service.service.DailyStatsService;
-import com.antonio.apprendrebackend.service.service.GoalService;
-import com.antonio.apprendrebackend.service.service.HomeService;
-import com.antonio.apprendrebackend.service.service.UserInfoService;
+import com.antonio.apprendrebackend.service.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired
     DailyStatsService dailyStatsService;
-
     @Autowired
     GoalService goalService;
-
     @Autowired
     UserInfoService userInfoService;
 
     @Autowired
-    GoalMapper goalMapper;
+    DeckService deckService;
+    @Autowired
+    WordTranslationHistorialService wordTranslationHistorialService;
 
     @Autowired
+    GoalMapper goalMapper;
+    @Autowired
     UserInfoMapper userInfoMapper;
+    @Autowired
+    DeckMapper deckMapper;
 
     @Override
     public Home getHome() {
@@ -33,6 +40,12 @@ public class HomeServiceImpl implements HomeService {
         home.setWeekStats(dailyStatsService.getDailyStatsLastWeek());
         home.setGoal(goalMapper.toDTO(goalService.getActiveGoal()));
         home.setUserInfo(userInfoMapper.toDTO(userInfoService.getUserInfo()));
+        home.setDecks(Optional.ofNullable(deckService.getActiveDecks())
+                .orElse(Collections.emptyList()).stream()
+                .map(deck -> deckMapper.toDTO(deck))
+                .collect(Collectors.toList()));
+        home.setLastDeckId(wordTranslationHistorialService.getLastWordTranslationHistorial().getDeckId());
+        
         return home;
     }
 }

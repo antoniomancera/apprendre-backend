@@ -3,7 +3,16 @@ package com.antonio.apprendrebackend.service.service;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 
 public interface WordTranslationService {
-    WordTranslationDTO getRandomWordTranslation();
+    WordTranslationDTO getRandomWordTranslation(Integer deckId);
 
-    WordTranslationDTO attemptsWordTranslation(int wordId, int phraseId, boolean success);
+    /**
+     * Update phrase, wordTranslate and WordTranslateHistorial depending on the result of the attemps, besides returns a WordTranslation
+     *
+     * @param wordId
+     * @param phraseId
+     * @param success
+     * @param deckId
+     * @return
+     */
+    WordTranslationDTO attemptsWordTranslation(int wordId, int phraseId, boolean success, Integer deckId);
 }

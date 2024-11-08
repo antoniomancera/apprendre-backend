@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface WordTranslationHistorialService {
     List<WordTranslationHistorial> getWordTranslationHistorialLastWeek();
+
+    WordTranslationHistorial getLastWordTranslationHistorial();
 }

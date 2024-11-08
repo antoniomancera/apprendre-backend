@@ -29,4 +29,9 @@ public class WordTranslationHistorialServiceImpl implements WordTranslationHisto
 
         return wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis);
     }
+
+    @Override
+    public WordTranslationHistorial getLastWordTranslationHistorial() {
+        return wordTranslationHistorialRepository.findFirstByOrderByDateDesc();
+    }
 }

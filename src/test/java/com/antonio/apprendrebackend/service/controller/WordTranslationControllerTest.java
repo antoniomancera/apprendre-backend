@@ -37,7 +37,7 @@ public class WordTranslationControllerTest {
 
         WordTranslationDTO wordTranslationDTO = new WordTranslationDTO();
 
-        given(wordTranslationService.getRandomWordTranslation()).willReturn(wordTranslationDTO);
+        given(wordTranslationService.getRandomWordTranslation(1)).willReturn(wordTranslationDTO);
 
         mockMvc.perform(get("/wordTranslation/getRandom")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -48,7 +48,7 @@ public class WordTranslationControllerTest {
     @Test
     public void testGetRandomWordTranslationPhrase_NotFound() throws Exception {
 
-        given(wordTranslationService.getRandomWordTranslation()).willReturn(null);
+        given(wordTranslationService.getRandomWordTranslation(1)).willReturn(null);
 
         mockMvc.perform(get("/wordTranslation/getRandom")
                         .contentType(MediaType.APPLICATION_JSON))

@@ -13,6 +13,10 @@ public class WordTranslationPool {
     @JoinColumn(name = "wordTranslation_id", nullable = false)
     private WordTranslation wordTranslation;
 
+    @ManyToOne
+    @JoinColumn(name = "deck_id")
+    private Deck deck;
+
     public Integer getId() {
         return id;
     }

@@ -41,7 +41,10 @@ public class WordTranslationServiceImpl implements WordTranslationService {
     WordTranslationHistorialRepository wordTranslationHistorialRepository;
 
     @Override
-    public WordTranslationDTO getRandomWordTranslation() {
+    public WordTranslationDTO getRandomWordTranslation(Integer deckId) {
+        if (deckId != null) {
+            WordTranslationPool wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPoolWithByDeck(deckId);
+        }
         WordTranslationPool wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPool();
 
         if (wordTranslationPool == null) {
@@ -59,7 +62,7 @@ public class WordTranslationServiceImpl implements WordTranslationService {
     }
 
     @Override
-    public WordTranslationDTO attemptsWordTranslation(int wordId, int phraseId, boolean success) {
+    public WordTranslationDTO attemptsWordTranslation(int wordId, int phraseId, boolean success, Integer deckId) {
         WordTranslation wordTranslation = wordTranslationRepository.findById(wordId).get();
         Phrase phrase = phraseRepository.findById(phraseId).get();
 
@@ -75,9 +78,9 @@ public class WordTranslationServiceImpl implements WordTranslationService {
         }
         wordTranslationRepository.save(wordTranslation);
         phraseRepository.save(phrase);
-        wordTranslationHistorialRepository.save(new WordTranslationHistorial(wordTranslation, wordTranslation.getImportanceIndex(), LocalDate.now().atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli(), success ? 1 : 0));
+        wordTranslationHistorialRepository.save(new WordTranslationHistorial(wordTranslation, wordTranslation.getImportanceIndex(), LocalDate.now().atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli(), success ? 1 : 0, deckId));
 
-        return getRandomWordTranslation();
+        return getRandomWordTranslation(deckId);
     }
 
 }
