@@ -42,13 +42,10 @@ public class WordTranslationServiceImpl implements WordTranslationService {
 
     @Override
     public WordTranslationDTO getRandomWordTranslation(Integer deckId) {
+        WordTranslationPool wordTranslationPool = new WordTranslationPool();
         if (deckId != null) {
-            WordTranslationPool wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPoolWithByDeck(deckId);
-        }
-        WordTranslationPool wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPool();
-
-        if (wordTranslationPool == null) {
-            wordTranslationPoolService.generateWordTranslationPoolEntries();
+            wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPoolWithByDeck(deckId);
+        } else {
             wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPool();
         }
 

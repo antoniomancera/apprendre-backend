@@ -22,7 +22,7 @@ public class WordTranslationController {
      * @param deckId
      * @return
      */
-    @GetMapping(path = "/getRandom")
+    @GetMapping(path = "/getRandom/{deckId}")
     public @ResponseBody ResponseEntity<?> getRandomWordTranslationPhrase(@PathVariable(required = false) Integer deckId) {
         WordTranslationDTO wordTranslationDTO = wordTranslationService.getRandomWordTranslation(deckId);
         if (wordTranslationDTO == null) {
