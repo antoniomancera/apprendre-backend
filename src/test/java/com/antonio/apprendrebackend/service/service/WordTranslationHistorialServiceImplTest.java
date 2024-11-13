@@ -40,7 +40,7 @@ public class WordTranslationHistorialServiceImplTest {
         List<WordTranslationHistorial> mockList = new ArrayList<>();
         mockList.add(new WordTranslationHistorial(/* Initialize with mock data */));
 
-        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis))
+        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis))
                 .thenReturn(mockList);
 
         // When
@@ -48,7 +48,7 @@ public class WordTranslationHistorialServiceImplTest {
 
         // Then
         assertEquals(mockList.size(), result.size());
-        verify(wordTranslationHistorialRepository, times(1)).findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis);
+        verify(wordTranslationHistorialRepository, times(1)).findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class WordTranslationHistorialServiceImplTest {
         long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis))
+        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis))
                 .thenReturn(new ArrayList<>());
 
         // When
@@ -66,7 +66,7 @@ public class WordTranslationHistorialServiceImplTest {
 
         // Then
         assertEquals(0, result.size());
-        verify(wordTranslationHistorialRepository, times(1)).findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis);
+        verify(wordTranslationHistorialRepository, times(1)).findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
     }
 
     @Test

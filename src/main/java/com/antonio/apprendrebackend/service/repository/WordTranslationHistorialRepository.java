@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface WordTranslationHistorialRepository extends CrudRepository<WordTranslationHistorial, Integer> {
-    List<WordTranslationHistorial> findByDateGreaterThanEqualAndDateLessThan(Long start, Long end);
-    
+    List<WordTranslationHistorial> findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(Long start, Long end);
+
     WordTranslationHistorial findFirstByOrderByDateDesc();
 }

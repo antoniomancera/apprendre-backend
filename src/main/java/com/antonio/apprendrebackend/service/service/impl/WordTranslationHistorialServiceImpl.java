@@ -27,7 +27,7 @@ public class WordTranslationHistorialServiceImpl implements WordTranslationHisto
         long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        return wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThan(startMillis, endMillis);
+        return wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
     }
 
     @Override
