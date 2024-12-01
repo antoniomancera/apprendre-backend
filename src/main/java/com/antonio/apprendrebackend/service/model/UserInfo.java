@@ -1,12 +1,11 @@
 package com.antonio.apprendrebackend.service.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -19,4 +18,5 @@ public class UserInfo {
     private String name;
     private String surname;
     private Long date;
+    private String email;
 }

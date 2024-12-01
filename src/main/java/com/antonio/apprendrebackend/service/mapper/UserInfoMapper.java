@@ -12,5 +12,6 @@ public interface UserInfoMapper {
 
     @Mapping(target = "name", source = "name")
     @Mapping(target = "surname", source = "surname")
+    @Mapping(target = "email", source = "email")
     UserInfoDTO toDTO(UserInfo userInfo);
 }
