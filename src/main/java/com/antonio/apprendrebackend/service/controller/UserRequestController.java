@@ -22,6 +22,14 @@ public class UserRequestController {
     @Autowired
     UserRequestService userRequestService;
 
+    /**
+     * Method for add a request from a user, or if the user  or exist another request in the last 7 days will return an error
+     *
+     * @param email
+     * @param subject
+     * @param message
+     * @return
+     */
     @PostMapping(path = "")
     public @ResponseBody ResponseEntity<?> addUserRequest(@RequestParam String email, @RequestParam String subject, @RequestParam String message) {
         try {
@@ -29,7 +37,6 @@ public class UserRequestController {
             return new ResponseEntity<>(userRequestService.addUserRequest(email, subject, message), HttpStatus.CREATED);
 
         } catch (UserInfoNotFoundException e) {
-            // Manejo del error
             System.err.println("Excepción: " + e.getMessage());
             throw e;
         }
