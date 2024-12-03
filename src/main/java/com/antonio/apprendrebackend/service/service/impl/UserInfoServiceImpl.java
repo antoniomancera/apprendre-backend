@@ -17,6 +17,13 @@ public class UserInfoServiceImpl implements UserInfoService {
         return userInfoRepository.findFirstByOrderByDateAsc();
     }
 
+    /**
+     * Found if exists the user by email
+     *
+     * @param email
+     * @return UserInfo
+     * @throws UserInfoNotFoundException
+     */
     @Override
     public UserInfo getByEmail(String email) throws UserInfoNotFoundException {
         return userInfoRepository.findByEmail(email)
