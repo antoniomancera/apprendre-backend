@@ -44,7 +44,7 @@ public class UserRequestServiceImplTest {
         mockUserInfo.setEmail(email);
 
         when(userInfoService.getByEmail(email)).thenReturn(mockUserInfo);
-        when(userRequestRepository.findFirstByUserInfoAndIsAnsweredFalseAndDateAfter(any(), anyLong()))
+        when(userRequestRepository.findFirstByUserInfoAndIsAnsweredFalseAndCreatedDateAfter(any(), anyLong()))
                 .thenReturn(Optional.empty());
 
         UserRequest mockSavedRequest = new UserRequest(subject, message, mockUserInfo);
@@ -58,7 +58,7 @@ public class UserRequestServiceImplTest {
         assertEquals(subject, result.getSubject());
         assertEquals(message, result.getMessage());
         verify(userInfoService, times(1)).getByEmail(email);
-        verify(userRequestRepository, times(1)).findFirstByUserInfoAndIsAnsweredFalseAndDateAfter(any(), anyLong());
+        verify(userRequestRepository, times(1)).findFirstByUserInfoAndIsAnsweredFalseAndCreatedDateAfter(any(), anyLong());
         verify(userRequestRepository, times(1)).save(any(UserRequest.class));
     }
 
@@ -76,7 +76,7 @@ public class UserRequestServiceImplTest {
         existingRequest.setAnswered(false);
 
         when(userInfoService.getByEmail(email)).thenReturn(mockUserInfo);
-        when(userRequestRepository.findFirstByUserInfoAndIsAnsweredFalseAndDateAfter(any(), anyLong()))
+        when(userRequestRepository.findFirstByUserInfoAndIsAnsweredFalseAndCreatedDateAfter(any(), anyLong()))
                 .thenReturn(Optional.of(existingRequest));
 
         // When & Then
@@ -87,7 +87,7 @@ public class UserRequestServiceImplTest {
 
         assertEquals("There is already an unanswered request for this user from the last week.", exception.getMessage());
         verify(userInfoService, times(1)).getByEmail(email);
-        verify(userRequestRepository, times(1)).findFirstByUserInfoAndIsAnsweredFalseAndDateAfter(any(), anyLong());
+        verify(userRequestRepository, times(1)).findFirstByUserInfoAndIsAnsweredFalseAndCreatedDateAfter(any(), anyLong());
         verify(userRequestRepository, never()).save(any(UserRequest.class));
     }
 }

@@ -13,8 +13,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.antonio.apprendrebackend.service.util.GeneralConstants.ONE_DAY_MILLIS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class WordTranslationHistorialServiceImplTest {
@@ -34,40 +37,54 @@ public class WordTranslationHistorialServiceImplTest {
     void testGetWordTranslationHistorialLastWeek_ReturnsList() {
         // Given
         LocalDate today = LocalDate.now();
-        long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endMillis = today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() - 1;
+
 
         List<WordTranslationHistorial> mockList = new ArrayList<>();
-        mockList.add(new WordTranslationHistorial(/* Initialize with mock data */));
+        WordTranslationHistorial wordTranslationHistorial = new WordTranslationHistorial();
+        wordTranslationHistorial.setDate(startMillis + 100000);
+        mockList.add(wordTranslationHistorial);
 
-        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis))
-                .thenReturn(mockList);
+
+        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
+                eq(startMillis), eq(endMillis)))
+                .thenReturn(Optional.of(mockList));
 
         // When
-        List<WordTranslationHistorial> result = wordTranslationHistorialService.getWordTranslationHistorialLastWeek();
+        Optional<List<WordTranslationHistorial>> result = wordTranslationHistorialService.getWordTranslationHistorialLastWeek();
 
         // Then
-        assertEquals(mockList.size(), result.size());
-        verify(wordTranslationHistorialRepository, times(1)).findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
+        assertTrue(result.isPresent());
+        assertEquals(mockList.size(), result.get().size());
+        verify(wordTranslationHistorialRepository, times(1))
+                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(eq(startMillis), eq(endMillis));
     }
 
+
     @Test
-    void testGetWordTranslationHistorialLastWeek_ReturnsEmptyList() {
+    void testGetWordTranslationHistorialLastWeek_ReturnsEmptyOptional() {
         // Given
         LocalDate today = LocalDate.now();
         long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis))
-                .thenReturn(new ArrayList<>());
+        when(wordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
+                eq(startMillis),
+                anyLong()
+        )).thenReturn(Optional.empty());
 
         // When
-        List<WordTranslationHistorial> result = wordTranslationHistorialService.getWordTranslationHistorialLastWeek();
+        Optional<List<WordTranslationHistorial>> result = wordTranslationHistorialService.getWordTranslationHistorialLastWeek();
 
         // Then
-        assertEquals(0, result.size());
-        verify(wordTranslationHistorialRepository, times(1)).findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
+        assertTrue(result.isEmpty());
+        verify(wordTranslationHistorialRepository, times(1)).findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
+                eq(startMillis),
+                anyLong()
+        );
     }
+
 
     @Test
     void testGetLastWordTranslationHistorial_ReturnsWordTranslationHistorial() {

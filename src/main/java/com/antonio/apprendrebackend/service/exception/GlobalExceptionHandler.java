@@ -37,4 +37,18 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorResponse);
     }
+
+    @ExceptionHandler(WordTranslationHistorialNotFound.class)
+    public ResponseEntity<ErrorResponse> handleWordTranslationHistorialNotFound(WordTranslationHistorialNotFound ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.WORD_TRANSLATION_HISTORIAL_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+    }
 }

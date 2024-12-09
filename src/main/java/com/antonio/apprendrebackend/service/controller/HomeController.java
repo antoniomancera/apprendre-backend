@@ -21,6 +21,11 @@ public class HomeController {
     @Autowired
     HomeService homeService;
 
+    /**
+     * Returns the information to be displayed in home
+     *
+     * @return Home
+     */
     @GetMapping
     public @ResponseBody ResponseEntity<?> getHome() {
         Home home = homeService.getHome();

@@ -25,14 +25,15 @@ import static org.mockito.Mockito.*;
 
 public class HomeServiceImplTest {
 
-    @Mock
-    private DailyStatsService dailyStatsService;
 
     @Mock
     private GoalService goalService;
 
     @Mock
     private UserInfoService userInfoService;
+
+    @Mock
+    private StatsService statsService;
 
     @Mock
     private GoalMapper goalMapper;
@@ -56,7 +57,7 @@ public class HomeServiceImplTest {
                 new DailyStats(LocalDate.now().minusDays(2)),
                 new DailyStats(LocalDate.now().minusDays(3))
         );
-        when(dailyStatsService.getDailyStatsLastWeek()).thenReturn(dailyStatsList);
+        when(statsService.getDailyStatsLastWeek()).thenReturn(dailyStatsList);
         when(goalService.getActiveGoal()).thenReturn(new Goal());
         when(userInfoService.getUserInfo()).thenReturn(new UserInfo());
 
@@ -72,7 +73,7 @@ public class HomeServiceImplTest {
         assertNotNull(home.getGoal());
         assertNotNull(home.getUserInfo());
 
-        verify(dailyStatsService).getDailyStatsLastWeek();
+        verify(statsService).getDailyStatsLastWeek();
         verify(goalService).getActiveGoal();
         verify(userInfoService).getUserInfo();
         verify(goalMapper).toDTO(any());

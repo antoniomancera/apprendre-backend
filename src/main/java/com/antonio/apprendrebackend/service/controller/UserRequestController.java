@@ -33,7 +33,6 @@ public class UserRequestController {
     @PostMapping(path = "")
     public @ResponseBody ResponseEntity<?> addUserRequest(@RequestParam String email, @RequestParam String subject, @RequestParam String message) {
         try {
-            System.out.println("funciona");
             return new ResponseEntity<>(userRequestService.addUserRequest(email, subject, message), HttpStatus.CREATED);
 
         } catch (UserInfoNotFoundException e) {
