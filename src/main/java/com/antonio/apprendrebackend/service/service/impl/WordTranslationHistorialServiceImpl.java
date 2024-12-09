@@ -1,5 +1,7 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
+import com.antonio.apprendrebackend.service.exception.UserInfoNotFoundException;
+import com.antonio.apprendrebackend.service.exception.WordTranslationHistorialNotFound;
 import com.antonio.apprendrebackend.service.model.DailyStats;
 import com.antonio.apprendrebackend.service.model.WordTranslationHistorial;
 import com.antonio.apprendrebackend.service.repository.WordTranslationHistorialRepository;
@@ -22,7 +24,7 @@ public class WordTranslationHistorialServiceImpl implements WordTranslationHisto
     WordTranslationHistorialRepository wordTranslationHistorialRepository;
 
     @Override
-    public List<WordTranslationHistorial> getWordTranslationHistorialLastWeek() {
+    public Optional<List<WordTranslationHistorial>> getWordTranslationHistorialLastWeek() {
         LocalDate today = LocalDate.now();
         long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();

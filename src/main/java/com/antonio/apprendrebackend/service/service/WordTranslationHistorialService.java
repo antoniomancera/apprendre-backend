@@ -4,9 +4,10 @@ import com.antonio.apprendrebackend.service.model.DailyStats;
 import com.antonio.apprendrebackend.service.model.WordTranslationHistorial;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WordTranslationHistorialService {
-    List<WordTranslationHistorial> getWordTranslationHistorialLastWeek();
+    Optional<List<WordTranslationHistorial>> getWordTranslationHistorialLastWeek();
 
     WordTranslationHistorial getLastWordTranslationHistorial();
 }

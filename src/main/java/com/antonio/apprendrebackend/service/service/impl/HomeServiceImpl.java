@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired
-    DailyStatsService dailyStatsService;
-    @Autowired
     GoalService goalService;
     @Autowired
     UserInfoService userInfoService;
@@ -28,16 +26,24 @@ public class HomeServiceImpl implements HomeService {
     WordTranslationHistorialService wordTranslationHistorialService;
 
     @Autowired
+    StatsService statsService;
+
+    @Autowired
     GoalMapper goalMapper;
     @Autowired
     UserInfoMapper userInfoMapper;
     @Autowired
     DeckMapper deckMapper;
 
+    /**
+     * Returns the information to be displayed in home
+     *
+     * @return
+     */
     @Override
     public Home getHome() {
         Home home = new Home();
-        home.setWeekStats(dailyStatsService.getDailyStatsLastWeek());
+        home.setWeekStats(statsService.getDailyStatsLastWeek());
         home.setGoal(goalMapper.toDTO(goalService.getActiveGoal()));
         home.setUserInfo(userInfoMapper.toDTO(userInfoService.getUserInfo()));
         home.setDecks(Optional.ofNullable(deckService.getActiveDecks())
@@ -45,7 +51,7 @@ public class HomeServiceImpl implements HomeService {
                 .map(deck -> deckMapper.toDTO(deck))
                 .collect(Collectors.toList()));
         home.setLastDeckId(wordTranslationHistorialService.getLastWordTranslationHistorial().getDeckId());
-        
+
         return home;
     }
 }
