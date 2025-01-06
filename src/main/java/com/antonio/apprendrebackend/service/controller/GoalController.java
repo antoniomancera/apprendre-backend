@@ -4,7 +4,7 @@ import com.antonio.apprendrebackend.service.dto.GoalDTO;
 import com.antonio.apprendrebackend.service.model.ErrorResponse;
 import com.antonio.apprendrebackend.service.model.Goal;
 import com.antonio.apprendrebackend.service.service.GoalService;
-import com.antonio.apprendrebackend.service.util.ErrorCode;
+import com.antonio.apprendrebackend.service.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

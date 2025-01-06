@@ -1,6 +1,6 @@
 package com.antonio.apprendrebackend.service.model;
 
-import com.antonio.apprendrebackend.service.util.ErrorCode;
+import com.antonio.apprendrebackend.service.exception.ErrorCode;
 
 public class ErrorResponse {
     private String message;

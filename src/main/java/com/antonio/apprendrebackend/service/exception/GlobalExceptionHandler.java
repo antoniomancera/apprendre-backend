@@ -1,10 +1,8 @@
 package com.antonio.apprendrebackend.service.exception;
 
-import com.antonio.apprendrebackend.service.util.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
