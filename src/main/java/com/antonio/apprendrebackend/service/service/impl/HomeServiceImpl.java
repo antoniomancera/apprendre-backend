@@ -4,6 +4,7 @@ import com.antonio.apprendrebackend.service.dto.DeckDTO;
 import com.antonio.apprendrebackend.service.mapper.DeckMapper;
 import com.antonio.apprendrebackend.service.mapper.GoalMapper;
 import com.antonio.apprendrebackend.service.mapper.UserInfoMapper;
+import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
 import com.antonio.apprendrebackend.service.model.Home;
 import com.antonio.apprendrebackend.service.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     DeckService deckService;
     @Autowired
-    WordTranslationHistorialService wordTranslationHistorialService;
+    DeckWordTranslationHistorialService deckWordTranslationHistorialService;
 
     @Autowired
     StatsService statsService;
@@ -50,7 +51,10 @@ public class HomeServiceImpl implements HomeService {
                 .orElse(Collections.emptyList()).stream()
                 .map(deck -> deckMapper.toDTO(deck))
                 .collect(Collectors.toList()));
-        home.setLastDeckId(wordTranslationHistorialService.getLastWordTranslationHistorial().getDeckId());
+
+        home.setLastDeckId(deckWordTranslationHistorialService.getLastWordTranslationHistorial()
+                .map(DeckWordTranslationHistorial::getDeckId)
+                .orElse(null));
 
         return home;
     }
