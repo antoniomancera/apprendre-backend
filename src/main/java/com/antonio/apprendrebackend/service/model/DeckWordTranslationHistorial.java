@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class WordTranslationHistorial {
+public class DeckWordTranslationHistorial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -16,32 +16,29 @@ public class WordTranslationHistorial {
     @JoinColumn(name = "wordTranslation_id")
     private WordTranslation wordTranslation;
 
-    private Integer importanceIndex;
 
     private Long date;
 
-    private Integer successes;
+    private Integer success;
 
     @Column(name = "deck_id")
     private Integer deckId;
 
-    public WordTranslationHistorial() {
+    public DeckWordTranslationHistorial() {
         this.date = System.currentTimeMillis();
     }
 
-    public WordTranslationHistorial(WordTranslation wordTranslation, Integer importanceIndex, Integer successes, Integer deckId) {
+    public DeckWordTranslationHistorial(WordTranslation wordTranslation, Integer success, Integer deckId) {
         this.wordTranslation = wordTranslation;
-        this.importanceIndex = importanceIndex;
         this.date = System.currentTimeMillis();
-        this.successes = successes;
+        this.success = success;
         this.deckId = deckId;
     }
 
-    public WordTranslationHistorial(WordTranslation wordTranslation, Integer importanceIndex, Long date, Integer successes, Integer deckId) {
+    public DeckWordTranslationHistorial(WordTranslation wordTranslation, Long date, Integer success, Integer deckId) {
         this.wordTranslation = wordTranslation;
-        this.importanceIndex = importanceIndex;
         this.date = date;
-        this.successes = successes;
+        this.success = success;
         this.deckId = deckId;
     }
 }

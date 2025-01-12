@@ -2,17 +2,18 @@ package com.antonio.apprendrebackend.service.service.impl;
 
 
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
+import com.antonio.apprendrebackend.service.exception.UserInfoNotFoundException;
+import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
+import com.antonio.apprendrebackend.service.model.DeckWordTranslation;
+import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
 import com.antonio.apprendrebackend.service.model.Phrase;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
-import com.antonio.apprendrebackend.service.model.WordTranslationHistorial;
-import com.antonio.apprendrebackend.service.model.WordTranslationPool;
+import com.antonio.apprendrebackend.service.repository.DeckWordTranslationHistorialRespository;
+import com.antonio.apprendrebackend.service.repository.DeckWordTranslationRespository;
 import com.antonio.apprendrebackend.service.repository.PhraseRepository;
-import com.antonio.apprendrebackend.service.repository.WordTranslationHistorialRepository;
-import com.antonio.apprendrebackend.service.repository.WordTranslationPoolRepository;
 import com.antonio.apprendrebackend.service.repository.WordTranslationRepository;
-import com.antonio.apprendrebackend.service.service.WordTranslationPoolService;
 import com.antonio.apprendrebackend.service.service.WordTranslationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,64 +21,61 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Optional;
 
 
 @Service
 public class WordTranslationServiceImpl implements WordTranslationService {
     @Autowired
-    WordTranslationPoolRepository wordTranslationPoolRepository;
+    DeckWordTranslationRespository deckWordTranslationRespository;
     @Autowired
     WordTranslationRepository wordTranslationRepository;
     @Autowired
     WordTranslationMapper wordTranslationMapper;
-    @Autowired
-    WordTranslationPoolService wordTranslationPoolService;
     @Autowired
     PhraseRepository phraseRepository;
     @Autowired
     PhraseMapper phraseMapper;
 
     @Autowired
-    WordTranslationHistorialRepository wordTranslationHistorialRepository;
+    DeckWordTranslationHistorialRespository deckWordTranslationHistorialRespository;
 
     @Override
     public WordTranslationDTO getRandomWordTranslation(Integer deckId) {
-        WordTranslationPool wordTranslationPool = new WordTranslationPool();
+        Optional<DeckWordTranslation> deckWordTranslation;
         if (deckId != null) {
-            wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPoolWithByDeck(deckId);
+            deckWordTranslation = deckWordTranslationRespository.findRandomDeckWordTranslationWithByDeck(deckId);
         } else {
-            wordTranslationPool = wordTranslationPoolRepository.findRandomWordTranslationPool();
+            deckWordTranslation = deckWordTranslationRespository.findRandomDeckWordTranslation();
         }
 
-        if (wordTranslationPool == null) {
-            return null;
+        if (deckWordTranslation.isEmpty()) {
+            throw new WordTranslationNotFoundException("Not found any WordTranslation");
         }
 
-        WordTranslation wordTranslation = wordTranslationPool.getWordTranslation();
-
-        return wordTranslationMapper.toDTO(wordTranslation);
+        return wordTranslationMapper.toDTO(deckWordTranslation.get().getWordTranslation());
     }
 
     @Override
     public WordTranslationDTO attemptsWordTranslation(int wordId, int phraseId, boolean success, Integer deckId) {
-        WordTranslation wordTranslation = wordTranslationRepository.findById(wordId).get();
-        Phrase phrase = phraseRepository.findById(phraseId).get();
+        WordTranslation wordTranslation = wordTranslationRepository.findById(wordId)
+                .orElseThrow(() -> new WordTranslationNotFoundException("WordTranslation not found"));
+        Phrase phrase = phraseRepository.findById(phraseId)
+                .orElseThrow(() -> new WordTranslationNotFoundException("Phrase not found"));
 
-        if (wordTranslation == null || phrase == null) {
-            return null;
-        }
+        updateStats(success, wordTranslation, phrase);
+        deckWordTranslationHistorialRespository.save(new DeckWordTranslationHistorial(wordTranslation, LocalDate.now().atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli(), success ? 1 : 0, deckId));
 
+        return getRandomWordTranslation(deckId);
+    }
+
+    private static void updateStats(boolean success, WordTranslation wordTranslation, Phrase phrase) {
         wordTranslation.setAttempts(wordTranslation.getAttempts() + 1);
         phrase.setAttempts(phrase.getAttempts() + 1);
         if (success) {
             wordTranslation.setSuccesses(wordTranslation.getSuccesses() + 1);
             phrase.setSuccesses(phrase.getSuccesses() + 1);
         }
-        wordTranslationRepository.save(wordTranslation);
-        phraseRepository.save(phrase);
-        wordTranslationHistorialRepository.save(new WordTranslationHistorial(wordTranslation, wordTranslation.getImportanceIndex(), LocalDate.now().atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli(), success ? 1 : 0, deckId));
-
-        return getRandomWordTranslation(deckId);
     }
 
 }

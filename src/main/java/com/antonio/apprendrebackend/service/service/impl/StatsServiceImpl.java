@@ -2,9 +2,9 @@ package com.antonio.apprendrebackend.service.service.impl;
 
 import com.antonio.apprendrebackend.service.exception.WordTranslationHistorialNotFound;
 import com.antonio.apprendrebackend.service.model.DailyStats;
-import com.antonio.apprendrebackend.service.model.WordTranslationHistorial;
+import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
+import com.antonio.apprendrebackend.service.service.DeckWordTranslationHistorialService;
 import com.antonio.apprendrebackend.service.service.StatsService;
-import com.antonio.apprendrebackend.service.service.WordTranslationHistorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import java.util.*;
 public class StatsServiceImpl implements StatsService {
 
     @Autowired
-    WordTranslationHistorialService wordTranslationHistorialService;
+    DeckWordTranslationHistorialService deckWordTranslationHistorialService;
 
     /**
      * Returns a list with the historial of the last week
@@ -27,7 +27,7 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public List<DailyStats> getDailyStatsLastWeek() {
 
-        Optional<List<WordTranslationHistorial>> optionalHistorialLastWeek = wordTranslationHistorialService.getWordTranslationHistorialLastWeek();
+        Optional<List<DeckWordTranslationHistorial>> optionalHistorialLastWeek = deckWordTranslationHistorialService.getWordTranslationHistorialLastWeek();
 
         if (optionalHistorialLastWeek.isEmpty()) {
             throw new WordTranslationHistorialNotFound("Not found any Word Translation Historial in last week");
@@ -35,14 +35,14 @@ public class StatsServiceImpl implements StatsService {
 
         Map<LocalDate, DailyStats> dailyStatsMap = new HashMap<>();
         optionalHistorialLastWeek.ifPresent(historialLastWeek -> {
-            for (WordTranslationHistorial historialDay : historialLastWeek) {
+            for (DeckWordTranslationHistorial historialDay : historialLastWeek) {
                 LocalDate date = Instant.ofEpochMilli(historialDay.getDate())
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate();
 
                 DailyStats stat = dailyStatsMap.computeIfAbsent(date, k -> new DailyStats(date));
                 stat.setTotalAttempts(stat.getTotalAttempts() + 1);
-                stat.setTotalSuccesses(stat.getTotalSuccesses() + historialDay.getSuccesses());
+                stat.setTotalSuccesses(stat.getTotalSuccesses() + historialDay.getSuccess());
             }
         });
 

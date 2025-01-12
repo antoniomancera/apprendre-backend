@@ -1,19 +1,12 @@
 package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.exception.UserInfoNotFoundException;
-import com.antonio.apprendrebackend.service.model.ErrorResponse;
-import com.antonio.apprendrebackend.service.model.UserRequest;
-import com.antonio.apprendrebackend.service.model.WordFr;
-import com.antonio.apprendrebackend.service.repository.UserRequestRepository;
 import com.antonio.apprendrebackend.service.service.UserRequestService;
-import com.antonio.apprendrebackend.service.util.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "/userRequest")

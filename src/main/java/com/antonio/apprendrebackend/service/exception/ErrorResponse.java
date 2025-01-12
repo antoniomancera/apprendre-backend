@@ -1,6 +1,5 @@
 package com.antonio.apprendrebackend.service.exception;
 
-import com.antonio.apprendrebackend.service.util.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 
