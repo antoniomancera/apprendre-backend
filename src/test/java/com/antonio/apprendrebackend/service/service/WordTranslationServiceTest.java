@@ -109,8 +109,7 @@ public class WordTranslationServiceTest {
         assertEquals("Not found any WordTranslation", exception.getMessage());
         verify(deckWordTranslationRespository, times(1)).findRandomDeckWordTranslation();
     }
-
-    //prueba
+    
     @Test
     void testAttemptsWordTranslation_UpdatesStatsAndReturnsNewTranslation() {
         // Given
@@ -142,15 +141,12 @@ public class WordTranslationServiceTest {
         WordTranslationDTO result = wordTranslationService.attemptsWordTranslation(wordId, phraseId, success, deckId);
 
         // Then
-        //assertNotNull(result);
         assertEquals(mockDto, result);
         assertEquals(1, mockWordTranslation.getAttempts());
         assertEquals(1, mockPhrase.getAttempts());
         assertEquals(1, mockWordTranslation.getSuccesses());
         assertEquals(1, mockPhrase.getSuccesses());
 
-//        verify(wordTranslationRepository, times(1)).save(mockWordTranslation);
-        //      verify(phraseRepository, times(1)).save(mockPhrase);
         verify(deckWordTranslationHistorialRespository, times(1)).save(any(DeckWordTranslationHistorial.class));
     }
 
