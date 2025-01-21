@@ -17,4 +17,9 @@ public class DeckServiceImpl implements DeckService {
     public List<Deck> getActiveDecks() {
         return deckRepository.findByEndDateNull();
     }
+
+    @Override
+    public Deck findById(Integer deckId) {
+        return deckRepository.findById(deckId);
+    }
 }
