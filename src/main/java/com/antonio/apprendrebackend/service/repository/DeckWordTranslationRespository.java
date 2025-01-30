@@ -6,6 +6,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,5 +28,23 @@ public interface DeckWordTranslationRespository extends CrudRepository<DeckWordT
      */
     @Query(value = "SELECT dwt.* FROM deck_word_translation dwt WHERE dwt.deck_id = :deckId ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     Optional<DeckWordTranslation> findRandomDeckWordTranslationWithByDeck(Integer deckId);
+
+
+    /**
+     * Get All DeckWordTranslation given a phrase and a deck
+     *
+     * @param deckId
+     * @param phraseId
+     * @return List<DeckWordTranslation>
+     */
+    @Query("""
+                SELECT dwt
+                FROM DeckWordTranslation dwt
+                JOIN FETCH dwt.wordTranslation wt
+                JOIN FETCH wt.phrases wtp
+                WHERE dwt.deck.id = :deckId
+                  AND wtp.phrase.id = :phraseId
+            """)
+    List<DeckWordTranslation> findDeckWordTranslationsByPhraseIdAndDeckId(@Param("deckId") Integer deckId, @Param("phraseId") Integer phraseId);
 }
 
