@@ -11,6 +11,4 @@ public interface DeckService {
      * @return List<Deck>
      */
     List<Deck> getActiveDecks();
-
-    Deck findById(Integer deckId);
 }

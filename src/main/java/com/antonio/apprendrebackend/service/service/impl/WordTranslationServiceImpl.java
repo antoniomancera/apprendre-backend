@@ -2,6 +2,7 @@ package com.antonio.apprendrebackend.service.service.impl;
 
 
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
+import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhrasesDTO;
 import com.antonio.apprendrebackend.service.exception.UserInfoNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseMapper;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 
