@@ -5,11 +5,10 @@ import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
-import com.antonio.apprendrebackend.service.model.Deck;
 import com.antonio.apprendrebackend.service.model.Phrase;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
 import com.antonio.apprendrebackend.service.repository.PhraseRepository;
-import com.antonio.apprendrebackend.service.repository.WordTranslationRepository;
+import com.antonio.apprendrebackend.service.service.DeckWordTranslationService;
 import com.antonio.apprendrebackend.service.service.PhraseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ public class PhraseServiceImpl implements PhraseService {
     PhraseRepository phraseRepository;
 
     @Autowired
-    WordTranslationRepository wordTranslationRepository;
+    DeckWordTranslationService deckWordTranslationService;
 
     @Autowired
     WordTranslationMapper wordTranslationMapper;
@@ -46,11 +45,9 @@ public class PhraseServiceImpl implements PhraseService {
         }
 
         List<Phrase> phrases = phrasesOptional.get();
-        //List<WordTranslation> wordTranslations = wordTranslationRepository.findWordTranslationsByPhraseIdAndDeckId(phrases.get(0).getId(), deckId);
-        //System.out.println(phrases.get(0).toString());
-        //System.out.println(wordTranslations.get(0).toString());
+
         return phrases.stream().map(phrase -> {
-            List<WordTranslation> wordTranslations = wordTranslationRepository.findWordTranslationsByPhraseIdAndDeckId(phrase.getId(), deckId);
+            List<WordTranslation> wordTranslations = deckWordTranslationService.getWordTranslationsByPhraseIdAndDeckId(phrase.getId(), deckId);
             List<WordTranslationDTO> wordTranslationDTOs = wordTranslations.stream()
                     .map(wordTranslationMapper::toDTO)
                     .collect(Collectors.toList());
@@ -60,20 +57,5 @@ public class PhraseServiceImpl implements PhraseService {
                     wordTranslationDTOs
             );
         }).collect(Collectors.toList());
-        /*
-        List<Phrase> phrases = phraseRepository.findPhrasesByDeckId(deckId);
-        return phrases.stream().map(phrase -> {
-            List<WordTranslation> wordTranslations = wordTranslationRepository.findWordTranslationsByPhraseIdAndDeckId(phrase.getId(), deckId);
-            List<WordTranslationDTO> wordTranslationDTOs = wordTranslations.stream()
-                    .map(wordTranslationMapper::toDTO)
-                    .collect(Collectors.toList());
-
-            return new PhraseWithWordTranslationsDTO(
-                    phraseMapper.toDTO(phrase),
-                    wordTranslationDTOs
-            );
-        }).collect(Collectors.toList());
-
-         */
     }
 }

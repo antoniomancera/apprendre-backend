@@ -1,6 +1,9 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
+import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhrasesDTO;
+
+import java.util.List;
 
 public interface WordTranslationService {
     /**
