@@ -20,8 +20,4 @@ public interface PhraseRepository extends CrudRepository<Phrase, Integer> {
                 WHERE dwt.deck.id = :deckId
             """)
     Optional<List<Phrase>> findPhrasesByDeckId(@Param("deckId") Integer deckId);
-
-
-    //List<Phrase> findByWordTranslationPhrase_WordTranslation_DeckWordTranslation_Deck_Id(Integer deckId);
-
 }
