@@ -58,4 +58,9 @@ public class PhraseServiceImpl implements PhraseService {
             );
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public List<Phrase> findPhrasesByDeckIdAndWordTranslationId(Integer deckId, Integer wordTranslationId) {
+        return phraseRepository.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslationId);
+    }
 }

@@ -1,7 +1,9 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.PhraseWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhrasesDTO;
+import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 
 import java.util.List;
 
@@ -24,4 +26,13 @@ public interface WordTranslationService {
      * @return
      */
     WordTranslationDTO attemptsWordTranslation(int wordId, int phraseId, boolean success, Integer deckId);
+
+    /**
+     * Get All WordTranslation and their Phrases associated given a deck
+     *
+     * @param deckId
+     * @return List<WordTranslationWithPhrasesDTO> of a deck
+     * @throws PhraseNotFoundException if not exist any WordTranslation of the deck
+     */
+    List<WordTranslationWithPhrasesDTO> getAllWordTranslationsWithPhrasesByDeck(Integer deckId);
 }
