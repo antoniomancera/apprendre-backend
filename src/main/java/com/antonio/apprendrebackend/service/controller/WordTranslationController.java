@@ -1,12 +1,11 @@
 package com.antonio.apprendrebackend.service.controller;
 
+import com.antonio.apprendrebackend.service.dto.PhraseWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
-import com.antonio.apprendrebackend.service.exception.ErrorCode;
-import com.antonio.apprendrebackend.service.model.DailyStats;
-import com.antonio.apprendrebackend.service.model.ErrorResponse;
+import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhrasesDTO;
+import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.service.WordTranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,5 +43,18 @@ public class WordTranslationController {
     public @ResponseBody ResponseEntity<?> attemptsWordTranslation(@PathVariable Integer wordId, @RequestParam Integer phraseId, @RequestParam boolean success, @RequestParam(required = false) Integer deckId) {
         WordTranslationDTO wordTranslationDTO = wordTranslationService.attemptsWordTranslation(wordId, phraseId, success, deckId);
         return ResponseEntity.ok(wordTranslationDTO);
+    }
+
+    /**
+     * Get All WordTranslation and their Phrases associated given a deck
+     *
+     * @param deckId
+     * @return HTTP respond with a List<WordTranslationWithPhrasesDTO>>
+     * @throws PhraseNotFoundException if not exist any WordTranslation of the deck
+     */
+    @GetMapping(path = "{deckId}")
+    public @ResponseBody ResponseEntity<List<WordTranslationWithPhrasesDTO>> getAllWordTranslationWithPhrasesByDeck(@PathVariable Integer deckId) {
+        List<WordTranslationWithPhrasesDTO> phrasesWithWordTranslations = wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
+        return ResponseEntity.ok(phrasesWithWordTranslations);
     }
 }

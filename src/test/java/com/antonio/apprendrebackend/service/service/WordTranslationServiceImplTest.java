@@ -1,7 +1,10 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.PhraseDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
+import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhrasesDTO;
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
+import com.antonio.apprendrebackend.service.mapper.PhraseMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
 import com.antonio.apprendrebackend.service.model.DeckWordTranslation;
 import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
@@ -19,12 +22,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class WordTranslationServiceTest {
+public class WordTranslationServiceImplTest {
 
     @Mock
     private DeckWordTranslationRespository deckWordTranslationRespository;
@@ -40,6 +45,12 @@ public class WordTranslationServiceTest {
 
     @Mock
     private DeckWordTranslationHistorialRespository deckWordTranslationHistorialRespository;
+
+    @Mock
+    private PhraseService phraseService;
+
+    @Mock
+    private PhraseMapper phraseMapper;
 
     @InjectMocks
     private WordTranslationServiceImpl wordTranslationService;
@@ -109,7 +120,7 @@ public class WordTranslationServiceTest {
         assertEquals("Not found any WordTranslation", exception.getMessage());
         verify(deckWordTranslationRespository, times(1)).findRandomDeckWordTranslation();
     }
-    
+
     @Test
     void testAttemptsWordTranslation_UpdatesStatsAndReturnsNewTranslation() {
         // Given
@@ -186,5 +197,103 @@ public class WordTranslationServiceTest {
 
         assertEquals("Phrase not found", exception.getMessage());
         verify(phraseRepository, times(1)).findById(phraseId);
+    }
+
+    @Test
+    void testGetAllWordTranslationsWithPhrasesByDeck_ReturnsWordTranslationsWithPhrases() {
+        // Given
+        int deckId = 1;
+
+        // Mock WordTranslation
+        WordTranslation wordTranslation = new WordTranslation();
+        wordTranslation.setId(1);
+
+        // Mock Phrase
+        Phrase phrase = new Phrase();
+        phrase.setId(1);
+
+        // Mock DTOs
+        WordTranslationDTO wordTranslationDTO = new WordTranslationDTO();
+        wordTranslationDTO.setId(1);
+
+        PhraseDTO phraseDTO = new PhraseDTO();
+        phraseDTO.setId(1);
+
+        WordTranslationWithPhrasesDTO wordTranslationWithPhrasesDTO = new WordTranslationWithPhrasesDTO(
+                wordTranslationDTO,
+                List.of(phraseDTO)
+        );
+
+        when(wordTranslationRepository.findWordTranslationsByDeckId(deckId))
+                .thenReturn(Optional.of(List.of(wordTranslation)));
+        when(phraseService.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId()))
+                .thenReturn(List.of(phrase));
+        when(wordTranslationMapper.toDTO(wordTranslation)).thenReturn(wordTranslationDTO);
+        when(phraseMapper.toDTO(phrase)).thenReturn(phraseDTO);
+
+        // When
+        List<WordTranslationWithPhrasesDTO> result = wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        WordTranslationWithPhrasesDTO resultDTO = result.get(0);
+        assertEquals(wordTranslationWithPhrasesDTO.getWordTranslation(), resultDTO.getWordTranslation());
+        assertEquals(wordTranslationWithPhrasesDTO.getPhrases(), resultDTO.getPhrases());
+
+        verify(wordTranslationRepository, times(1)).findWordTranslationsByDeckId(deckId);
+        verify(phraseService, times(1)).findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId());
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation);
+        verify(phraseMapper, times(1)).toDTO(phrase);
+    }
+
+    @Test
+    void testGetAllWordTranslationsWithPhrasesByDeck_ThrowsExceptionWhenNoWordTranslationsFound() {
+        // Given
+        int deckId = 1;
+        when(wordTranslationRepository.findWordTranslationsByDeckId(deckId))
+                .thenReturn(Optional.of(Collections.emptyList()));
+
+        // When / Then
+        WordTranslationNotFoundException exception = assertThrows(
+                WordTranslationNotFoundException.class,
+                () -> wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId)
+        );
+
+        assertEquals("Not found any wordTranslation", exception.getMessage());
+        verify(wordTranslationRepository, times(1)).findWordTranslationsByDeckId(deckId);
+    }
+
+    @Test
+    void testGetAllWordTranslationsWithPhrasesByDeck_ReturnsEmptyPhrasesListWhenNoPhrasesFound() {
+        // Given
+        int deckId = 1;
+
+        WordTranslation wordTranslation = new WordTranslation();
+        wordTranslation.setId(1);
+        WordTranslationDTO wordTranslationDTO = new WordTranslationDTO();
+        wordTranslationDTO.setId(1);
+
+        when(wordTranslationRepository.findWordTranslationsByDeckId(deckId))
+                .thenReturn(Optional.of(List.of(wordTranslation)));
+        when(phraseService.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId()))
+                .thenReturn(Collections.emptyList());
+        when(wordTranslationMapper.toDTO(wordTranslation)).thenReturn(wordTranslationDTO);
+
+        // When
+        List<WordTranslationWithPhrasesDTO> result = wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        WordTranslationWithPhrasesDTO resultDTO = result.get(0);
+        assertEquals(wordTranslationDTO, resultDTO.getWordTranslation());
+        assertTrue(resultDTO.getPhrases().isEmpty());
+
+        verify(wordTranslationRepository, times(1)).findWordTranslationsByDeckId(deckId);
+        verify(phraseService, times(1)).findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId());
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation);
     }
 }
