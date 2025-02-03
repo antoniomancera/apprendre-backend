@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.PhraseDTO;
 import com.antonio.apprendrebackend.service.dto.PhraseWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.model.Phrase;
@@ -30,4 +31,14 @@ public interface PhraseService {
      * @return List<Phrase>
      */
     List<Phrase> findPhrasesByDeckIdAndWordTranslationId(Integer deckId, Integer wordTranslationId);
+
+    /**
+     * Get the page pageNumber of PhraseDTO with pageSize elements
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return List<PhraseDTO>
+     * @throws PhraseNotFoundException if not exist any Phrase
+     */
+    List<PhraseDTO> getAllPhrases(Integer pageNumber, Integer pageSize);
 }

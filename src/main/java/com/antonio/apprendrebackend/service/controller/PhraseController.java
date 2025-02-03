@@ -1,8 +1,10 @@
 package com.antonio.apprendrebackend.service.controller;
 
+import com.antonio.apprendrebackend.service.dto.PhraseDTO;
 import com.antonio.apprendrebackend.service.dto.PhraseWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
+import com.antonio.apprendrebackend.service.model.Phrase;
 import com.antonio.apprendrebackend.service.service.PhraseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +30,22 @@ public class PhraseController {
     public @ResponseBody ResponseEntity<List<PhraseWithWordTranslationsDTO>> getAllPhrasesWithWordTranslationsByDeck(@PathVariable Integer deckId) {
         List<PhraseWithWordTranslationsDTO> phrasesWithWordTranslations = phraseService.getAllPhrasesWithWordTranslationsByDeck(deckId);
         return ResponseEntity.ok(phrasesWithWordTranslations);
+    }
+
+    /**
+     * Get the page pageNumber of PhraseDTO with pageSize elements
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return List<PhraseDTO>
+     * @throws PhraseNotFoundException if not exist any Phrase
+     */
+    @GetMapping(path = "/paginated/{pageNumber}/{pageSize}")
+    public @ResponseBody ResponseEntity<List<PhraseDTO>> getAllPhrases(
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        List<PhraseDTO> phrases = phraseService.getAllPhrases(pageNumber, pageSize);
+        return ResponseEntity.ok(phrases);
     }
 }

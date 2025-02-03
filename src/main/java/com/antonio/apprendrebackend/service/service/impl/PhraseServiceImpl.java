@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
+import com.antonio.apprendrebackend.service.dto.PhraseDTO;
 import com.antonio.apprendrebackend.service.dto.PhraseWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
@@ -11,6 +12,9 @@ import com.antonio.apprendrebackend.service.repository.PhraseRepository;
 import com.antonio.apprendrebackend.service.service.DeckWordTranslationService;
 import com.antonio.apprendrebackend.service.service.PhraseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,5 +66,20 @@ public class PhraseServiceImpl implements PhraseService {
     @Override
     public List<Phrase> findPhrasesByDeckIdAndWordTranslationId(Integer deckId, Integer wordTranslationId) {
         return phraseRepository.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslationId);
+    }
+
+    @Override
+    public List<PhraseDTO> getAllPhrases(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        List<PhraseDTO> phrases = phraseRepository
+                .findAll(pageable)
+                .stream()
+                .map(phraseMapper::toDTO)
+                .collect(Collectors.toList());
+
+        if (phrases.isEmpty()) {
+            throw new PhraseNotFoundException("Not found any phrase");
+        }
+        return phrases;
     }
 }

@@ -20,6 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 
 import java.util.Collections;
@@ -295,5 +298,54 @@ public class WordTranslationServiceImplTest {
         verify(wordTranslationRepository, times(1)).findWordTranslationsByDeckId(deckId);
         verify(phraseService, times(1)).findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId());
         verify(wordTranslationMapper, times(1)).toDTO(wordTranslation);
+    }
+
+    @Test
+    void testGetAllWordTranslations_ReturnsWordTranslations() {
+        // Given
+        int pageNumber = 0;
+        int pageSize = 10;
+
+        WordTranslation wordTranslation = new WordTranslation();
+        wordTranslation.setId(1);
+
+        WordTranslationDTO wordTranslationDTO = new WordTranslationDTO();
+        wordTranslationDTO.setId(1);
+
+        Page<WordTranslation> wordTranslationPage = new PageImpl<>(List.of(wordTranslation));
+
+        when(wordTranslationRepository.findAll(any(Pageable.class))).thenReturn(wordTranslationPage);
+        when(wordTranslationMapper.toDTO(wordTranslation)).thenReturn(wordTranslationDTO);
+
+        // When
+        List<WordTranslationDTO> result = wordTranslationService.getAllWordTranslations(pageNumber, pageSize);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(wordTranslationDTO, result.get(0));
+
+        verify(wordTranslationRepository, times(1)).findAll(any(Pageable.class));
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation);
+    }
+
+    @Test
+    void testGetAllWordTranslations_ThrowsExceptionWhenNoWordTranslationsFound() {
+        // Given
+        int pageNumber = 0;
+        int pageSize = 10;
+
+        Page<WordTranslation> wordTranslationPage = new PageImpl<>(Collections.emptyList());
+
+        when(wordTranslationRepository.findAll(any(Pageable.class))).thenReturn(wordTranslationPage);
+
+        // When / Then
+        WordTranslationNotFoundException exception = assertThrows(
+                WordTranslationNotFoundException.class,
+                () -> wordTranslationService.getAllWordTranslations(pageNumber, pageSize)
+        );
+
+        assertEquals("Not found any phrase", exception.getMessage());
+        verify(wordTranslationRepository, times(1)).findAll(any(Pageable.class));
     }
 }

@@ -2,6 +2,8 @@ package com.antonio.apprendrebackend.service.repository;
 
 import com.antonio.apprendrebackend.service.model.DeckWordTranslation;
 import com.antonio.apprendrebackend.service.model.Phrase;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -38,4 +40,12 @@ public interface PhraseRepository extends CrudRepository<Phrase, Integer> {
                   AND wtp.wordTranslation.id = :wordTranslationId
             """)
     List<Phrase> findPhrasesByDeckIdAndWordTranslationId(@Param("deckId") Integer deckId, @Param("wordTranslationId") Integer wordTranslationId);
+
+    /**
+     * Get a page with phrases
+     *
+     * @param pageable
+     * @return
+     */
+    Page<Phrase> findAll(Pageable pageable);
 }
