@@ -1,6 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
 
+import com.antonio.apprendrebackend.service.dto.PhraseDTO;
 import com.antonio.apprendrebackend.service.dto.PhraseWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -114,5 +118,54 @@ public class PhraseServiceImplTest {
 
         assertEquals(String.format("Not found any phrase of deck %s", deckId), exception.getMessage());
         verify(phraseRepository, times(1)).findPhrasesByDeckId(deckId);
+    }
+
+    @Test
+    void testGetAllPhrases_ReturnsPhrases() {
+        // Given
+        int pageNumber = 0;
+        int pageSize = 10;
+
+        Phrase phrase = new Phrase();
+        phrase.setId(1);
+
+        PhraseDTO phraseDTO = new PhraseDTO();
+        phraseDTO.setId(1);
+
+        Page<Phrase> phrasePage = new PageImpl<>(List.of(phrase));
+
+        when(phraseRepository.findAll(any(Pageable.class))).thenReturn(phrasePage);
+        when(phraseMapper.toDTO(phrase)).thenReturn(phraseDTO);
+
+        // When
+        List<PhraseDTO> result = phraseService.getAllPhrases(pageNumber, pageSize);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(phraseDTO, result.get(0));
+
+        verify(phraseRepository, times(1)).findAll(any(Pageable.class));
+        verify(phraseMapper, times(1)).toDTO(phrase);
+    }
+
+    @Test
+    void testGetAllPhrases_ThrowsExceptionWhenNoPhrasesFound() {
+        // Given
+        int pageNumber = 0;
+        int pageSize = 10;
+
+        Page<Phrase> phrasePage = new PageImpl<>(Collections.emptyList());
+
+        when(phraseRepository.findAll(any(Pageable.class))).thenReturn(phrasePage);
+
+        // When / Then
+        PhraseNotFoundException exception = assertThrows(
+                PhraseNotFoundException.class,
+                () -> phraseService.getAllPhrases(pageNumber, pageSize)
+        );
+
+        assertEquals("Not found any phrase", exception.getMessage());
+        verify(phraseRepository, times(1)).findAll(any(Pageable.class));
     }
 }
