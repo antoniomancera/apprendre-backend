@@ -5,6 +5,7 @@ import com.antonio.apprendrebackend.service.dto.PhraseDTO;
 import com.antonio.apprendrebackend.service.dto.PhraseWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhrasesDTO;
+import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.exception.UserInfoNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseMapper;
@@ -21,6 +22,8 @@ import com.antonio.apprendrebackend.service.service.PhraseService;
 import com.antonio.apprendrebackend.service.service.WordTranslationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -95,6 +98,21 @@ public class WordTranslationServiceImpl implements WordTranslationService {
                     phrasesDTOs
             );
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<WordTranslationDTO> getAllWordTranslations(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        List<WordTranslationDTO> words = wordTranslationRepository
+                .findAll(pageable)
+                .stream()
+                .map(wordTranslationMapper::toDTO)
+                .collect(Collectors.toList());
+
+        if (words.isEmpty()) {
+            throw new WordTranslationNotFoundException("Not found any phrase");
+        }
+        return words;
     }
 
     private static void updateStats(boolean success, WordTranslation wordTranslation, Phrase phrase) {
