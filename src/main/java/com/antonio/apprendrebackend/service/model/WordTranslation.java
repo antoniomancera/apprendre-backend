@@ -1,11 +1,15 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Random;
 
 @Entity
+@Getter
+@Setter
 public class WordTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,70 +53,6 @@ public class WordTranslation {
         this.wordSp = wordSp;
         this.attempts = 0;
         this.successes = 0;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public WordFr getWordFr() {
-        return wordFr;
-    }
-
-    public void setWordFr(WordFr wordFr) {
-        this.wordFr = wordFr;
-    }
-
-    public WordSp getWordSp() {
-        return wordSp;
-    }
-
-    public void setWordSp(WordSp wordSp) {
-        this.wordSp = wordSp;
-    }
-
-    public Integer getAttempts() {
-        return attempts;
-    }
-
-    public void setAttempts(Integer attempts) {
-        this.attempts = attempts;
-    }
-
-    public Integer getSuccesses() {
-        return successes;
-    }
-
-    public void setSuccesses(Integer successes) {
-        this.successes = successes;
-    }
-
-    public Integer getImportanceIndex() {
-        return importanceIndex;
-    }
-
-    public void setImportanceIndex(Integer importanceIndex) {
-        this.importanceIndex = importanceIndex;
-    }
-
-    public List<WordTranslationPhrase> getPhrases() {
-        return phrases;
-    }
-
-    public void setPhrases(List<WordTranslationPhrase> phrases) {
-        this.phrases = phrases;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
 
     public WordTranslationPhrase getRandomPhrase() {

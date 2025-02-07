@@ -1,5 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.DeckWordTranslationHistorialDTO;
+import com.antonio.apprendrebackend.service.exception.DeckWordTranslationHistorialNotFoundException;
 import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
 
 import java.util.List;
@@ -19,4 +21,13 @@ public interface DeckWordTranslationHistorialService {
      * @return
      */
     Optional<DeckWordTranslationHistorial> getLastWordTranslationHistorial();
+
+    /**
+     * Return all DeckWordTranslationHistorial for a day
+     *
+     * @param dayMillis
+     * @return List<DeckWordTranslationHistorialDTO>
+     * @throws DeckWordTranslationHistorialNotFoundException if not exist any DeckWordTranslationHistorial the dayMillis day
+     */
+    List<DeckWordTranslationHistorialDTO> getDeckWordTranslationHistorialByDayMillis(Long dayMillis);
 }
