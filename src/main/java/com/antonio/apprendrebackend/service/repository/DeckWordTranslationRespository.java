@@ -45,6 +45,6 @@ public interface DeckWordTranslationRespository extends CrudRepository<DeckWordT
                 WHERE dwt.deck.id = :deckId
                   AND wtp.phrase.id = :phraseId
             """)
-    List<DeckWordTranslation> findDeckWordTranslationsByPhraseIdAndDeckId(@Param("deckId") Integer deckId, @Param("phraseId") Integer phraseId);
+    List<DeckWordTranslation> findDeckWordTranslationsByPhraseIdAndDeckId(@Param("phraseId") Integer phraseId, @Param("deckId") Integer deckId);
 }
 
