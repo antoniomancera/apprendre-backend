@@ -10,6 +10,8 @@ public class WordFr {
 
     private String name;
 
+    private String definition;
+
     public WordFr(String name) {
         this.name = name;
     }

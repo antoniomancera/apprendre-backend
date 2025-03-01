@@ -9,6 +9,7 @@ public class WordSp {
     private Integer id;
 
     private String name;
+    private String definition;
 
 
     public WordSp() {
