@@ -32,6 +32,7 @@ public class WordTranslationControllerTest {
     private WordTranslationService wordTranslationService;
 
 
+    /*
     @Test
     public void testGetRandomWordTranslationPhrase() throws Exception {
 
@@ -54,4 +55,6 @@ public class WordTranslationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+     */
 }

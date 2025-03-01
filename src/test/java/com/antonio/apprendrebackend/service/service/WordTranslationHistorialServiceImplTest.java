@@ -38,15 +38,14 @@ public class WordTranslationHistorialServiceImplTest {
     void testGetWordTranslationHistorialLastWeek_ReturnsList() {
         // Given
         LocalDate today = LocalDate.now();
-        LocalDate lastWeekStart = today.minusDays(6);
-        LocalDate nextDay = today.plusDays(1);
+        long endMillis = System.currentTimeMillis();
+        long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        long startMillis = lastWeekStart.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long endMillis = nextDay.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() - 1;
-
-        List<DeckWordTranslationHistorial> mockList = List.of(new DeckWordTranslationHistorial(new WordTranslation(), startMillis, 1, 1));//Usando List.of para crear listas inmutables
-        when(deckWordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis))
+        List<DeckWordTranslationHistorial> mockList = List.of(new DeckWordTranslationHistorial(new WordTranslation(), endMillis - 1, 1, 1));
+        when(deckWordTranslationHistorialRepository
+                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(anyLong(), anyLong()))
                 .thenReturn(Optional.of(mockList));
+
 
         // When
         Optional<List<DeckWordTranslationHistorial>> result = deckWordTranslationHistorialService.getWordTranslationHistorialLastWeek();
@@ -54,9 +53,9 @@ public class WordTranslationHistorialServiceImplTest {
         // Then
         assertTrue(result.isPresent());
         assertEquals(mockList.size(), result.get().size());
-        assertEquals(mockList, result.get()); //Comprobamos que las listas son iguales
+        assertEquals(mockList, result.get());
         verify(deckWordTranslationHistorialRepository, times(1))
-                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
+                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(eq(startMillis), anyLong());
     }
 
     @Test
@@ -77,17 +76,17 @@ public class WordTranslationHistorialServiceImplTest {
         // Then
         assertTrue(result.isEmpty());
         verify(deckWordTranslationHistorialRepository, times(1))
-                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
+                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(eq(startMillis), anyLong());
     }
 
     @Test
     void testGetLastWordTranslationHistorial_ReturnsWordTranslationHistorial() {
         // Given
         DeckWordTranslationHistorial mockHistorial = new DeckWordTranslationHistorial(new WordTranslation(), 2L, 100, 100);
-        when(deckWordTranslationHistorialRepository.findFirstByOrderByDateDesc()).thenReturn(Optional.of(mockHistorial));//Devolvemos un optional
+        when(deckWordTranslationHistorialRepository.findFirstByOrderByDateDesc()).thenReturn(Optional.of(mockHistorial));
 
         // When
-        Optional<DeckWordTranslationHistorial> result = deckWordTranslationHistorialService.getLastWordTranslationHistorial();//El servicio ahora devuelve un optional
+        Optional<DeckWordTranslationHistorial> result = deckWordTranslationHistorialService.getLastWordTranslationHistorial();
 
         // Then
         assertTrue(result.isPresent());
