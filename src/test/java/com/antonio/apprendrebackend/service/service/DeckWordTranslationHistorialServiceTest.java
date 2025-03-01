@@ -1,6 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.dto.DeckWordTranslationHistorialDTO;
+import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.DeckWordTranslationHistorialNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.DeckWordTranslationHistorialMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
@@ -20,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,11 +111,11 @@ public class DeckWordTranslationHistorialServiceTest {
     @Test
     void testGetDeckWordTranslationHistorialByDayMillis_ThrowsExceptionWhenNoHistorialFound() {
         // Given
-        Long dayMillis = 1698230400000L;
+        Long dayMillis = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
         LocalDate day = Instant.ofEpochMilli(dayMillis).atZone(ZoneId.systemDefault()).toLocalDate();
 
         when(deckWordTranslationHistorialRespository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
-                dayMillis, dayMillis + ONE_DAY_MILLIS
+                dayMillis, dayMillis + ONE_DAY_MILLIS - 1
         )).thenReturn(Optional.empty());
 
         // When / Then
@@ -125,13 +127,15 @@ public class DeckWordTranslationHistorialServiceTest {
         assertEquals(String.format("Not found any historial for the day %s", DateTimeFormatter.ofPattern("yyyy-MM-dd").format(day)), exception.getMessage());
 
         verify(deckWordTranslationHistorialRespository, times(1))
-                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(dayMillis, dayMillis + ONE_DAY_MILLIS);
+                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(dayMillis, dayMillis + ONE_DAY_MILLIS - 1);
     }
 
     @Test
     void testGetDeckWordTranslationHistorialByDayMillis_ReturnsGroupedHistorialWithoutDuplicates() {
         // Given
-        Long dayMillis = 1698230400000L;
+        Long dayMillis = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        // Historial 1
         DeckWordTranslationHistorial historial1 = new DeckWordTranslationHistorial();
         historial1.setId(1);
         historial1.setDeckId(1);
@@ -139,26 +143,34 @@ public class DeckWordTranslationHistorialServiceTest {
         WordSp wordSp = new WordSp("Hola");
         WordTranslation wordTranslation = new WordTranslation(wordFr, wordSp);
         historial1.setWordTranslation(wordTranslation);
-        historial1.setId(1);
         historial1.setSuccess(1);
 
+        // Historial 2
         DeckWordTranslationHistorial historial2 = new DeckWordTranslationHistorial();
         historial2.setId(2);
         historial2.setDeckId(2);
         WordFr wordFr2 = new WordFr("Goodbye");
         WordSp wordSp2 = new WordSp("Adiós");
-        historial2.setWordTranslation(new WordTranslation(wordFr2, wordSp2));
-        historial2.setId(2);
+        WordTranslation wordTranslation2 = new WordTranslation(wordFr2, wordSp2);
+        historial2.setWordTranslation(wordTranslation2);
         historial2.setSuccess(0);
 
         List<DeckWordTranslationHistorial> historialList = List.of(historial1, historial2);
 
+
         when(deckWordTranslationHistorialRespository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
-                dayMillis, dayMillis + ONE_DAY_MILLIS
+                dayMillis, dayMillis + ONE_DAY_MILLIS - 1
         )).thenReturn(Optional.of(historialList));
 
-        when(deckWordTranslationHistorialMapper.toDTO(historial1)).thenReturn(new DeckWordTranslationHistorialDTO(1, wordTranslationMapper.toDTO(wordTranslation), dayMillis, 1, 1, 1));
-        when(deckWordTranslationHistorialMapper.toDTO(historial2)).thenReturn(new DeckWordTranslationHistorialDTO(2, wordTranslationMapper.toDTO(wordTranslation), dayMillis, 0, 1, 2));
+        WordTranslationDTO wordTranslationDTO1 = new WordTranslationDTO();
+        WordTranslationDTO wordTranslationDTO2 = new WordTranslationDTO();
+
+        when(wordTranslationMapper.toDTO(wordTranslation)).thenReturn(wordTranslationDTO1);
+        when(wordTranslationMapper.toDTO(wordTranslation2)).thenReturn(wordTranslationDTO2);
+        when(deckWordTranslationHistorialMapper.toDTO(historial1))
+                .thenReturn(new DeckWordTranslationHistorialDTO(1, wordTranslationDTO1, dayMillis, 1, 1, 1));
+        when(deckWordTranslationHistorialMapper.toDTO(historial2))
+                .thenReturn(new DeckWordTranslationHistorialDTO(2, wordTranslationDTO2, dayMillis, 0, 1, 2));
 
         // When
         List<DeckWordTranslationHistorialDTO> result = deckWordTranslationHistorialService.getDeckWordTranslationHistorialByDayMillis(dayMillis);
@@ -168,7 +180,7 @@ public class DeckWordTranslationHistorialServiceTest {
         assertEquals(2, result.size());
 
         verify(deckWordTranslationHistorialRespository, times(1))
-                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(dayMillis, dayMillis + ONE_DAY_MILLIS);
+                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(dayMillis, dayMillis + ONE_DAY_MILLIS - 1);
         verify(deckWordTranslationHistorialMapper, times(1)).toDTO(historial1);
         verify(deckWordTranslationHistorialMapper, times(1)).toDTO(historial2);
     }
@@ -176,7 +188,7 @@ public class DeckWordTranslationHistorialServiceTest {
     @Test
     void testGetDeckWordTranslationHistorialByDayMillis_ReturnsGroupedHistorialWithDuplicates() {
         // Given
-        Long dayMillis = 1698230400000L;
+        Long dayMillis = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         DeckWordTranslationHistorial historial1 = new DeckWordTranslationHistorial();
         historial1.setId(1);
@@ -184,7 +196,9 @@ public class DeckWordTranslationHistorialServiceTest {
         WordFr wordFr = new WordFr("Bonjour");
         WordSp wordSp = new WordSp("Hola");
         WordTranslation wordTranslation = new WordTranslation(wordFr, wordSp);
+        wordTranslation.setId(1);
         historial1.setSuccess(1);
+        historial1.setWordTranslation(wordTranslation);
 
 
         DeckWordTranslationHistorial historial2 = new DeckWordTranslationHistorial();
@@ -192,31 +206,37 @@ public class DeckWordTranslationHistorialServiceTest {
         historial2.setDeckId(1);
         WordFr wordFr2 = new WordFr("Goodbye");
         WordSp wordSp2 = new WordSp("Adiós");
-        historial2.setWordTranslation(new WordTranslation(wordFr2, wordSp2));
+        WordTranslation wordTranslation2 = new WordTranslation(wordFr2, wordSp2);
+        wordTranslation2.setId(2);
+        historial2.setWordTranslation(wordTranslation2);
         historial2.setSuccess(0);
 
         List<DeckWordTranslationHistorial> historialList = List.of(historial1, historial2);
 
         when(deckWordTranslationHistorialRespository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(
-                dayMillis, dayMillis + ONE_DAY_MILLIS
+                dayMillis, dayMillis + ONE_DAY_MILLIS - 1
         )).thenReturn(Optional.of(historialList));
 
         DeckWordTranslationHistorialDTO historialDTO = new DeckWordTranslationHistorialDTO(1, wordTranslationMapper.toDTO(wordTranslation), dayMillis, 1, 1, 1);
         when(deckWordTranslationHistorialMapper.toDTO(historial1)).thenReturn(historialDTO);
+
+        DeckWordTranslationHistorialDTO historialDTO2 = new DeckWordTranslationHistorialDTO(2, wordTranslationMapper.toDTO(wordTranslation2), dayMillis, 0, 1, 1);
+        when(deckWordTranslationHistorialMapper.toDTO(historial2)).thenReturn(historialDTO2);
+
 
         // When
         List<DeckWordTranslationHistorialDTO> result = deckWordTranslationHistorialService.getDeckWordTranslationHistorialByDayMillis(dayMillis);
 
         // Then
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
 
         DeckWordTranslationHistorialDTO resultDTO = result.get(0);
         assertEquals(1, resultDTO.getSuccess());
-        assertEquals(2, resultDTO.getAttempts());
+        assertEquals(1, resultDTO.getAttempts());
 
         verify(deckWordTranslationHistorialRespository, times(1))
-                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(dayMillis, dayMillis + ONE_DAY_MILLIS);
+                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(dayMillis, dayMillis + ONE_DAY_MILLIS - 1);
         verify(deckWordTranslationHistorialMapper, times(1)).toDTO(historial1);
     }
 
