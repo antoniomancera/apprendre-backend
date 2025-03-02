@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . /app
 
+RUN chmod +x gradlew
+
 RUN ./gradlew clean build -x test
 
 FROM eclipse-temurin:17-jdk
