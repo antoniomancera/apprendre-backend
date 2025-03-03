@@ -13,7 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:4200",
                         "https://apprendre-backend.onrender.com",
-                        "https://apprendre-4d6jodwqm-antoniomanceras-projects.vercel.app/home")
+                        "https://apprendre-4d6jodwqm-antoniomanceras-projects.vercel.app",
+                        "https://apprendre-git-master-antoniomanceras-projects.vercel.app/")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
     }
