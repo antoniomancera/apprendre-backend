@@ -16,12 +16,12 @@ public class WordTranslation {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "word_fr_id")
-    private WordFr wordFr;
+    @JoinColumn(name = "word_sense_fr_id")
+    private WordSenseFr wordSenseFr;
 
     @ManyToOne
-    @JoinColumn(name = "word_es_id")
-    private WordSp wordSp;
+    @JoinColumn(name = "word_sense_sp_id")
+    private WordSenseSp wordSenseSp;
 
     @OneToMany(mappedBy = "wordTranslation")
     private List<WordTranslationPhrase> phrases;
@@ -48,9 +48,9 @@ public class WordTranslation {
         this.successes = 0;
     }
 
-    public WordTranslation(WordFr wordFr, WordSp wordSp) {
-        this.wordFr = wordFr;
-        this.wordSp = wordSp;
+    public WordTranslation(WordSenseFr wordSenseFr, WordSenseSp wordSenseSp) {
+        this.wordSenseFr = wordSenseFr;
+        this.wordSenseSp = wordSenseSp;
         this.attempts = 0;
         this.successes = 0;
     }
