@@ -16,8 +16,8 @@ public interface WordTranslationMapper {
 
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "wordFr", source = "wordFr")
-    @Mapping(target = "wordSp", source = "wordSp")
+    @Mapping(target = "wordSenseFr", source = "wordSenseFr")
+    @Mapping(target = "wordSenseSp", source = "wordSenseSp")
     @Mapping(target = "attempts", source = "attempts")
     @Mapping(target = "successes", source = "successes")
     WordTranslationDTO toDTO(WordTranslation wordTranslation);

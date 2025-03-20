@@ -9,14 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WordFr {
+public class WordSenseFr {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "word_fr_id")
+    private WordFr wordFr;
 
-    public WordFr(String name) {
-        this.name = name;
-    }
+    private String sense;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id")
+    private Type type;
 }
