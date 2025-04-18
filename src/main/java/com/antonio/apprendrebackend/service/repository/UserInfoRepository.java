@@ -8,5 +8,7 @@ import java.util.Optional;
 public interface UserInfoRepository extends CrudRepository<UserInfo, Integer> {
     UserInfo findFirstByOrderByDateAsc();
 
+    Optional<UserInfo> findBySupabaseId(String supabaseId);
+
     Optional<UserInfo> findByEmail(String email);
 }

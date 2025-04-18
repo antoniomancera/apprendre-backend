@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @NoArgsConstructor
 @Getter
@@ -15,8 +13,7 @@ public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
-    private String surname;
-    private Long date;
-    private String email;
+
+    private String supabaseId;
+    private String userName;
 }
