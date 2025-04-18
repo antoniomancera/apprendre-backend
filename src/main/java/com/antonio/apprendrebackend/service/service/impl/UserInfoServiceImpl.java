@@ -30,4 +30,18 @@ public class UserInfoServiceImpl implements UserInfoService {
                 .orElseThrow(() -> new UserInfoNotFoundException("Not found userInfo with email: " + email));
     }
 
+
+    /**
+     * Get the UserInfo given the SupabaseId
+     *
+     * @param supabaseId
+     * @return UserInfo
+     * @throws UserInfoNotFoundException if not exist any UserInfo
+     */
+    @Override
+    public UserInfo findBySupabaseId(String supabaseId) {
+        return userInfoRepository.findBySupabaseId(supabaseId)
+                .orElseThrow(() -> new UserInfoNotFoundException("Not found userInfo"));
+    }
+
 }
