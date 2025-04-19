@@ -1,10 +1,11 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
-import com.antonio.apprendrebackend.service.dto.DeckDTO;
+import com.antonio.apprendrebackend.service.exception.HomeNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.DeckMapper;
 import com.antonio.apprendrebackend.service.mapper.GoalMapper;
 import com.antonio.apprendrebackend.service.mapper.UserInfoMapper;
-import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
+import com.antonio.apprendrebackend.service.model.UserInfo;
+import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.Home;
 import com.antonio.apprendrebackend.service.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,14 @@ import java.util.stream.Collectors;
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired
-    GoalService goalService;
+    UserGoalService userGoalService;
     @Autowired
     UserInfoService userInfoService;
 
     @Autowired
-    DeckService deckService;
+    DeckUserService deckUserService;
     @Autowired
-    DeckWordTranslationHistorialService deckWordTranslationHistorialService;
+    UserHistorialService userHistorialService;
 
     @Autowired
     StatsService statsService;
@@ -39,23 +40,26 @@ public class HomeServiceImpl implements HomeService {
     /**
      * Returns the information to be displayed in home
      *
-     * @return
+     * @return Home respond with a Home object that includes userHistorial among other data
+     * @throws HomeNotFoundException if not found any data related to home for an user
      */
     @Override
-    public Home getHome() {
+    public Home getHome(UserInfo userInfo) {
         Home home = new Home();
-        home.setWeekStats(statsService.getDailyStatsLastWeek());
-        home.setGoal(goalMapper.toDTO(goalService.getActiveGoal()));
-        home.setUserInfo(userInfoMapper.toDTO(userInfoService.getUserInfo()));
-        home.setDecks(Optional.ofNullable(deckService.getActiveDecks())
+        home.setWeekStats(statsService.getDailyStatsLastWeek(userInfo));
+        home.setGoal(goalMapper.toDTO(userGoalService.getActiveGoal(userInfo)));
+        home.setDecks(Optional.ofNullable(deckUserService.getActiveDecks(userInfo))
                 .orElse(Collections.emptyList()).stream()
                 .map(deck -> deckMapper.toDTO(deck))
                 .collect(Collectors.toList()));
 
-        home.setLastDeckId(deckWordTranslationHistorialService.getLastWordTranslationHistorial()
-                .map(DeckWordTranslationHistorial::getDeckId)
+        home.setLastDeckId(userHistorialService.getLastUserHistorial(userInfo)
+                .map(UserHistorial::getDeckId)
                 .orElse(null));
 
+        if (home == null) {
+            throw new HomeNotFoundException("Home not found");
+        }
         return home;
     }
 }
