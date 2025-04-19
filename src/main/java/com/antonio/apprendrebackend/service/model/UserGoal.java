@@ -1,31 +1,31 @@
 package com.antonio.apprendrebackend.service.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-public class Goal {
+public class UserGoal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserInfo userInfo;
+
     private Long beginDate;
     private Long endDate;
     private Integer attempts;
     private Double successesAccuracy;
 
 
-    public Goal() {
+    public UserGoal() {
     }
 
-    public Goal(Integer attempts, Double successesAccuracy) {
+    public UserGoal(Integer attempts, Double successesAccuracy) {
         this.attempts = attempts;
         this.successesAccuracy = successesAccuracy;
         this.beginDate = System.currentTimeMillis();

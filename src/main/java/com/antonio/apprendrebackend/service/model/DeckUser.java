@@ -9,10 +9,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Deck {
+public class DeckUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserInfo userInfo;
 
     private String name;
     private String description;
