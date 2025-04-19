@@ -106,5 +106,18 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(GoalNotCreatedException.class)
+    public ResponseEntity<ErrorResponse> handleGoalNotCreatedException(GoalNotCreatedException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.GOAL_NOT_CREATED,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+    }
 
 }
