@@ -36,11 +36,11 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(WordTranslationHistorialNotFound.class)
-    public ResponseEntity<ErrorResponse> handleWordTranslationHistorialNotFound(WordTranslationHistorialNotFound ex) {
+    @ExceptionHandler(UserHistorialNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserHistorialNotFoundException(UserHistorialNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                ErrorCode.WORD_TRANSLATION_HISTORIAL_NOT_FOUND,
+                ErrorCode.USER_HISTORIAL,
                 ex.getMessage()
         );
 
@@ -77,21 +77,7 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorResponse);
     }
-
-    @ExceptionHandler(DeckWordTranslationHistorialNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleDeckWordTranslationHistorialNotFoundException(DeckWordTranslationHistorialNotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                ErrorCode.DECK_WORD_TRANSLATION_HISTORIAL_NOT_FOUND,
-                ex.getMessage()
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(errorResponse);
-    }
-
+    
     @ExceptionHandler(HomeNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleHomeNotFoundException(HomeNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
@@ -120,4 +106,17 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(DeckUserWordPhraseTranslationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDeckUserWordPhraseTranslation(DeckUserWordPhraseTranslationNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.DECK_USER_WORD_PHRASE_TRANSLATION,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+    }
 }

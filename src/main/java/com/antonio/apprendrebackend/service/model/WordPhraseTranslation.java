@@ -2,25 +2,21 @@ package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-public class WordSenseFr {
+public class WordPhraseTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "word_fr_id")
-    private WordFr wordFr;
-
-    private String sense;
+    @JoinColumn(name = "word_translation_id")
+    private WordTranslation wordTranslation;
 
     @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
+    @JoinColumn(name = "phrase_translation_id")
+    private PhraseTranslation phraseTranslation;
 }

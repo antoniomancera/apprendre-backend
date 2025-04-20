@@ -7,18 +7,19 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class DeckWordTranslation {
+public class DeckUserWordPhraseTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "deck_id", nullable = false)
-    private Deck deck;
+    @JoinColumn(name = "deck_user_id", nullable = false)
+    private DeckUser deckUser;
 
     @ManyToOne
-    @JoinColumn(name = "word_translation_id", nullable = false)
-    private WordTranslation wordTranslation;
+    @JoinColumn(name = "word_phrase_translation_id", nullable = false)
+    private WordPhraseTranslation wordPhraseTranslation;
+
     private Integer baseWeight;
     private Integer currentWeight;
 }
