@@ -21,13 +21,4 @@ public interface WordTranslationMapper {
     @Mapping(target = "attempts", source = "attempts")
     @Mapping(target = "successes", source = "successes")
     WordTranslationDTO toDTO(WordTranslation wordTranslation);
-
-
-    @AfterMapping
-    default void setRandomPhrase(WordTranslation wordTranslation, @MappingTarget WordTranslationDTO wordTranslationDTO) {
-        PhraseMapper phraseMapper = Mappers.getMapper(PhraseMapper.class);
-        if (wordTranslation.getRandomPhrase() != null) {
-            wordTranslationDTO.setPhrase(phraseMapper.toDTO(wordTranslation.getRandomPhrase().getPhrase()));
-        }
-    }
 }

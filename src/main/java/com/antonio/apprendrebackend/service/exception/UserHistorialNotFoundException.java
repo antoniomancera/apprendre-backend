@@ -1,7 +1,7 @@
 package com.antonio.apprendrebackend.service.exception;
 
-public class DeckWordTranslationHistorialNotFoundException extends RuntimeException {
-    public DeckWordTranslationHistorialNotFoundException(String message) {
+public class UserHistorialNotFoundException extends RuntimeException {
+    public UserHistorialNotFoundException(String message) {
         super(message);
     }
 }

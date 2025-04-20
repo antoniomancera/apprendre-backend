@@ -1,8 +1,10 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.model.UserInfo;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public interface WordPhraseTranslationService {
 
@@ -13,15 +15,16 @@ public interface WordPhraseTranslationService {
      * @return WordPhraseTranslationDTO
      */
     WordPhraseTranslationDTO getRandomWordPhraseTranslation(UserInfo userInfo, Integer deckId);
-
+    
     /**
-     * Update phrase, wordTranslate and WordTranslateHistorial depending on the result of the attemps, besides returns a WordTranslation
+     * Attempt a WordPhraseTranslation, will add an userHistorial depending on the result of the attemps, besides returns a WordTranslation
+     * in case of success
      *
-     * @param wordId
-     * @param phraseId
-     * @param success
+     * @param wordPhraseId
      * @param deckId
-     * @return
+     * @param attempt
+     * @return AttemptResultDTO with result and new WordPhraseTranslation in case of success
+     * @throws DeckUserWordPhraseTranslationNotFoundException if not exist anyone
      */
-    WordTranslationDTO attemptsWordPhraseTranslation(int wordId, int phraseId, boolean success, Integer deckId);
+    AttemptResultDTO attemptsWordPhraseTranslation(UserInfo userInfo, Integer wordPhraseId, Integer deckId, String attempt);
 }

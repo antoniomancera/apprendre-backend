@@ -65,4 +65,24 @@ public class DeckUserWordPhraseTranslationServiceImpl implements DeckUserWordPhr
         }
         return deckUserWordPhraseTranslation.get();
     }
+
+    /**
+     * Get DeckUserWordPhraseTranslation given a DeckUser and a WordPhraseTranslation
+     *
+     * @param deckId
+     * @param wordPhraseTranslationId
+     * @return a DeckUserWordPhraseTranslation
+     */
+    @Override
+    public DeckUserWordPhraseTranslation getByDeckUserIdAndWordPhraseTranslationId(Integer deckId, Integer wordPhraseTranslationId) {
+        return deckUserWordPhraseTranslationRespository
+                .findByDeckUserIdAndWordPhraseTranslationId(deckId, wordPhraseTranslationId)
+                .orElseThrow(() -> new DeckUserWordPhraseTranslationNotFoundException(
+                        String.format(
+                                "DeckUserWordPhraseTranslation not found for deckId %d and wordPhraseTranslationId %d",
+                                deckId,
+                                wordPhraseTranslationId
+                        )
+                ));
+    }
 }
