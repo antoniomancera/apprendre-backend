@@ -13,8 +13,8 @@ public class UserHistorial {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "wordTranslation_id")
-    private WordTranslation wordTranslation;
+    @JoinColumn(name = "deckUser_word_phrase_translation_id")
+    private DeckUserWordPhraseTranslation deckUserWordPhraseTranslation;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,15 +31,15 @@ public class UserHistorial {
         this.date = System.currentTimeMillis();
     }
 
-    public UserHistorial(WordTranslation wordTranslation, Integer success, Integer deckId) {
-        this.wordTranslation = wordTranslation;
+    public UserHistorial(DeckUserWordPhraseTranslation deckUserWordPhraseTranslation, Integer success, Integer deckId) {
+        this.deckUserWordPhraseTranslation = deckUserWordPhraseTranslation;
         this.date = System.currentTimeMillis();
         this.success = success;
         this.deckId = deckId;
     }
 
-    public UserHistorial(WordTranslation wordTranslation, Long date, Integer success, Integer deckId) {
-        this.wordTranslation = wordTranslation;
+    public UserHistorial(DeckUserWordPhraseTranslation deckUserWordPhraseTranslation, Long date, Integer success, Integer deckId) {
+        this.deckUserWordPhraseTranslation = deckUserWordPhraseTranslation;
         this.date = date;
         this.success = success;
         this.deckId = deckId;

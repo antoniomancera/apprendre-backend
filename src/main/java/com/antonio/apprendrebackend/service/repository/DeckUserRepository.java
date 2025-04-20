@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface DeckRepository extends CrudRepository<DeckUser, Integer> {
+public interface DeckUserRepository extends CrudRepository<DeckUser, Integer> {
     List<DeckUser> findByEndDateNullAndUserInfo(UserInfo userInfo);
 }

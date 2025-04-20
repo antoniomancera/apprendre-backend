@@ -1,7 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.dto.UserHistorialDTO;
-import com.antonio.apprendrebackend.service.exception.DeckWordTranslationHistorialNotFoundException;
+import com.antonio.apprendrebackend.service.exception.UserHistorialNotFoundException;
 import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 
@@ -28,7 +28,15 @@ public interface UserHistorialService {
      *
      * @param dayMillis
      * @return List<DeckWordTranslationHistorialDTO>
-     * @throws DeckWordTranslationHistorialNotFoundException if not exist any DeckWordTranslationHistorial the dayMillis day
+     * @throws UserHistorialNotFoundException if not exist any DeckWordTranslationHistorial the dayMillis day
      */
     List<UserHistorialDTO> getDeckWordTranslationHistorialByDayMillis(UserInfo userInfo, Long dayMillis);
+
+    /**
+     * Save new UserHistorial
+     *
+     * @param userHistorial
+     * @returnUserHistorial
+     */
+    UserHistorial postUserHistorial(UserHistorial userHistorial);
 }

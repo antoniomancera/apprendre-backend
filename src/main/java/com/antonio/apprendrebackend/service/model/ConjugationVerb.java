@@ -24,7 +24,7 @@ public class ConjugationVerb {
 
     @OneToOne
     @JoinColumn(name = "word_sense_id")
-    private WordSenseFr wordSenseFr;
+    private WordSense wordSense;
 
     private String participle;
     private String gerund;
