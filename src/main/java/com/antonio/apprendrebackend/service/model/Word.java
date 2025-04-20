@@ -9,14 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WordSp {
+public class Word {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "language_id")
+    private Language language;
 
-    public WordSp(String name) {
-        this.name = name;
-    }
+    private String name;
 }

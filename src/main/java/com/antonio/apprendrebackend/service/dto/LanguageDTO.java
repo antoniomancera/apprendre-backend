@@ -5,8 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PhraseDTO {
-    private Integer id;
-    private String phrase;
-    private String language;
+public class LanguageDTO {
+    private String name;
 }
