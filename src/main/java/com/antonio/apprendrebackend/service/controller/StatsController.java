@@ -1,6 +1,7 @@
 package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.model.DailyStats;
+import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,8 @@ public class StatsController {
      */
     @GetMapping
     public @ResponseBody ResponseEntity<?> getStatsPageInitial() {
-        List<DailyStats> stats = statsService.getDailyStatsLastWeek();
+        UserInfo userInfo = new UserInfo(1, "1");
+        List<DailyStats> stats = statsService.getDailyStatsLastWeek(userInfo);
         return ResponseEntity.ok(stats);
     }
 

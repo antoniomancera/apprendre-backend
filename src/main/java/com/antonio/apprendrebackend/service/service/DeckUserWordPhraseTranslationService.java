@@ -2,24 +2,15 @@ package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.dto.DeckUserWordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.model.DeckUserWordPhraseTranslation;
+import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface DeckUserWordPhraseTranslationService {
-
-
-    /**
-     * Get All Phrases and their WordTranslation of a deck
-     *
-     * @param deckId
-     * @return A List<PhraseWithWordTranslationsDTO>>
-     */
-    List<WordTranslation> getWordTranslationsByPhraseIdAndDeckId(Integer phraseId, Integer deckId);
-
-
     /**
      * Return a DeckUserWordPhraseTranslation
      *
@@ -46,6 +37,22 @@ public interface DeckUserWordPhraseTranslationService {
      * @return a DeckUserWordPhraseTranslation
      */
     DeckUserWordPhraseTranslation getByDeckUserIdAndWordPhraseTranslationId(Integer deckId, Integer wordPhraseTranslationId);
+
+    /**
+     * Return all WordTranslation of a deckUser
+     *
+     * @param deckId
+     * @return List<WordTranslation>
+     */
+    List<WordTranslation> getWordTranslationsByDeckId(Integer deckId);
+
+    /**
+     * Return all PhraseTranslation of a deckUser
+     *
+     * @param deckId
+     * @return List<PhraseTranslation>
+     */
+    List<PhraseTranslation> getPhraseTranslationsByDeckId(Integer deckId);
 }
 
 

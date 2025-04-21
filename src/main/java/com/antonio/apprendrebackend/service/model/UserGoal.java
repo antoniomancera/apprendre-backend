@@ -25,7 +25,8 @@ public class UserGoal {
     public UserGoal() {
     }
 
-    public UserGoal(Integer attempts, Double successesAccuracy) {
+    public UserGoal(UserInfo userInfo, Integer attempts, Double successesAccuracy) {
+        this.userInfo = userInfo;
         this.attempts = attempts;
         this.successesAccuracy = successesAccuracy;
         this.beginDate = System.currentTimeMillis();

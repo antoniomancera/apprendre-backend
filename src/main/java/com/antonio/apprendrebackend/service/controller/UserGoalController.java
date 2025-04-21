@@ -1,15 +1,11 @@
 package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.dto.GoalDTO;
-import com.antonio.apprendrebackend.service.exception.DeckWordTranslationHistorialNotFoundException;
 import com.antonio.apprendrebackend.service.exception.GoalNotCreatedException;
-import com.antonio.apprendrebackend.service.model.ErrorResponse;
 import com.antonio.apprendrebackend.service.model.UserGoal;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.UserGoalService;
-import com.antonio.apprendrebackend.service.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

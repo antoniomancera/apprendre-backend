@@ -1,15 +1,12 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
-import com.antonio.apprendrebackend.service.dto.DeckUserWordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.DeckUserWordPhraseTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.model.DeckUserWordPhraseTranslation;
+import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
 import com.antonio.apprendrebackend.service.repository.DeckUserWordPhraseTranslationRespository;
-import com.antonio.apprendrebackend.service.repository.PhraseTranslationRepository;
-import com.antonio.apprendrebackend.service.repository.UserHistorialRespository;
 import com.antonio.apprendrebackend.service.service.DeckUserWordPhraseTranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,20 +16,6 @@ public class DeckUserWordPhraseTranslationServiceImpl implements DeckUserWordPhr
 
     @Autowired
     DeckUserWordPhraseTranslationRespository deckUserWordPhraseTranslationRespository;
-
-
-    @Override
-    public List<WordTranslation> getWordTranslationsByPhraseIdAndDeckId(Integer phraseId, Integer deckId) {
-        return null;
-        /*
-        List<com.antonio.apprendrebackend.service.model.DeckUserWordPhraseTranslation> deckUserWordPhraseTranslations = deckUserWordPhraseTranslationRespository.findDeckWordTranslationsByPhraseIdAndDeckId(phraseId, deckId);
-
-        return deckUserWordPhraseTranslations.stream()
-                .map(com.antonio.apprendrebackend.service.model.DeckUserWordPhraseTranslation::getWordTranslation)
-                .collect(Collectors.toList());
-
-         */
-    }
 
     /**
      * Return a DeckUserWordPhraseTranslation
@@ -84,5 +67,27 @@ public class DeckUserWordPhraseTranslationServiceImpl implements DeckUserWordPhr
                                 wordPhraseTranslationId
                         )
                 ));
+    }
+
+    /**
+     * Return all WordTranslation of a deckUser
+     *
+     * @param deckId
+     * @return List<WordTranslation>
+     */
+    @Override
+    public List<WordTranslation> getWordTranslationsByDeckId(Integer deckId) {
+        return deckUserWordPhraseTranslationRespository.findWordTranslationsByDeckId(deckId);
+    }
+
+    /**
+     * Return all PhraseTranslation of a deckUser
+     *
+     * @param deckId
+     * @return List<PhraseTranslation>
+     */
+    @Override
+    public List<PhraseTranslation> getPhraseTranslationsByDeckId(Integer deckId) {
+        return deckUserWordPhraseTranslationRespository.findPhraseTranslationsByDeckId(deckId);
     }
 }

@@ -3,14 +3,15 @@ package com.antonio.apprendrebackend.service.service.impl;
 import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.mapper.WordPhraseTranslationMapper;
-import com.antonio.apprendrebackend.service.model.DeckUserWordPhraseTranslation;
-import com.antonio.apprendrebackend.service.model.UserHistorial;
-import com.antonio.apprendrebackend.service.model.UserInfo;
+import com.antonio.apprendrebackend.service.model.*;
+import com.antonio.apprendrebackend.service.repository.WordPhraseTranslationRepository;
 import com.antonio.apprendrebackend.service.service.DeckUserWordPhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.UserHistorialService;
 import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTranslationService {
@@ -23,6 +24,9 @@ public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTransl
 
     @Autowired
     UserHistorialService userHistorialService;
+
+    @Autowired
+    WordPhraseTranslationRepository wordPhraseTranslationRepository;
 
     /**
      * Return a Random WordTranslation depending on an optional deck
@@ -62,6 +66,31 @@ public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTransl
         }
         return new AttemptResultDTO(false, null);
     }
+
+    /**
+     * Get all PhraseTranslation associated to a WordTranslation of a Deck
+     *
+     * @param deckId
+     * @param wordTranslationId
+     * @return List<Phrase>
+     */
+    @Override
+    public List<PhraseTranslation> getPhrasesByDeckIdAndWordTranslationId(Integer deckId, Integer wordTranslationId) {
+        return wordPhraseTranslationRepository.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslationId);
+    }
+
+    /**
+     * Get all WordTranslation associated to a phraseTranslation of a Deck
+     *
+     * @param deckId
+     * @param phraseTranslationId
+     * @return List<WordTranslation>
+     */
+    @Override
+    public List<WordTranslation> getWordTranslationsByDeckIdPhraseTranslationId(Integer deckId, Integer phraseTranslationId) {
+        return wordPhraseTranslationRepository.findWordTranslationsByDeckIdPhraseTranslationId(deckId, phraseTranslationId);
+    }
+
 
     private static void updateStats(boolean success, DeckUserWordPhraseTranslation deckUserWordPhraseTranslation) {
         deckUserWordPhraseTranslation.setAttempts(deckUserWordPhraseTranslation.getAttempts() + 1);
