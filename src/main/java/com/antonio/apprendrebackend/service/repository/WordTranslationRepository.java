@@ -18,20 +18,4 @@ public interface WordTranslationRepository extends CrudRepository<WordTranslatio
      * @return
      */
     Page<WordTranslation> findAll(Pageable pageable);
-
-    /**
-     * Get all WordTranslation of a deck
-     *
-     * @param deckId
-     * @return Optional<List < WordTranslation>>
-     */
-    @Query("""
-                SELECT wt
-                FROM WordTranslation wt
-                JOIN DeckWordTranslation dwt ON wt.id = dwt.wordTranslation.id
-                WHERE dwt.deck.id = :deckId
-            """)
-    Optional<List<WordTranslation>> findWordTranslationsByDeckId(@Param("deckId") Integer deckId);
-
-
 }

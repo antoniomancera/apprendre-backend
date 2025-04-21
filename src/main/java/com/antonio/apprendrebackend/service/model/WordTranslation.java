@@ -16,15 +16,12 @@ public class WordTranslation {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "word_fr_id")
-    private WordFr wordFr;
+    @JoinColumn(name = "word_sense_fr_id")
+    private WordSense wordSenseFr;
 
     @ManyToOne
-    @JoinColumn(name = "word_es_id")
-    private WordSp wordSp;
-
-    @OneToMany(mappedBy = "wordTranslation")
-    private List<WordTranslationPhrase> phrases;
+    @JoinColumn(name = "word_sense_sp_id")
+    private WordSense wordSenseSp;
 
     @ManyToOne
     @JoinColumn(name = "type_id")
@@ -48,18 +45,10 @@ public class WordTranslation {
         this.successes = 0;
     }
 
-    public WordTranslation(WordFr wordFr, WordSp wordSp) {
-        this.wordFr = wordFr;
-        this.wordSp = wordSp;
+    public WordTranslation(WordSense wordSenseFr, WordSense wordSenseSp) {
+        this.wordSenseFr = wordSenseFr;
+        this.wordSenseSp = wordSenseSp;
         this.attempts = 0;
         this.successes = 0;
-    }
-
-    public WordTranslationPhrase getRandomPhrase() {
-        if (phrases == null || phrases.isEmpty()) {
-            return null;
-        }
-        Random rand = new Random();
-        return phrases.get(rand.nextInt(phrases.size()));
     }
 }

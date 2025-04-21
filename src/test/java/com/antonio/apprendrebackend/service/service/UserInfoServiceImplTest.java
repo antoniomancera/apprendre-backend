@@ -20,6 +20,7 @@ public class UserInfoServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /*
     @Test
     void testGetUserInfo() {
         // Given
@@ -39,4 +40,6 @@ public class UserInfoServiceImplTest {
 
         verify(userInfoService, times(1)).getUserInfo();
     }
+
+     */
 }

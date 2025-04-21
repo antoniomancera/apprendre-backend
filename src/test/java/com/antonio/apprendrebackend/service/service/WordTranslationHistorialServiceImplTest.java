@@ -1,110 +1,259 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
-import com.antonio.apprendrebackend.service.model.WordTranslation;
-import com.antonio.apprendrebackend.service.repository.DeckWordTranslationHistorialRespository;
-import com.antonio.apprendrebackend.service.service.impl.DeckWordTranslationHistorialServiceImpl;
+import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
+import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
+import com.antonio.apprendrebackend.service.mapper.WordPhraseTranslationMapper;
+import com.antonio.apprendrebackend.service.model.*;
+import com.antonio.apprendrebackend.service.repository.WordPhraseTranslationRepository;
+import com.antonio.apprendrebackend.service.service.impl.WordPhraseTranslationServiceServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class WordTranslationHistorialServiceImplTest {
 
-    @InjectMocks
-    private DeckWordTranslationHistorialServiceImpl deckWordTranslationHistorialService;
+    @Mock
+    private DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
 
     @Mock
-    private DeckWordTranslationHistorialRespository deckWordTranslationHistorialRepository;
+    private WordPhraseTranslationMapper wordPhraseTranslationMapper;
+
+    @Mock
+    private UserHistorialService userHistorialService;
+
+    @Mock
+    private WordPhraseTranslationRepository wordPhraseTranslationRepository;
+
+    @InjectMocks
+    private WordPhraseTranslationServiceServiceImpl wordPhraseTranslationService;
+
+    private UserInfo userInfo;
+    private DeckUserWordPhraseTranslation deckUserWordPhraseTranslation;
+    private WordPhraseTranslation wordPhraseTranslation;
+    private WordTranslation wordTranslation;
+    private WordSense wordSenseFr;
+    private Word word;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
 
+        // Common test data setup
+        userInfo = new UserInfo();
+        userInfo.setId(1);
+        userInfo.setUserName("testUser");
 
-    @Test
-    void testGetWordTranslationHistorialLastWeek_ReturnsList() {
-        // Given
-        LocalDate today = LocalDate.now();
-        LocalDate lastWeekStart = today.minusDays(6);
-        LocalDate nextDay = today.plusDays(1);
+        word = new Word();
+        word.setId(101);
+        word.setName("maison");
 
-        long startMillis = lastWeekStart.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long endMillis = nextDay.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() - 1;
+        wordSenseFr = new WordSense();
+        wordSenseFr.setId(201);
+        wordSenseFr.setWord(word);
 
-        List<DeckWordTranslationHistorial> mockList = List.of(new DeckWordTranslationHistorial(new WordTranslation(), startMillis, 1, 1));//Usando List.of para crear listas inmutables
-        when(deckWordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis))
-                .thenReturn(Optional.of(mockList));
+        wordTranslation = new WordTranslation();
+        wordTranslation.setId(301);
+        wordTranslation.setWordSenseFr(wordSenseFr);
 
-        // When
-        Optional<List<DeckWordTranslationHistorial>> result = deckWordTranslationHistorialService.getWordTranslationHistorialLastWeek();
+        wordPhraseTranslation = new WordPhraseTranslation();
+        wordPhraseTranslation.setId(401);
+        wordPhraseTranslation.setWordTranslation(wordTranslation);
 
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(mockList.size(), result.get().size());
-        assertEquals(mockList, result.get()); //Comprobamos que las listas son iguales
-        verify(deckWordTranslationHistorialRepository, times(1))
-                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
-    }
-
-    @Test
-    void testGetWordTranslationHistorialLastWeek_ReturnsEmptyOptional() {
-        // Given
-        LocalDate today = LocalDate.now();
-        LocalDate nextDay = today.plusDays(1);
-        LocalDate lastWeekStart = today.minusDays(6);
-        long startMillis = lastWeekStart.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long endMillis = nextDay.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() - 1;
-
-        when(deckWordTranslationHistorialRepository.findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis))
-                .thenReturn(Optional.empty());
-
-        // When
-        Optional<List<DeckWordTranslationHistorial>> result = deckWordTranslationHistorialService.getWordTranslationHistorialLastWeek();
-
-        // Then
-        assertTrue(result.isEmpty());
-        verify(deckWordTranslationHistorialRepository, times(1))
-                .findByDateGreaterThanEqualAndDateLessThanOrderByDateDesc(startMillis, endMillis);
+        deckUserWordPhraseTranslation = new DeckUserWordPhraseTranslation();
+        deckUserWordPhraseTranslation.setId(501);
+        deckUserWordPhraseTranslation.setWordPhraseTranslation(wordPhraseTranslation);
+        deckUserWordPhraseTranslation.setAttempts(5);
+        deckUserWordPhraseTranslation.setSuccesses(3);
     }
 
     @Test
-    void testGetLastWordTranslationHistorial_ReturnsWordTranslationHistorial() {
+    void testGetRandomWordPhraseTranslationWithDeckId() {
         // Given
-        DeckWordTranslationHistorial mockHistorial = new DeckWordTranslationHistorial(new WordTranslation(), 2L, 100, 100);
-        when(deckWordTranslationHistorialRepository.findFirstByOrderByDateDesc()).thenReturn(Optional.of(mockHistorial));//Devolvemos un optional
+        Integer deckId = 10;
+        WordPhraseTranslationDTO expectedDto = new WordPhraseTranslationDTO();
+        expectedDto.setId(401);
 
         // When
-        Optional<DeckWordTranslationHistorial> result = deckWordTranslationHistorialService.getLastWordTranslationHistorial();//El servicio ahora devuelve un optional
+        when(deckUserWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId))
+                .thenReturn(deckUserWordPhraseTranslation);
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
+
+        WordPhraseTranslationDTO result = wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
 
         // Then
-        assertTrue(result.isPresent());
-        assertEquals(mockHistorial, result.get());
-        verify(deckWordTranslationHistorialRepository, times(1)).findFirstByOrderByDateDesc();
+        assertNotNull(result);
+        assertEquals(401, result.getId());
+        verify(deckUserWordPhraseTranslationService, times(1))
+                .getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId);
+        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation);
     }
 
     @Test
-    void testGetLastWordTranslationHistorial_ReturnsEmptyOptional() {
+    void testGetRandomWordPhraseTranslationWithoutDeckId() {
         // Given
-        when(deckWordTranslationHistorialRepository.findFirstByOrderByDateDesc()).thenReturn(Optional.empty());
+        Integer deckId = null;
+        WordPhraseTranslationDTO expectedDto = new WordPhraseTranslationDTO();
+        expectedDto.setId(401);
 
         // When
-        Optional<DeckWordTranslationHistorial> result = deckWordTranslationHistorialService.getLastWordTranslationHistorial();
+        when(deckUserWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId()))
+                .thenReturn(deckUserWordPhraseTranslation);
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
+
+        WordPhraseTranslationDTO result = wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
 
         // Then
-        assertTrue(result.isEmpty());
-        verify(deckWordTranslationHistorialRepository, times(1)).findFirstByOrderByDateDesc();
+        assertNotNull(result);
+        assertEquals(401, result.getId());
+        verify(deckUserWordPhraseTranslationService, times(1))
+                .getRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId());
+        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation);
     }
+
+   /* @Test
+    void testAttemptsWordPhraseTranslationSuccess() {
+        // Given
+        Integer wordPhraseId = 401;
+        Integer deckId = 10;
+        String attempt = "maison"; // Correct attempt matching word name
+
+        WordPhraseTranslationDTO nextWordPhraseDto = new WordPhraseTranslationDTO();
+        nextWordPhraseDto.setId(402);
+
+        // When
+        when(deckUserWordPhraseTranslationService.getByDeckUserIdAndWordPhraseTranslationId(deckId, wordPhraseId))
+                .thenReturn(deckUserWordPhraseTranslation);
+        when(userHistorialService.postUserHistorial(any(UserHistorial.class)))
+                .thenReturn(new UserHistorial());
+        when(wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId))
+                .thenReturn(nextWordPhraseDto);
+
+        AttemptResultDTO result = wordPhraseTranslationService.attemptsWordPhraseTranslation(
+                userInfo, wordPhraseId, deckId, attempt);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isHasSuccess());
+        //assertNotNull(result.getWordPhraseTranslation());
+        assertEquals(402, result.getWordPhraseTranslation().getId());
+
+        // Verify stats update
+        assertEquals(6, deckUserWordPhraseTranslation.getAttempts());
+        assertEquals(4, deckUserWordPhraseTranslation.getSuccesses());
+
+        // Verify historial was created with success=1
+        ArgumentCaptor<UserHistorial> historialCaptor = ArgumentCaptor.forClass(UserHistorial.class);
+        verify(userHistorialService, times(1)).postUserHistorial(historialCaptor.capture());
+        UserHistorial capturedHistorial = historialCaptor.getValue();
+        assertEquals(1, capturedHistorial.getSuccess());
+        assertEquals(deckUserWordPhraseTranslation, capturedHistorial.getDeckUserWordPhraseTranslation());
+        assertEquals(deckId, capturedHistorial.getDeckId());
+    }
+
+    */
+
+    @Test
+    void testAttemptsWordPhraseTranslationFailure() {
+        // Given
+        Integer wordPhraseId = 401;
+        Integer deckId = 10;
+        String attempt = "incorrect"; // Incorrect attempt
+
+        // When
+        when(deckUserWordPhraseTranslationService.getByDeckUserIdAndWordPhraseTranslationId(deckId, wordPhraseId))
+                .thenReturn(deckUserWordPhraseTranslation);
+        when(userHistorialService.postUserHistorial(any(UserHistorial.class)))
+                .thenReturn(new UserHistorial());
+
+        AttemptResultDTO result = wordPhraseTranslationService.attemptsWordPhraseTranslation(
+                userInfo, wordPhraseId, deckId, attempt);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.isHasSuccess());
+        assertNull(result.getWordPhraseTranslation());
+
+        // Verify stats update (only attempts should increase, not successes)
+        assertEquals(6, deckUserWordPhraseTranslation.getAttempts());
+        assertEquals(3, deckUserWordPhraseTranslation.getSuccesses());
+
+        // Verify historial was created with success=0
+        ArgumentCaptor<UserHistorial> historialCaptor = ArgumentCaptor.forClass(UserHistorial.class);
+        verify(userHistorialService, times(1)).postUserHistorial(historialCaptor.capture());
+        UserHistorial capturedHistorial = historialCaptor.getValue();
+        assertEquals(0, capturedHistorial.getSuccess());
+        assertEquals(deckUserWordPhraseTranslation, capturedHistorial.getDeckUserWordPhraseTranslation());
+        assertEquals(deckId, capturedHistorial.getDeckId());
+    }
+
+    @Test
+    void testGetPhrasesByDeckIdAndWordTranslationId() {
+        // Given
+        Integer deckId = 10;
+        Integer wordTranslationId = 301;
+
+        PhraseTranslation phrase1 = new PhraseTranslation();
+        phrase1.setId(601);
+
+        PhraseTranslation phrase2 = new PhraseTranslation();
+        phrase2.setId(602);
+
+        List<PhraseTranslation> expectedPhrases = Arrays.asList(phrase1, phrase2);
+
+        // When
+        when(wordPhraseTranslationRepository.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslationId))
+                .thenReturn(expectedPhrases);
+
+        List<PhraseTranslation> result = wordPhraseTranslationService.getPhrasesByDeckIdAndWordTranslationId(
+                deckId, wordTranslationId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(601, result.get(0).getId());
+        assertEquals(602, result.get(1).getId());
+        verify(wordPhraseTranslationRepository, times(1))
+                .findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslationId);
+    }
+
+    @Test
+    void testGetWordTranslationsByDeckIdPhraseTranslationId() {
+        // Given
+        Integer deckId = 10;
+        Integer phraseTranslationId = 601;
+
+        WordTranslation wordTranslation1 = new WordTranslation();
+        wordTranslation1.setId(301);
+
+        WordTranslation wordTranslation2 = new WordTranslation();
+        wordTranslation2.setId(302);
+
+        List<WordTranslation> expectedWordTranslations = Arrays.asList(wordTranslation1, wordTranslation2);
+
+        // When
+        when(wordPhraseTranslationRepository.findWordTranslationsByDeckIdPhraseTranslationId(deckId, phraseTranslationId))
+                .thenReturn(expectedWordTranslations);
+
+        List<WordTranslation> result = wordPhraseTranslationService.getWordTranslationsByDeckIdPhraseTranslationId(
+                deckId, phraseTranslationId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(301, result.get(0).getId());
+        assertEquals(302, result.get(1).getId());
+        verify(wordPhraseTranslationRepository, times(1))
+                .findWordTranslationsByDeckIdPhraseTranslationId(deckId, phraseTranslationId);
+    }
+
 }

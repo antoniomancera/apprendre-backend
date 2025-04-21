@@ -1,8 +1,11 @@
 package com.antonio.apprendrebackend.service.model;
 
 
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
+@NoArgsConstructor
 public class DailyStats {
     private LocalDate date;
     private int totalAttempts;

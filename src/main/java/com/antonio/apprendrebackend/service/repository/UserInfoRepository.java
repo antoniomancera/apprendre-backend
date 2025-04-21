@@ -6,7 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface UserInfoRepository extends CrudRepository<UserInfo, Integer> {
-    UserInfo findFirstByOrderByDateAsc();
-
-    Optional<UserInfo> findByEmail(String email);
+    Optional<UserInfo> findBySupabaseId(String supabaseId);
 }
