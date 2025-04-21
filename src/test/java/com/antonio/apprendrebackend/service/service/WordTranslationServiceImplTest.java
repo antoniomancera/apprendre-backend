@@ -1,18 +1,14 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.dto.PhraseDTO;
+
+import com.antonio.apprendrebackend.service.dto.PhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
-import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhrasesDTO;
+import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhraseTranslationsDTO;
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
-import com.antonio.apprendrebackend.service.mapper.PhraseMapper;
+import com.antonio.apprendrebackend.service.mapper.PhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
-import com.antonio.apprendrebackend.service.model.DeckWordTranslation;
-import com.antonio.apprendrebackend.service.model.DeckWordTranslationHistorial;
-import com.antonio.apprendrebackend.service.model.Phrase;
+import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
-import com.antonio.apprendrebackend.service.repository.DeckWordTranslationHistorialRespository;
-import com.antonio.apprendrebackend.service.repository.DeckWordTranslationRespository;
-import com.antonio.apprendrebackend.service.repository.PhraseRepository;
 import com.antonio.apprendrebackend.service.repository.WordTranslationRepository;
 import com.antonio.apprendrebackend.service.service.impl.WordTranslationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,38 +18,33 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class WordTranslationServiceImplTest {
-
-    @Mock
-    private DeckWordTranslationRespository deckWordTranslationRespository;
-
+class WordTranslationServiceImplTest {
     @Mock
     private WordTranslationRepository wordTranslationRepository;
+
+    @Mock
+    private WordPhraseTranslationService wordPhraseTranslationService;
 
     @Mock
     private WordTranslationMapper wordTranslationMapper;
 
     @Mock
-    private PhraseRepository phraseRepository;
+    private PhraseTranslationMapper phraseTranslationMapper;
 
     @Mock
-    private DeckWordTranslationHistorialRespository deckWordTranslationHistorialRespository;
-
-    @Mock
-    private PhraseService phraseService;
-
-    @Mock
-    private PhraseMapper phraseMapper;
+    private DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
 
     @InjectMocks
     private WordTranslationServiceImpl wordTranslationService;
@@ -64,288 +55,153 @@ public class WordTranslationServiceImplTest {
     }
 
     @Test
-    void testGetRandomWordTranslation_WithDeckId_ReturnsTranslation() {
+    void testGetAllWordTranslationsWithPhrasesByDeck() {
         // Given
-        int deckId = 1;
-        DeckWordTranslation mockDeckWordTranslation = mock(DeckWordTranslation.class);
-        WordTranslation mockWordTranslation = mock(WordTranslation.class);
-        WordTranslationDTO mockDto = mock(WordTranslationDTO.class);
+        Integer deckId = 10;
 
-        when(deckWordTranslationRespository.findRandomDeckWordTranslationWithByDeck(deckId))
-                .thenReturn(Optional.of(mockDeckWordTranslation));
-        when(mockDeckWordTranslation.getWordTranslation()).thenReturn(mockWordTranslation);
-        when(wordTranslationMapper.toDTO(mockWordTranslation)).thenReturn(mockDto);
+        WordTranslation wordTranslation1 = new WordTranslation();
+        wordTranslation1.setId(101);
+
+        WordTranslation wordTranslation2 = new WordTranslation();
+        wordTranslation2.setId(102);
+
+        List<WordTranslation> wordTranslations = Arrays.asList(wordTranslation1, wordTranslation2);
+
+        WordTranslationDTO wordTranslationDTO1 = new WordTranslationDTO();
+        wordTranslationDTO1.setId(101);
+
+        WordTranslationDTO wordTranslationDTO2 = new WordTranslationDTO();
+        wordTranslationDTO2.setId(102);
+
+        PhraseTranslation phraseTranslation1 = new PhraseTranslation();
+        phraseTranslation1.setId(201);
+
+        PhraseTranslation phraseTranslation2 = new PhraseTranslation();
+        phraseTranslation2.setId(202);
+
+        List<PhraseTranslation> phrasesForWord1 = Arrays.asList(phraseTranslation1);
+        List<PhraseTranslation> phrasesForWord2 = Arrays.asList(phraseTranslation2);
+
+        PhraseTranslationDTO phraseTranslationDTO1 = new PhraseTranslationDTO();
+        phraseTranslationDTO1.setId(201);
+
+        PhraseTranslationDTO phraseTranslationDTO2 = new PhraseTranslationDTO();
+        phraseTranslationDTO2.setId(202);
 
         // When
-        WordTranslationDTO result = wordTranslationService.getRandomWordTranslation(deckId);
+        when(deckUserWordPhraseTranslationService.getWordTranslationsByDeckId(deckId))
+                .thenReturn(wordTranslations);
+
+        when(wordPhraseTranslationService.getPhrasesByDeckIdAndWordTranslationId(eq(deckId), eq(101)))
+                .thenReturn(phrasesForWord1);
+        when(wordPhraseTranslationService.getPhrasesByDeckIdAndWordTranslationId(eq(deckId), eq(102)))
+                .thenReturn(phrasesForWord2);
+
+        when(wordTranslationMapper.toDTO(wordTranslation1)).thenReturn(wordTranslationDTO1);
+        when(wordTranslationMapper.toDTO(wordTranslation2)).thenReturn(wordTranslationDTO2);
+
+        when(phraseTranslationMapper.toDTO(phraseTranslation1)).thenReturn(phraseTranslationDTO1);
+        when(phraseTranslationMapper.toDTO(phraseTranslation2)).thenReturn(phraseTranslationDTO2);
+
+        List<WordTranslationWithPhraseTranslationsDTO> result = wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
 
         // Then
         assertNotNull(result);
-        assertEquals(mockDto, result);
-        verify(deckWordTranslationRespository, times(1)).findRandomDeckWordTranslationWithByDeck(deckId);
-        verify(wordTranslationMapper, times(1)).toDTO(mockWordTranslation);
+        assertEquals(2, result.size());
+
+        assertEquals(101, result.get(0).getWordTranslation().getId());
+        assertEquals(1, result.get(0).getPhraseTranslations().size());
+        assertEquals(201, result.get(0).getPhraseTranslations().get(0).getId());
+
+        assertEquals(102, result.get(1).getWordTranslation().getId());
+        assertEquals(1, result.get(1).getPhraseTranslations().size());
+        assertEquals(202, result.get(1).getPhraseTranslations().get(0).getId());
+
+        verify(deckUserWordPhraseTranslationService, times(1)).getWordTranslationsByDeckId(deckId);
+        verify(wordPhraseTranslationService, times(1)).getPhrasesByDeckIdAndWordTranslationId(deckId, 101);
+        verify(wordPhraseTranslationService, times(1)).getPhrasesByDeckIdAndWordTranslationId(deckId, 102);
     }
 
     @Test
-    void testGetRandomWordTranslation_NoDeckId_ReturnsTranslation() {
+    void testGetAllWordTranslationsWithPhrasesByDeckEmpty() {
         // Given
-        DeckWordTranslation mockDeckWordTranslation = mock(DeckWordTranslation.class);
-        WordTranslation mockWordTranslation = mock(WordTranslation.class);
-        WordTranslationDTO mockDto = mock(WordTranslationDTO.class);
-
-        when(deckWordTranslationRespository.findRandomDeckWordTranslation())
-                .thenReturn(Optional.of(mockDeckWordTranslation));
-        when(mockDeckWordTranslation.getWordTranslation()).thenReturn(mockWordTranslation);
-        when(wordTranslationMapper.toDTO(mockWordTranslation)).thenReturn(mockDto);
+        Integer deckId = 10;
+        List<WordTranslation> emptyList = new ArrayList<>();
 
         // When
-        WordTranslationDTO result = wordTranslationService.getRandomWordTranslation(null);
+        when(deckUserWordPhraseTranslationService.getWordTranslationsByDeckId(deckId))
+                .thenReturn(emptyList);
 
         // Then
-        assertNotNull(result);
-        assertEquals(mockDto, result);
-        verify(deckWordTranslationRespository, times(1)).findRandomDeckWordTranslation();
-        verify(wordTranslationMapper, times(1)).toDTO(mockWordTranslation);
-    }
-
-    @Test
-    void testGetRandomWordTranslation_ThrowsExceptionWhenNotFound() {
-        // Given
-        when(deckWordTranslationRespository.findRandomDeckWordTranslation())
-                .thenReturn(Optional.empty());
-
-        // When / Then
-        WordTranslationNotFoundException exception = assertThrows(
-                WordTranslationNotFoundException.class,
-                () -> wordTranslationService.getRandomWordTranslation(null)
-        );
-
-        assertEquals("Not found any WordTranslation", exception.getMessage());
-        verify(deckWordTranslationRespository, times(1)).findRandomDeckWordTranslation();
-    }
-
-    @Test
-    void testAttemptsWordTranslation_UpdatesStatsAndReturnsNewTranslation() {
-        // Given
-        int wordId = 1;
-        int phraseId = 2;
-        boolean success = true;
-        Integer deckId = 1;
-
-        WordTranslation mockWordTranslation = new WordTranslation();
-        mockWordTranslation.setAttempts(0);
-        mockWordTranslation.setSuccesses(0);
-
-        Phrase mockPhrase = new Phrase();
-        mockPhrase.setAttempts(0);
-        mockPhrase.setSuccesses(0);
-
-        WordTranslationDTO mockDto = mock(WordTranslationDTO.class);
-
-        DeckWordTranslation mockDeckWordTranslation = new DeckWordTranslation();
-        mockDeckWordTranslation.setWordTranslation(mockWordTranslation);
-
-        when(wordTranslationRepository.findById(wordId)).thenReturn(Optional.of(mockWordTranslation));
-        when(phraseRepository.findById(phraseId)).thenReturn(Optional.of(mockPhrase));
-        when(deckWordTranslationRespository.findRandomDeckWordTranslationWithByDeck(deckId))
-                .thenReturn(Optional.of(mockDeckWordTranslation));
-        when(wordTranslationMapper.toDTO(mockWordTranslation)).thenReturn(mockDto);
-
-        // When
-        WordTranslationDTO result = wordTranslationService.attemptsWordTranslation(wordId, phraseId, success, deckId);
-
-        // Then
-        assertEquals(mockDto, result);
-        assertEquals(1, mockWordTranslation.getAttempts());
-        assertEquals(1, mockPhrase.getAttempts());
-        assertEquals(1, mockWordTranslation.getSuccesses());
-        assertEquals(1, mockPhrase.getSuccesses());
-
-        verify(deckWordTranslationHistorialRespository, times(1)).save(any(DeckWordTranslationHistorial.class));
-    }
-
-
-    @Test
-    void testAttemptsWordTranslation_ThrowsExceptionWhenWordNotFound() {
-        // Given
-        int wordId = 1;
-        int phraseId = 2;
-        when(wordTranslationRepository.findById(wordId)).thenReturn(Optional.empty());
-
-        // When / Then
-        WordTranslationNotFoundException exception = assertThrows(
-                WordTranslationNotFoundException.class,
-                () -> wordTranslationService.attemptsWordTranslation(wordId, phraseId, true, null)
-        );
-
-        assertEquals("WordTranslation not found", exception.getMessage());
-        verify(wordTranslationRepository, times(1)).findById(wordId);
-    }
-
-    @Test
-    void testAttemptsWordTranslation_ThrowsExceptionWhenPhraseNotFound() {
-        // Given
-        int wordId = 1;
-        int phraseId = 2;
-        WordTranslation mockWordTranslation = mock(WordTranslation.class);
-
-        when(wordTranslationRepository.findById(wordId)).thenReturn(Optional.of(mockWordTranslation));
-        when(phraseRepository.findById(phraseId)).thenReturn(Optional.empty());
-
-        // When / Then
-        WordTranslationNotFoundException exception = assertThrows(
-                WordTranslationNotFoundException.class,
-                () -> wordTranslationService.attemptsWordTranslation(wordId, phraseId, true, null)
-        );
-
-        assertEquals("Phrase not found", exception.getMessage());
-        verify(phraseRepository, times(1)).findById(phraseId);
-    }
-
-    @Test
-    void testGetAllWordTranslationsWithPhrasesByDeck_ReturnsWordTranslationsWithPhrases() {
-        // Given
-        int deckId = 1;
-
-        // Mock WordTranslation
-        WordTranslation wordTranslation = new WordTranslation();
-        wordTranslation.setId(1);
-
-        // Mock Phrase
-        Phrase phrase = new Phrase();
-        phrase.setId(1);
-
-        // Mock DTOs
-        WordTranslationDTO wordTranslationDTO = new WordTranslationDTO();
-        wordTranslationDTO.setId(1);
-
-        PhraseDTO phraseDTO = new PhraseDTO();
-        phraseDTO.setId(1);
-
-        WordTranslationWithPhrasesDTO wordTranslationWithPhrasesDTO = new WordTranslationWithPhrasesDTO(
-                wordTranslationDTO,
-                List.of(phraseDTO)
-        );
-
-        when(wordTranslationRepository.findWordTranslationsByDeckId(deckId))
-                .thenReturn(Optional.of(List.of(wordTranslation)));
-        when(phraseService.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId()))
-                .thenReturn(List.of(phrase));
-        when(wordTranslationMapper.toDTO(wordTranslation)).thenReturn(wordTranslationDTO);
-        when(phraseMapper.toDTO(phrase)).thenReturn(phraseDTO);
-
-        // When
-        List<WordTranslationWithPhrasesDTO> result = wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        WordTranslationWithPhrasesDTO resultDTO = result.get(0);
-        assertEquals(wordTranslationWithPhrasesDTO.getWordTranslation(), resultDTO.getWordTranslation());
-        assertEquals(wordTranslationWithPhrasesDTO.getPhrases(), resultDTO.getPhrases());
-
-        verify(wordTranslationRepository, times(1)).findWordTranslationsByDeckId(deckId);
-        verify(phraseService, times(1)).findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId());
-        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation);
-        verify(phraseMapper, times(1)).toDTO(phrase);
-    }
-
-    @Test
-    void testGetAllWordTranslationsWithPhrasesByDeck_ThrowsExceptionWhenNoWordTranslationsFound() {
-        // Given
-        int deckId = 1;
-        when(wordTranslationRepository.findWordTranslationsByDeckId(deckId))
-                .thenReturn(Optional.of(Collections.emptyList()));
-
-        // When / Then
-        WordTranslationNotFoundException exception = assertThrows(
-                WordTranslationNotFoundException.class,
-                () -> wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId)
-        );
+        WordTranslationNotFoundException exception = assertThrows(WordTranslationNotFoundException.class, () -> {
+            wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
+        });
 
         assertEquals("Not found any wordTranslation", exception.getMessage());
-        verify(wordTranslationRepository, times(1)).findWordTranslationsByDeckId(deckId);
+        verify(deckUserWordPhraseTranslationService, times(1)).getWordTranslationsByDeckId(deckId);
+        verify(wordPhraseTranslationService, never()).getPhrasesByDeckIdAndWordTranslationId(anyInt(), anyInt());
     }
 
     @Test
-    void testGetAllWordTranslationsWithPhrasesByDeck_ReturnsEmptyPhrasesListWhenNoPhrasesFound() {
+    void testGetAllWordTranslations() {
         // Given
-        int deckId = 1;
+        Integer pageNumber = 0;
+        Integer pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-        WordTranslation wordTranslation = new WordTranslation();
-        wordTranslation.setId(1);
-        WordTranslationDTO wordTranslationDTO = new WordTranslationDTO();
-        wordTranslationDTO.setId(1);
+        WordTranslation wordTranslation1 = new WordTranslation();
+        wordTranslation1.setId(101);
 
-        when(wordTranslationRepository.findWordTranslationsByDeckId(deckId))
-                .thenReturn(Optional.of(List.of(wordTranslation)));
-        when(phraseService.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId()))
-                .thenReturn(Collections.emptyList());
-        when(wordTranslationMapper.toDTO(wordTranslation)).thenReturn(wordTranslationDTO);
+        WordTranslation wordTranslation2 = new WordTranslation();
+        wordTranslation2.setId(102);
+
+        List<WordTranslation> wordTranslations = Arrays.asList(wordTranslation1, wordTranslation2);
+        Page<WordTranslation> wordTranslationPage = new PageImpl<>(wordTranslations);
+
+        WordTranslationDTO wordTranslationDTO1 = new WordTranslationDTO();
+        wordTranslationDTO1.setId(101);
+
+        WordTranslationDTO wordTranslationDTO2 = new WordTranslationDTO();
+        wordTranslationDTO2.setId(102);
 
         // When
-        List<WordTranslationWithPhrasesDTO> result = wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
+        when(wordTranslationRepository.findAll(pageable)).thenReturn(wordTranslationPage);
+        when(wordTranslationMapper.toDTO(wordTranslation1)).thenReturn(wordTranslationDTO1);
+        when(wordTranslationMapper.toDTO(wordTranslation2)).thenReturn(wordTranslationDTO2);
 
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        WordTranslationWithPhrasesDTO resultDTO = result.get(0);
-        assertEquals(wordTranslationDTO, resultDTO.getWordTranslation());
-        assertTrue(resultDTO.getPhrases().isEmpty());
-
-        verify(wordTranslationRepository, times(1)).findWordTranslationsByDeckId(deckId);
-        verify(phraseService, times(1)).findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslation.getId());
-        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation);
-    }
-
-    @Test
-    void testGetAllWordTranslations_ReturnsWordTranslations() {
-        // Given
-        int pageNumber = 0;
-        int pageSize = 10;
-
-        WordTranslation wordTranslation = new WordTranslation();
-        wordTranslation.setId(1);
-
-        WordTranslationDTO wordTranslationDTO = new WordTranslationDTO();
-        wordTranslationDTO.setId(1);
-
-        Page<WordTranslation> wordTranslationPage = new PageImpl<>(List.of(wordTranslation));
-
-        when(wordTranslationRepository.findAll(any(Pageable.class))).thenReturn(wordTranslationPage);
-        when(wordTranslationMapper.toDTO(wordTranslation)).thenReturn(wordTranslationDTO);
-
-        // When
         List<WordTranslationDTO> result = wordTranslationService.getAllWordTranslations(pageNumber, pageSize);
 
         // Then
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(wordTranslationDTO, result.get(0));
+        assertEquals(2, result.size());
+        assertEquals(101, result.get(0).getId());
+        assertEquals(102, result.get(1).getId());
 
-        verify(wordTranslationRepository, times(1)).findAll(any(Pageable.class));
-        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation);
+        verify(wordTranslationRepository, times(1)).findAll(pageable);
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation1);
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation2);
     }
 
     @Test
-    void testGetAllWordTranslations_ThrowsExceptionWhenNoWordTranslationsFound() {
+    void testGetAllWordTranslationsEmpty() {
         // Given
-        int pageNumber = 0;
-        int pageSize = 10;
+        Integer pageNumber = 0;
+        Integer pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-        Page<WordTranslation> wordTranslationPage = new PageImpl<>(Collections.emptyList());
+        List<WordTranslation> emptyList = new ArrayList<>();
+        Page<WordTranslation> emptyPage = new PageImpl<>(emptyList);
 
-        when(wordTranslationRepository.findAll(any(Pageable.class))).thenReturn(wordTranslationPage);
+        // When
+        when(wordTranslationRepository.findAll(pageable)).thenReturn(emptyPage);
 
-        // When / Then
-        WordTranslationNotFoundException exception = assertThrows(
-                WordTranslationNotFoundException.class,
-                () -> wordTranslationService.getAllWordTranslations(pageNumber, pageSize)
-        );
+        // Then
+        WordTranslationNotFoundException exception = assertThrows(WordTranslationNotFoundException.class, () -> {
+            wordTranslationService.getAllWordTranslations(pageNumber, pageSize);
+        });
 
         assertEquals("Not found any phrase", exception.getMessage());
-        verify(wordTranslationRepository, times(1)).findAll(any(Pageable.class));
+        verify(wordTranslationRepository, times(1)).findAll(pageable);
+        verify(wordTranslationMapper, never()).toDTO(any());
     }
 }

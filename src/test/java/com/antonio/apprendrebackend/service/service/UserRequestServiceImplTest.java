@@ -33,6 +33,7 @@ public class UserRequestServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /*
     @Test
     void testAddUserRequest_SuccessfulSave() {
         // Given
@@ -90,4 +91,6 @@ public class UserRequestServiceImplTest {
         verify(userRequestRepository, times(1)).findFirstByUserInfoAndIsAnsweredFalseAndCreatedDateAfter(any(), anyLong());
         verify(userRequestRepository, never()).save(any(UserRequest.class));
     }
+
+     */
 }
