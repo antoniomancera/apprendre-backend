@@ -4,7 +4,6 @@ import com.antonio.apprendrebackend.service.exception.UserRequestExistLastWeekNo
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.model.UserRequest;
 import com.antonio.apprendrebackend.service.repository.UserRequestRepository;
-import com.antonio.apprendrebackend.service.service.UserInfoService;
 import com.antonio.apprendrebackend.service.service.UserRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +16,6 @@ import static com.antonio.apprendrebackend.service.util.GeneralConstants.ONE_DAY
 
 @Service
 public class UserRequestServiceImpl implements UserRequestService {
-    @Autowired
-    UserInfoService userInfoService;
 
     @Autowired
     UserRequestRepository userRequestRepository;
@@ -33,7 +30,7 @@ public class UserRequestServiceImpl implements UserRequestService {
      */
     @Override
     public UserRequest addUserRequest(@PathVariable String email, @RequestParam String subject, @RequestParam String message) {
-        UserInfo userInfo = userInfoService.getByEmail(email);
+        UserInfo userInfo = new UserInfo(1, "1");
 
         Optional<UserRequest> existingRequest = userRequestRepository
                 .findFirstByUserInfoAndIsAnsweredFalseAndCreatedDateAfter(userInfo, System.currentTimeMillis() - (7 * ONE_DAY_MILLIS));

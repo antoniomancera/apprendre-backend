@@ -12,22 +12,18 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     UserInfoRepository userInfoRepository;
 
-    @Override
-    public UserInfo getUserInfo() {
-        return userInfoRepository.findFirstByOrderByDateAsc();
-    }
 
     /**
-     * Found if exists the user by email
+     * Get the UserInfo given the SupabaseId
      *
-     * @param email
+     * @param supabaseId
      * @return UserInfo
-     * @throws UserInfoNotFoundException
+     * @throws UserInfoNotFoundException if not exist any UserInfo
      */
     @Override
-    public UserInfo getByEmail(String email) throws UserInfoNotFoundException {
-        return userInfoRepository.findByEmail(email)
-                .orElseThrow(() -> new UserInfoNotFoundException("Not found userInfo with email: " + email));
+    public UserInfo findBySupabaseId(String supabaseId) {
+        return userInfoRepository.findBySupabaseId(supabaseId)
+                .orElseThrow(() -> new UserInfoNotFoundException("Not found userInfo"));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.model.DailyStats;
+import com.antonio.apprendrebackend.service.model.UserInfo;
 
 import java.util.List;
 
@@ -10,5 +11,5 @@ public interface StatsService {
      *
      * @return List<DailyStats>
      */
-    List<DailyStats> getDailyStatsLastWeek();
+    List<DailyStats> getDailyStatsLastWeek(UserInfo userInfo);
 }
