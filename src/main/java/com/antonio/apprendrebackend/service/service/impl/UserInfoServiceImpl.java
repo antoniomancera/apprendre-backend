@@ -12,24 +12,6 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     UserInfoRepository userInfoRepository;
 
-    @Override
-    public UserInfo getUserInfo() {
-        return userInfoRepository.findFirstByOrderByDateAsc();
-    }
-
-    /**
-     * Found if exists the user by email
-     *
-     * @param email
-     * @return UserInfo
-     * @throws UserInfoNotFoundException
-     */
-    @Override
-    public UserInfo getByEmail(String email) throws UserInfoNotFoundException {
-        return userInfoRepository.findByEmail(email)
-                .orElseThrow(() -> new UserInfoNotFoundException("Not found userInfo with email: " + email));
-    }
-
 
     /**
      * Get the UserInfo given the SupabaseId

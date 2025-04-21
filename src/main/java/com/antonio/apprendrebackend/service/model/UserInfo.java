@@ -13,7 +13,13 @@ public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String supabaseId;
     private String userName;
+
+
+    //borrar
+    public UserInfo(Integer id, String supabaseId) {
+        this.id = id;
+        this.supabaseId = supabaseId;
+    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class WordTranslationWithPhrasesDTO {
+public class WordTranslationWithPhraseTranslationsDTO {
     private WordTranslationDTO wordTranslation;
-    private List<PhraseDTO> phrases;
+    private List<PhraseTranslationDTO> phraseTranslations;
 }
