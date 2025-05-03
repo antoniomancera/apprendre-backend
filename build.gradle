@@ -43,6 +43,15 @@ dependencies {
     // PostgreSQL JDBC driver
     runtimeOnly 'org.postgresql:postgresql:42.6.0'
 
+    // Spring Security and jjwt readers and decoders
+    implementation("org.springframework.security:spring-security-core:6.4.4")
+    implementation("org.springframework.boot:spring-boot-starter-security:3.4.5")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
+    //Env file reader
+    implementation("io.github.cdimascio:dotenv-java:3.2.0")
 }
 
 tasks.named('test') {
