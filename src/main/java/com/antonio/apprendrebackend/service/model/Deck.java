@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DeckUser {
+public class Deck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

@@ -1,24 +1,18 @@
 package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
-import com.antonio.apprendrebackend.service.dto.DeckUserWordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
-import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
-import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.model.UserInfo;
-import com.antonio.apprendrebackend.service.service.DeckUserWordPhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
-import com.antonio.apprendrebackend.service.service.WordTranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping(path = "/deckUserWordPhrase")
-public class DeckUserWordPhraseTranslationController {
+@RequestMapping(path = "/deckWordPhrase")
+public class DeckWordPhraseTranslationController {
     @Autowired
     WordPhraseTranslationService wordPhraseTranslationService;
 
@@ -29,7 +23,7 @@ public class DeckUserWordPhraseTranslationController {
      * @param deckId
      * @return
      * @return HTTP respond with WordPhraseTranslationDTO
-     * @throws DeckUserWordPhraseTranslationNotFoundException if not exist any wordPhraseTranslation for the user
+     * @throws DeckWordPhraseTranslationNotFoundException if not exist any wordPhraseTranslation for the user
      */
     @GetMapping(path = {"/getRandom/{deckId}", "/getRandom"})
     public @ResponseBody ResponseEntity<?> getRandomWordPhraseTranslation(@PathVariable(required = false) Integer deckId) {
@@ -46,7 +40,7 @@ public class DeckUserWordPhraseTranslationController {
      * @param deckId
      * @param attempt
      * @return HTTP respond with the AttemptResultDTO with result and new WordPhraseTranslation in case of success
-     * @throws DeckUserWordPhraseTranslationNotFoundException if not exist anyone
+     * @throws DeckWordPhraseTranslationNotFoundException if not exist anyone
      */
     @PutMapping(path = "/attempts/{wordPhraseId}")
     public @ResponseBody ResponseEntity<?> attemptsWordPhraseTranslation(@PathVariable Integer wordPhraseId, @RequestParam Integer deckId, @RequestParam String attempt) {

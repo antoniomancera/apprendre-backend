@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 public class WordTranslationHistorialServiceImplTest {
 
     @Mock
-    private DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
+    private DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     @Mock
     private WordPhraseTranslationMapper wordPhraseTranslationMapper;
@@ -38,7 +38,7 @@ public class WordTranslationHistorialServiceImplTest {
     private WordPhraseTranslationServiceServiceImpl wordPhraseTranslationService;
 
     private UserInfo userInfo;
-    private DeckUserWordPhraseTranslation deckUserWordPhraseTranslation;
+    private DeckWordPhraseTranslation deckWordPhraseTranslation;
     private WordPhraseTranslation wordPhraseTranslation;
     private WordTranslation wordTranslation;
     private WordSense wordSenseFr;
@@ -69,11 +69,11 @@ public class WordTranslationHistorialServiceImplTest {
         wordPhraseTranslation.setId(401);
         wordPhraseTranslation.setWordTranslation(wordTranslation);
 
-        deckUserWordPhraseTranslation = new DeckUserWordPhraseTranslation();
-        deckUserWordPhraseTranslation.setId(501);
-        deckUserWordPhraseTranslation.setWordPhraseTranslation(wordPhraseTranslation);
-        deckUserWordPhraseTranslation.setAttempts(5);
-        deckUserWordPhraseTranslation.setSuccesses(3);
+        deckWordPhraseTranslation = new DeckWordPhraseTranslation();
+        deckWordPhraseTranslation.setId(501);
+        deckWordPhraseTranslation.setWordPhraseTranslation(wordPhraseTranslation);
+        deckWordPhraseTranslation.setAttempts(5);
+        deckWordPhraseTranslation.setSuccesses(3);
     }
 
     @Test
@@ -84,8 +84,8 @@ public class WordTranslationHistorialServiceImplTest {
         expectedDto.setId(401);
 
         // When
-        when(deckUserWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId))
-                .thenReturn(deckUserWordPhraseTranslation);
+        when(deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId))
+                .thenReturn(deckWordPhraseTranslation);
         when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
 
         WordPhraseTranslationDTO result = wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
@@ -93,7 +93,7 @@ public class WordTranslationHistorialServiceImplTest {
         // Then
         assertNotNull(result);
         assertEquals(401, result.getId());
-        verify(deckUserWordPhraseTranslationService, times(1))
+        verify(deckWordPhraseTranslationService, times(1))
                 .getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId);
         verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation);
     }
@@ -106,8 +106,8 @@ public class WordTranslationHistorialServiceImplTest {
         expectedDto.setId(401);
 
         // When
-        when(deckUserWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId()))
-                .thenReturn(deckUserWordPhraseTranslation);
+        when(deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId()))
+                .thenReturn(deckWordPhraseTranslation);
         when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
 
         WordPhraseTranslationDTO result = wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
@@ -115,7 +115,7 @@ public class WordTranslationHistorialServiceImplTest {
         // Then
         assertNotNull(result);
         assertEquals(401, result.getId());
-        verify(deckUserWordPhraseTranslationService, times(1))
+        verify(deckWordPhraseTranslationService, times(1))
                 .getRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId());
         verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation);
     }
@@ -170,8 +170,8 @@ public class WordTranslationHistorialServiceImplTest {
         String attempt = "incorrect"; // Incorrect attempt
 
         // When
-        when(deckUserWordPhraseTranslationService.getByDeckUserIdAndWordPhraseTranslationId(deckId, wordPhraseId))
-                .thenReturn(deckUserWordPhraseTranslation);
+        when(deckWordPhraseTranslationService.getByDeckIdAndWordPhraseTranslationId(deckId, wordPhraseId))
+                .thenReturn(deckWordPhraseTranslation);
         when(userHistorialService.postUserHistorial(any(UserHistorial.class)))
                 .thenReturn(new UserHistorial());
 
@@ -184,15 +184,15 @@ public class WordTranslationHistorialServiceImplTest {
         assertNull(result.getWordPhraseTranslation());
 
         // Verify stats update (only attempts should increase, not successes)
-        assertEquals(6, deckUserWordPhraseTranslation.getAttempts());
-        assertEquals(3, deckUserWordPhraseTranslation.getSuccesses());
+        assertEquals(6, deckWordPhraseTranslation.getAttempts());
+        assertEquals(3, deckWordPhraseTranslation.getSuccesses());
 
         // Verify historial was created with success=0
         ArgumentCaptor<UserHistorial> historialCaptor = ArgumentCaptor.forClass(UserHistorial.class);
         verify(userHistorialService, times(1)).postUserHistorial(historialCaptor.capture());
         UserHistorial capturedHistorial = historialCaptor.getValue();
         assertEquals(0, capturedHistorial.getSuccess());
-        assertEquals(deckUserWordPhraseTranslation, capturedHistorial.getDeckUserWordPhraseTranslation());
+        assertEquals(deckWordPhraseTranslation, capturedHistorial.getDeckWordPhraseTranslation());
         assertEquals(deckId, capturedHistorial.getDeckId());
     }
 

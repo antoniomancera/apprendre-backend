@@ -1,7 +1,7 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
 import com.antonio.apprendrebackend.service.exception.HomeNotFoundException;
-import com.antonio.apprendrebackend.service.mapper.DeckUserMapper;
+import com.antonio.apprendrebackend.service.mapper.DeckMapper;
 import com.antonio.apprendrebackend.service.mapper.GoalMapper;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.model.UserHistorial;
@@ -19,7 +19,7 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     UserGoalService userGoalService;
     @Autowired
-    DeckUserService deckUserService;
+    DeckService deckService;
     @Autowired
     UserHistorialService userHistorialService;
     @Autowired
@@ -27,7 +27,7 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     GoalMapper goalMapper;
     @Autowired
-    DeckUserMapper deckUserMapper;
+    DeckMapper deckMapper;
 
     /**
      * Returns the information to be displayed in home
@@ -40,9 +40,9 @@ public class HomeServiceImpl implements HomeService {
         Home home = new Home();
         home.setWeekStats(statsService.getDailyStatsLastWeek(userInfo));
         home.setGoal(goalMapper.toDTO(userGoalService.getActiveGoal(userInfo)));
-        home.setDecks(Optional.ofNullable(deckUserService.getActiveDecks(userInfo))
+        home.setDecks(Optional.ofNullable(deckService.getActiveDecks(userInfo))
                 .orElse(Collections.emptyList()).stream()
-                .map(deck -> deckUserMapper.toDTO(deck))
+                .map(deck -> deckMapper.toDTO(deck))
                 .collect(Collectors.toList()));
 
         home.setLastDeckId(userHistorialService.getLastUserHistorial(userInfo)

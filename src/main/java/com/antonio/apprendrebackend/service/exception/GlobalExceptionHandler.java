@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WordTranslationNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleWordTranslationNotFoundException(WordTranslationNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NO_CONTENT.value(),
                 ErrorCode.WORD_TRANSLATION_NOT_FOUND,
                 ex.getMessage()
         );
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PhraseNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePhraseNotFoundException(PhraseNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NO_CONTENT.value(),
                 ErrorCode.PHRASE_NOT_FOUND,
                 ex.getMessage()
         );
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorResponse);
     }
-    
+
     @ExceptionHandler(HomeNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleHomeNotFoundException(HomeNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
@@ -106,8 +106,8 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(DeckUserWordPhraseTranslationNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleDeckUserWordPhraseTranslation(DeckUserWordPhraseTranslationNotFoundException ex) {
+    @ExceptionHandler(DeckWordPhraseTranslationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDeckWordPhraseTranslation(DeckWordPhraseTranslationNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 ErrorCode.DECK_USER_WORD_PHRASE_TRANSLATION,

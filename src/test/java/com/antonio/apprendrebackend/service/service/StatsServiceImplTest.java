@@ -1,25 +1,12 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.exception.WordTranslationHistorialNotFound;
-import com.antonio.apprendrebackend.service.model.DailyStats;
-import com.antonio.apprendrebackend.service.model.UserHistorial;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 public class StatsServiceImplTest {
     @Mock
-    DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
+    DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     @Mock
     StatsService statsService;

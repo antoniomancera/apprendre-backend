@@ -22,13 +22,13 @@ public interface WordPhraseTranslationRepository extends CrudRepository<WordPhra
      */
     @Query("""
                 SELECT wpt.phraseTranslation
-                FROM DeckUserWordPhraseTranslation dwt
+                FROM DeckWordPhraseTranslation dwt
                 JOIN dwt.wordPhraseTranslation wpt 
-                WHERE dwt.deckUser.id = :deckId
+                WHERE dwt.deck.id = :deckId
                   AND wpt.wordTranslation.id = :wordTranslationId
             """)
     List<PhraseTranslation> findPhrasesByDeckIdAndWordTranslationId(@Param("deckId") Integer deckId, @Param("wordTranslationId") Integer wordTranslationId);
-    
+
     /**
      * Get all WordTranslation associated to a phraseTranslation of a Deck
      *
@@ -38,9 +38,9 @@ public interface WordPhraseTranslationRepository extends CrudRepository<WordPhra
      */
     @Query("""
                 SELECT wpt.wordTranslation
-                FROM DeckUserWordPhraseTranslation dwt
+                FROM DeckWordPhraseTranslation dwt
                 JOIN dwt.wordPhraseTranslation wpt 
-                WHERE dwt.deckUser.id = :deckId
+                WHERE dwt.deck.id = :deckId
                   AND wpt.phraseTranslation.id = :phraseTranslationId
             """)
     List<WordTranslation> findWordTranslationsByDeckIdPhraseTranslationId(@Param("deckId") Integer deckId, @Param("phraseTranslationId") Integer phraseTranslationId);

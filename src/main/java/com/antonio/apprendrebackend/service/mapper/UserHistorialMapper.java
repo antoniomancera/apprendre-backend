@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface UserHistorialMapper {
 
-    @Mapping(target = "deckUserWordPhraseTranslation", source = "deckUserWordPhraseTranslation")
+    @Mapping(target = "deckWordPhraseTranslation", source = "deckWordPhraseTranslation")
     @Mapping(target = "date", source = "date")
     @Mapping(target = "success", source = "success")
     @Mapping(target = "deckId", source = "deckId")
