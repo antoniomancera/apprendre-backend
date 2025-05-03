@@ -11,6 +11,8 @@ import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService
 import com.antonio.apprendrebackend.service.service.WordTranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -31,7 +33,7 @@ public class DeckUserWordPhraseTranslationController {
      */
     @GetMapping(path = {"/getRandom/{deckId}", "/getRandom"})
     public @ResponseBody ResponseEntity<?> getRandomWordPhraseTranslation(@PathVariable(required = false) Integer deckId) {
-        UserInfo userInfo = new UserInfo(1, "1");
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         WordPhraseTranslationDTO wordPhraseRandom = wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
         return ResponseEntity.ok(wordPhraseRandom);
     }
@@ -48,7 +50,7 @@ public class DeckUserWordPhraseTranslationController {
      */
     @PutMapping(path = "/attempts/{wordPhraseId}")
     public @ResponseBody ResponseEntity<?> attemptsWordPhraseTranslation(@PathVariable Integer wordPhraseId, @RequestParam Integer deckId, @RequestParam String attempt) {
-        UserInfo userInfo = new UserInfo(1, "1");
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         AttemptResultDTO wordPhraseTranslationDTO = wordPhraseTranslationService.attemptsWordPhraseTranslation(userInfo, wordPhraseId, deckId, attempt);
         return ResponseEntity.ok(wordPhraseTranslationDTO);
     }
