@@ -1,15 +1,15 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
 import com.antonio.apprendrebackend.service.exception.GoalNotCreatedException;
-import com.antonio.apprendrebackend.service.model.UserGoal;
+import com.antonio.apprendrebackend.service.model.Goal;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.repository.GoalRepository;
-import com.antonio.apprendrebackend.service.service.UserGoalService;
+import com.antonio.apprendrebackend.service.service.GoalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserGoalServiceImpl implements UserGoalService {
+public class GoalServiceImpl implements GoalService {
     @Autowired
     GoalRepository goalRepository;
 
@@ -17,10 +17,10 @@ public class UserGoalServiceImpl implements UserGoalService {
      * Get the active goal for the logged User
      *
      * @param userInfo
-     * @return UserGoal
+     * @return Goal
      */
     @Override
-    public UserGoal getActiveGoal(UserInfo userInfo) {
+    public Goal getActiveGoal(UserInfo userInfo) {
         return goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo);
     }
 
@@ -34,13 +34,13 @@ public class UserGoalServiceImpl implements UserGoalService {
      * @throws GoalNotCreatedException if the goal is not created
      */
     @Override
-    public UserGoal createGoal(UserInfo userInfo, Integer attempts, Double successesAccuracy) {
-        UserGoal lastUserGoal = goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo);
-        if (lastUserGoal != null) {
-            lastUserGoal.setEndDate(System.currentTimeMillis());
-            goalRepository.save(lastUserGoal);
+    public Goal createGoal(UserInfo userInfo, Integer attempts, Double successesAccuracy) {
+        Goal lastGoal = goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo);
+        if (lastGoal != null) {
+            lastGoal.setEndDate(System.currentTimeMillis());
+            goalRepository.save(lastGoal);
         }
-        UserGoal goal = goalRepository.save(new UserGoal(userInfo, attempts, successesAccuracy));
+        Goal goal = goalRepository.save(new Goal(userInfo, attempts, successesAccuracy));
         if (goal == null) {
             throw new GoalNotCreatedException("Goal not created");
         }

@@ -1,10 +1,10 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.exception.GoalNotCreatedException;
-import com.antonio.apprendrebackend.service.model.UserGoal;
+import com.antonio.apprendrebackend.service.model.Goal;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.repository.GoalRepository;
-import com.antonio.apprendrebackend.service.service.impl.UserGoalServiceImpl;
+import com.antonio.apprendrebackend.service.service.impl.GoalServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,13 +14,13 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UserGoalServiceImplTest {
+public class GoalServiceImplTest {
 
     @Mock
     private GoalRepository goalRepository;
 
     @InjectMocks
-    private UserGoalServiceImpl userGoalService;
+    private GoalServiceImpl goalService;
 
     @BeforeEach
     void setUp() {
@@ -34,7 +34,7 @@ public class UserGoalServiceImplTest {
         userInfo.setId(1);
         userInfo.setUserName("testUser");
 
-        UserGoal activeGoal = new UserGoal();
+        Goal activeGoal = new Goal();
         activeGoal.setId(1);
         activeGoal.setUserInfo(userInfo);
         activeGoal.setAttempts(10);
@@ -43,7 +43,7 @@ public class UserGoalServiceImplTest {
 
         // When
         when(goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo)).thenReturn(activeGoal);
-        UserGoal result = userGoalService.getActiveGoal(userInfo);
+        Goal result = goalService.getActiveGoal(userInfo);
 
         // Then
         assertNotNull(result);
@@ -62,7 +62,7 @@ public class UserGoalServiceImplTest {
 
         // When
         when(goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo)).thenReturn(null);
-        UserGoal result = userGoalService.getActiveGoal(userInfo);
+        Goal result = goalService.getActiveGoal(userInfo);
 
         // Then
         assertNull(result);
@@ -79,14 +79,14 @@ public class UserGoalServiceImplTest {
         Integer attempts = 10;
         Double successesAccuracy = 0.8;
 
-        UserGoal newGoal = new UserGoal(userInfo, attempts, successesAccuracy);
+        Goal newGoal = new Goal(userInfo, attempts, successesAccuracy);
         newGoal.setId(1);
 
         // When
         when(goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo)).thenReturn(null);
-        when(goalRepository.save(any(UserGoal.class))).thenReturn(newGoal);
+        when(goalRepository.save(any(Goal.class))).thenReturn(newGoal);
 
-        UserGoal result = userGoalService.createGoal(userInfo, attempts, successesAccuracy);
+        Goal result = goalService.createGoal(userInfo, attempts, successesAccuracy);
 
         // Then
         assertNotNull(result);
@@ -94,7 +94,7 @@ public class UserGoalServiceImplTest {
         assertEquals(10, result.getAttempts());
         assertEquals(0.8, result.getSuccessesAccuracy());
         verify(goalRepository, times(1)).findFirstByUserInfoOrderByBeginDateDesc(userInfo);
-        verify(goalRepository, times(1)).save(any(UserGoal.class));
+        verify(goalRepository, times(1)).save(any(Goal.class));
     }
 
     @Test
@@ -107,21 +107,21 @@ public class UserGoalServiceImplTest {
         Integer attempts = 15;
         Double successesAccuracy = 0.9;
 
-        UserGoal existingGoal = new UserGoal();
+        Goal existingGoal = new Goal();
         existingGoal.setId(1);
         existingGoal.setUserInfo(userInfo);
         existingGoal.setAttempts(10);
         existingGoal.setSuccessesAccuracy(0.8);
         existingGoal.setBeginDate(System.currentTimeMillis() - 86400000); // 1 day ago
 
-        UserGoal newGoal = new UserGoal(userInfo, attempts, successesAccuracy);
+        Goal newGoal = new Goal(userInfo, attempts, successesAccuracy);
         newGoal.setId(2);
 
         // When
         when(goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo)).thenReturn(existingGoal);
-        when(goalRepository.save(any(UserGoal.class))).thenReturn(newGoal);
+        when(goalRepository.save(any(Goal.class))).thenReturn(newGoal);
 
-        UserGoal result = userGoalService.createGoal(userInfo, attempts, successesAccuracy);
+        Goal result = goalService.createGoal(userInfo, attempts, successesAccuracy);
 
         // Then
         assertNotNull(result);
@@ -129,7 +129,7 @@ public class UserGoalServiceImplTest {
         assertEquals(15, result.getAttempts());
         assertEquals(0.9, result.getSuccessesAccuracy());
         verify(goalRepository, times(1)).findFirstByUserInfoOrderByBeginDateDesc(userInfo);
-        verify(goalRepository, times(2)).save(any(UserGoal.class)); // Una vez para actualizar el existing y otra para el nuevo
+        verify(goalRepository, times(2)).save(any(Goal.class)); // Una vez para actualizar el existing y otra para el nuevo
     }
 
     @Test
@@ -144,14 +144,14 @@ public class UserGoalServiceImplTest {
 
         // When
         when(goalRepository.findFirstByUserInfoOrderByBeginDateDesc(userInfo)).thenReturn(null);
-        when(goalRepository.save(any(UserGoal.class))).thenReturn(null);
+        when(goalRepository.save(any(Goal.class))).thenReturn(null);
 
         // Then
         assertThrows(GoalNotCreatedException.class, () -> {
-            userGoalService.createGoal(userInfo, attempts, successesAccuracy);
+            goalService.createGoal(userInfo, attempts, successesAccuracy);
         });
 
         verify(goalRepository, times(1)).findFirstByUserInfoOrderByBeginDateDesc(userInfo);
-        verify(goalRepository, times(1)).save(any(UserGoal.class));
+        verify(goalRepository, times(1)).save(any(Goal.class));
     }
 }

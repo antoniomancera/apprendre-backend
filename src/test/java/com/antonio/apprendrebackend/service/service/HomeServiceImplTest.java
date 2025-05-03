@@ -26,7 +26,7 @@ public class HomeServiceImplTest {
     private HomeServiceImpl homeService;
 
     @Mock
-    private UserGoalService userGoalService;
+    private GoalService goalService;
 
     @Mock
     private DeckService deckService;
@@ -61,9 +61,9 @@ public class HomeServiceImplTest {
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
         // Setup Goal
-        UserGoal goalMock = new UserGoal();
+        Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
-        when(userGoalService.getActiveGoal(userInfo)).thenReturn(goalMock);
+        when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks
@@ -98,7 +98,7 @@ public class HomeServiceImplTest {
         assertEquals(1, result.getLastDeckId());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
-        verify(userGoalService, times(1)).getActiveGoal(userInfo);
+        verify(goalService, times(1)).getActiveGoal(userInfo);
         verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
@@ -114,9 +114,9 @@ public class HomeServiceImplTest {
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
         // Setup Goal
-        UserGoal goalMock = new UserGoal();
+        Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
-        when(userGoalService.getActiveGoal(userInfo)).thenReturn(goalMock);
+        when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks (empty)
@@ -138,7 +138,7 @@ public class HomeServiceImplTest {
         assertEquals(1, result.getLastDeckId());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
-        verify(userGoalService, times(1)).getActiveGoal(userInfo);
+        verify(goalService, times(1)).getActiveGoal(userInfo);
         verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
@@ -153,9 +153,9 @@ public class HomeServiceImplTest {
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
         // Setup Goal
-        UserGoal goalMock = new UserGoal();
+        Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
-        when(userGoalService.getActiveGoal(userInfo)).thenReturn(goalMock);
+        when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks (null)
@@ -177,7 +177,7 @@ public class HomeServiceImplTest {
         assertEquals(1, result.getLastDeckId());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
-        verify(userGoalService, times(1)).getActiveGoal(userInfo);
+        verify(goalService, times(1)).getActiveGoal(userInfo);
         verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
@@ -192,9 +192,9 @@ public class HomeServiceImplTest {
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
         // Setup Goal
-        UserGoal goalMock = new UserGoal();
+        Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
-        when(userGoalService.getActiveGoal(userInfo)).thenReturn(goalMock);
+        when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks
@@ -222,7 +222,7 @@ public class HomeServiceImplTest {
         assertNull(result.getLastDeckId());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
-        verify(userGoalService, times(1)).getActiveGoal(userInfo);
+        verify(goalService, times(1)).getActiveGoal(userInfo);
         verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);

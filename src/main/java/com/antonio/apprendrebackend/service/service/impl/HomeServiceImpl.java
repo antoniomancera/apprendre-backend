@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired
-    UserGoalService userGoalService;
+    GoalService goalService;
     @Autowired
     DeckService deckService;
     @Autowired
@@ -39,7 +39,7 @@ public class HomeServiceImpl implements HomeService {
     public Home getHome(UserInfo userInfo) {
         Home home = new Home();
         home.setWeekStats(statsService.getDailyStatsLastWeek(userInfo));
-        home.setGoal(goalMapper.toDTO(userGoalService.getActiveGoal(userInfo)));
+        home.setGoal(goalMapper.toDTO(goalService.getActiveGoal(userInfo)));
         home.setDecks(Optional.ofNullable(deckService.getActiveDecks(userInfo))
                 .orElse(Collections.emptyList()).stream()
                 .map(deck -> deckMapper.toDTO(deck))

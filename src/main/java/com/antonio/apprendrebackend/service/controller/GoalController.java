@@ -2,9 +2,9 @@ package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.dto.GoalDTO;
 import com.antonio.apprendrebackend.service.exception.GoalNotCreatedException;
-import com.antonio.apprendrebackend.service.model.UserGoal;
+import com.antonio.apprendrebackend.service.model.Goal;
 import com.antonio.apprendrebackend.service.model.UserInfo;
-import com.antonio.apprendrebackend.service.service.UserGoalService;
+import com.antonio.apprendrebackend.service.service.GoalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(path = "/goal")
-public class UserGoalController {
+public class GoalController {
     @Autowired
-    UserGoalService userGoalService;
+    GoalService goalService;
 
 
     /**
@@ -29,8 +29,8 @@ public class UserGoalController {
     public @ResponseBody ResponseEntity<?> createGoal(
             @RequestBody GoalDTO goal) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        UserGoal createdUserGoal = userGoalService.createGoal(userInfo, goal.getAttempts(), goal.getSuccessesAccuracy());
-        return ResponseEntity.ok(createdUserGoal);
+        Goal createdGoal = goalService.createGoal(userInfo, goal.getAttempts(), goal.getSuccessesAccuracy());
+        return ResponseEntity.ok(createdGoal);
     }
 }
 
