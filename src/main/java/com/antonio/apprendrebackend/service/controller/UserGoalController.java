@@ -7,6 +7,7 @@ import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.UserGoalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class UserGoalController {
     @PostMapping
     public @ResponseBody ResponseEntity<?> createGoal(
             @RequestBody GoalDTO goal) {
-        UserInfo userInfo = new UserInfo(1, "1");
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         UserGoal createdUserGoal = userGoalService.createGoal(userInfo, goal.getAttempts(), goal.getSuccessesAccuracy());
         return ResponseEntity.ok(createdUserGoal);
     }

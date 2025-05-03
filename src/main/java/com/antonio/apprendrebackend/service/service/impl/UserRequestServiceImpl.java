@@ -29,9 +29,7 @@ public class UserRequestServiceImpl implements UserRequestService {
      * @return
      */
     @Override
-    public UserRequest addUserRequest(@PathVariable String email, @RequestParam String subject, @RequestParam String message) {
-        UserInfo userInfo = new UserInfo(1, "1");
-
+    public UserRequest addUserRequest(UserInfo userInfo, String email, String subject, String message) {
         Optional<UserRequest> existingRequest = userRequestRepository
                 .findFirstByUserInfoAndIsAnsweredFalseAndCreatedDateAfter(userInfo, System.currentTimeMillis() - (7 * ONE_DAY_MILLIS));
 

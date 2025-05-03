@@ -5,6 +5,7 @@ import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,7 @@ public class StatsController {
      */
     @GetMapping
     public @ResponseBody ResponseEntity<?> getStatsPageInitial() {
-        UserInfo userInfo = new UserInfo(1, "1");
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         List<DailyStats> stats = statsService.getDailyStatsLastWeek(userInfo);
         return ResponseEntity.ok(stats);
     }
