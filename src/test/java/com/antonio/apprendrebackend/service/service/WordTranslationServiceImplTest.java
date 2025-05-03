@@ -44,7 +44,7 @@ class WordTranslationServiceImplTest {
     private PhraseTranslationMapper phraseTranslationMapper;
 
     @Mock
-    private DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
+    private DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     @InjectMocks
     private WordTranslationServiceImpl wordTranslationService;
@@ -89,7 +89,7 @@ class WordTranslationServiceImplTest {
         phraseTranslationDTO2.setId(202);
 
         // When
-        when(deckUserWordPhraseTranslationService.getWordTranslationsByDeckId(deckId))
+        when(deckWordPhraseTranslationService.getWordTranslationsByDeckId(deckId))
                 .thenReturn(wordTranslations);
 
         when(wordPhraseTranslationService.getPhrasesByDeckIdAndWordTranslationId(eq(deckId), eq(101)))
@@ -117,7 +117,7 @@ class WordTranslationServiceImplTest {
         assertEquals(1, result.get(1).getPhraseTranslations().size());
         assertEquals(202, result.get(1).getPhraseTranslations().get(0).getId());
 
-        verify(deckUserWordPhraseTranslationService, times(1)).getWordTranslationsByDeckId(deckId);
+        verify(deckWordPhraseTranslationService, times(1)).getWordTranslationsByDeckId(deckId);
         verify(wordPhraseTranslationService, times(1)).getPhrasesByDeckIdAndWordTranslationId(deckId, 101);
         verify(wordPhraseTranslationService, times(1)).getPhrasesByDeckIdAndWordTranslationId(deckId, 102);
     }
@@ -129,7 +129,7 @@ class WordTranslationServiceImplTest {
         List<WordTranslation> emptyList = new ArrayList<>();
 
         // When
-        when(deckUserWordPhraseTranslationService.getWordTranslationsByDeckId(deckId))
+        when(deckWordPhraseTranslationService.getWordTranslationsByDeckId(deckId))
                 .thenReturn(emptyList);
 
         // Then
@@ -138,7 +138,7 @@ class WordTranslationServiceImplTest {
         });
 
         assertEquals("Not found any wordTranslation", exception.getMessage());
-        verify(deckUserWordPhraseTranslationService, times(1)).getWordTranslationsByDeckId(deckId);
+        verify(deckWordPhraseTranslationService, times(1)).getWordTranslationsByDeckId(deckId);
         verify(wordPhraseTranslationService, never()).getPhrasesByDeckIdAndWordTranslationId(anyInt(), anyInt());
     }
 

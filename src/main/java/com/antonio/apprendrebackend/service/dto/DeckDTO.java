@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DeckUserDTO {
+public class DeckDTO {
     private Integer id;
     private String name;
     private String description;

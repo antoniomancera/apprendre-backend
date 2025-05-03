@@ -9,7 +9,7 @@ import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
 import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
 import com.antonio.apprendrebackend.service.repository.PhraseTranslationRepository;
-import com.antonio.apprendrebackend.service.service.DeckUserWordPhraseTranslationService;
+import com.antonio.apprendrebackend.service.service.DeckWordPhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.PhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class PhraseTranslationServiceImpl implements PhraseTranslationService {
     WordPhraseTranslationService wordPhraseTranslationService;
 
     @Autowired
-    DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
+    DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     @Autowired
     WordTranslationMapper wordTranslationMapper;
@@ -46,7 +46,7 @@ public class PhraseTranslationServiceImpl implements PhraseTranslationService {
      */
     @Override
     public List<PhraseTranslationWithWordTranslationsDTO> getAllPhrasesWithWordTranslationsByDeck(Integer deckId) {
-        List<PhraseTranslation> phrases = deckUserWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId);
+        List<PhraseTranslation> phrases = deckWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId);
 
         if (phrases.size() == 0) {
             throw new PhraseNotFoundException(String.format("Not found any phrase of deck %s", deckId));

@@ -7,14 +7,14 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class DeckUserWordPhraseTranslation {
+public class DeckWordPhraseTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "deck_user_id", nullable = false)
-    private DeckUser deckUser;
+    private Deck deck;
 
     @ManyToOne
     @JoinColumn(name = "word_phrase_translation_id", nullable = false)

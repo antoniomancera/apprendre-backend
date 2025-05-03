@@ -1,17 +1,17 @@
 package com.antonio.apprendrebackend.service.mapper;
 
-import com.antonio.apprendrebackend.service.dto.DeckUserDTO;
-import com.antonio.apprendrebackend.service.model.DeckUser;
+import com.antonio.apprendrebackend.service.dto.DeckDTO;
+import com.antonio.apprendrebackend.service.model.Deck;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
-public interface DeckUserMapper {
-    DeckUserMapper INSTANCE = Mappers.getMapper(DeckUserMapper.class);
+public interface DeckMapper {
+    DeckMapper INSTANCE = Mappers.getMapper(DeckMapper.class);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "description", source = "description")
-    DeckUserDTO toDTO(DeckUser deckUser);
+    DeckDTO toDTO(Deck deck);
 }

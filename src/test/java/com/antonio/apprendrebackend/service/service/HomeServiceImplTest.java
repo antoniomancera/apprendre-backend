@@ -1,8 +1,8 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.dto.DeckUserDTO;
+import com.antonio.apprendrebackend.service.dto.DeckDTO;
 import com.antonio.apprendrebackend.service.dto.GoalDTO;
-import com.antonio.apprendrebackend.service.mapper.DeckUserMapper;
+import com.antonio.apprendrebackend.service.mapper.DeckMapper;
 import com.antonio.apprendrebackend.service.mapper.GoalMapper;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.service.impl.HomeServiceImpl;
@@ -29,7 +29,7 @@ public class HomeServiceImplTest {
     private UserGoalService userGoalService;
 
     @Mock
-    private DeckUserService deckUserService;
+    private DeckService deckService;
 
     @Mock
     private UserHistorialService userHistorialService;
@@ -41,7 +41,7 @@ public class HomeServiceImplTest {
     private GoalMapper goalMapper;
 
     @Mock
-    private DeckUserMapper deckUserMapper;
+    private DeckMapper deckMapper;
 
     private UserInfo userInfo;
 
@@ -67,20 +67,20 @@ public class HomeServiceImplTest {
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks
-        DeckUser deckUser1 = new DeckUser();
-        deckUser1.setId(1);
-        DeckUser deckUser2 = new DeckUser();
-        deckUser2.setId(2);
-        List<DeckUser> decksMock = Arrays.asList(deckUser1, deckUser2);
+        Deck deck1 = new Deck();
+        deck1.setId(1);
+        Deck deck2 = new Deck();
+        deck2.setId(2);
+        List<Deck> decksMock = Arrays.asList(deck1, deck2);
 
-        DeckUserDTO deckUserDTO1 = new DeckUserDTO();
-        deckUserDTO1.setId(1);
-        DeckUserDTO deckUserDTO2 = new DeckUserDTO();
-        deckUserDTO2.setId(2);
+        DeckDTO deckDTO1 = new DeckDTO();
+        deckDTO1.setId(1);
+        DeckDTO deckDTO2 = new DeckDTO();
+        deckDTO2.setId(2);
 
-        when(deckUserService.getActiveDecks(userInfo)).thenReturn(decksMock);
-        when(deckUserMapper.toDTO(deckUser1)).thenReturn(deckUserDTO1);
-        when(deckUserMapper.toDTO(deckUser2)).thenReturn(deckUserDTO2);
+        when(deckService.getActiveDecks(userInfo)).thenReturn(decksMock);
+        when(deckMapper.toDTO(deck1)).thenReturn(deckDTO1);
+        when(deckMapper.toDTO(deck2)).thenReturn(deckDTO2);
 
         // Setup Last Deck
         UserHistorial lastHistorial = new UserHistorial();
@@ -99,11 +99,11 @@ public class HomeServiceImplTest {
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(userGoalService, times(1)).getActiveGoal(userInfo);
-        verify(deckUserService, times(1)).getActiveDecks(userInfo);
+        verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
-        verify(deckUserMapper, times(1)).toDTO(deckUser1);
-        verify(deckUserMapper, times(1)).toDTO(deckUser2);
+        verify(deckMapper, times(1)).toDTO(deck1);
+        verify(deckMapper, times(1)).toDTO(deck2);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class HomeServiceImplTest {
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks (empty)
-        when(deckUserService.getActiveDecks(userInfo)).thenReturn(Collections.emptyList());
+        when(deckService.getActiveDecks(userInfo)).thenReturn(Collections.emptyList());
 
         // Setup Last Deck
         UserHistorial lastHistorial = new UserHistorial();
@@ -139,10 +139,10 @@ public class HomeServiceImplTest {
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(userGoalService, times(1)).getActiveGoal(userInfo);
-        verify(deckUserService, times(1)).getActiveDecks(userInfo);
+        verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
-        verify(deckUserMapper, never()).toDTO(any());
+        verify(deckMapper, never()).toDTO(any());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class HomeServiceImplTest {
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks (null)
-        when(deckUserService.getActiveDecks(userInfo)).thenReturn(null);
+        when(deckService.getActiveDecks(userInfo)).thenReturn(null);
 
         // Setup Last Deck
         UserHistorial lastHistorial = new UserHistorial();
@@ -178,10 +178,10 @@ public class HomeServiceImplTest {
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(userGoalService, times(1)).getActiveGoal(userInfo);
-        verify(deckUserService, times(1)).getActiveDecks(userInfo);
+        verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
-        verify(deckUserMapper, never()).toDTO(any());
+        verify(deckMapper, never()).toDTO(any());
     }
 
     @Test
@@ -198,15 +198,15 @@ public class HomeServiceImplTest {
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
         // Setup Decks
-        DeckUser deckUser1 = new DeckUser();
-        deckUser1.setId(1);
-        List<DeckUser> decksMock = List.of(deckUser1);
+        Deck deck1 = new Deck();
+        deck1.setId(1);
+        List<Deck> decksMock = List.of(deck1);
 
-        DeckUserDTO deckUserDTO1 = new DeckUserDTO();
-        deckUserDTO1.setId(1);
+        DeckDTO deckDTO1 = new DeckDTO();
+        deckDTO1.setId(1);
 
-        when(deckUserService.getActiveDecks(userInfo)).thenReturn(decksMock);
-        when(deckUserMapper.toDTO(deckUser1)).thenReturn(deckUserDTO1);
+        when(deckService.getActiveDecks(userInfo)).thenReturn(decksMock);
+        when(deckMapper.toDTO(deck1)).thenReturn(deckDTO1);
 
         // Setup Last Deck (empty)
         when(userHistorialService.getLastUserHistorial(userInfo)).thenReturn(Optional.empty());
@@ -223,10 +223,10 @@ public class HomeServiceImplTest {
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(userGoalService, times(1)).getActiveGoal(userInfo);
-        verify(deckUserService, times(1)).getActiveDecks(userInfo);
+        verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
-        verify(deckUserMapper, times(1)).toDTO(deckUser1);
+        verify(deckMapper, times(1)).toDTO(deck1);
     }
 
     @Test
