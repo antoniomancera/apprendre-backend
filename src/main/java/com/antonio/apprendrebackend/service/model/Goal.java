@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class UserGoal {
+public class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,10 +22,10 @@ public class UserGoal {
     private Double successesAccuracy;
 
 
-    public UserGoal() {
+    public Goal() {
     }
 
-    public UserGoal(UserInfo userInfo, Integer attempts, Double successesAccuracy) {
+    public Goal(UserInfo userInfo, Integer attempts, Double successesAccuracy) {
         this.userInfo = userInfo;
         this.attempts = attempts;
         this.successesAccuracy = successesAccuracy;
