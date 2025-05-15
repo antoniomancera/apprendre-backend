@@ -3,6 +3,8 @@ package com.antonio.apprendrebackend.service.model;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 public class ConjugationVariation {
@@ -18,9 +20,12 @@ public class ConjugationVariation {
     @JoinColumn(name = "conjugation_irregular_pattern_id")
     private ConjugationIrregularPattern conjugationIrregularPattern;
 
-    @ManyToOne
-    @JoinColumn(name = "conjugation_verb_form_id")
-    private ConjugationVerbForm conjugationVerbForm;
+    @OneToMany(mappedBy = "conjugationVariation", cascade = CascadeType.ALL)
+    private List<ConjugationVerbFormIrregular> conjugationVerbFormIrregulars;
+
+    @OneToOne
+    @JoinColumn(name = "conjugation_verb_id")
+    private ConjugationVerb conjugationVerb;
 }
 
 
