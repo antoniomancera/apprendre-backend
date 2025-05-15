@@ -5,23 +5,18 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class Tense {
+public class ConjugationVerbFormIrregular {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "mood_id")
-    private Mood mood;
+    @JoinColumn(name = "conjugation_variation_id")
+    private ConjugationVariation conjugationVariation;
 
-    @ManyToOne
-    @JoinColumn(name = "language_id")
-    private Language language;
+    @OneToOne
+    @JoinColumn(name = "conjugation_verb_form_id")
+    private ConjugationVerbForm conjugationVerbForm;
 
     private String name;
-
-    private Boolean isCompound;
-
-    private Boolean isFinite;
-    
 }

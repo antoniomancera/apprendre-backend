@@ -35,6 +35,10 @@ public class WordTranslation {
     @JoinColumn(name = "level_id")
     private Level level;
 
+    @ManyToOne
+    @JoinColumn(name = "conjugation_verb_form_id")
+    private ConjugationVerbForm conjugationVerbForm;
+
     private Integer attempts;
     private Integer successes;
     private Integer importanceIndex;
