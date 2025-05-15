@@ -19,15 +19,9 @@ public class ConjugationVerb {
     private VerbGroup verbGroup;
 
     @OneToOne
-    @JoinColumn(name = "conjugation_variation_id")
-    private ConjugationVariation conjugationVariation;
-
-    @OneToOne
     @JoinColumn(name = "word_sense_id")
     private WordSense wordSense;
 
-    private String participle;
-    private String gerund;
     private Integer isReflexive;
 
 }

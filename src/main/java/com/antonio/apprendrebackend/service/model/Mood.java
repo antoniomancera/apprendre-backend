@@ -8,15 +8,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class Mode {
+public class Mood {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
-
-    private Boolean isFinite;
 
 
 }

@@ -14,6 +14,10 @@ public class VerbAuxiliary {
     @JoinColumn(name = "language_id")
     private Language language;
 
+    @OneToOne
+    @JoinColumn(name = "word_sense_id")
+    private WordSense wordSense;
+
     private String name;
 
 
