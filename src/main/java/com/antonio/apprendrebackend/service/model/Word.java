@@ -18,5 +18,9 @@ public class Word {
     @JoinColumn(name = "language_id")
     private Language language;
 
+    @ManyToOne
+    @JoinColumn(name = "type_id")
+    private Type type;
+
     private String name;
 }

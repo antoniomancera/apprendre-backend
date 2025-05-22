@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Language {
+    public enum LanguageEnum {
+        FR, ES, EN
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,5 +18,6 @@ public class Language {
 
     private String name;
 
-
+    @Enumerated(EnumType.STRING)
+    private LanguageEnum languageEnum;
 }
