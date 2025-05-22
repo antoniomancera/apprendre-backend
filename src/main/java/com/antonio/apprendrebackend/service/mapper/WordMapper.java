@@ -14,6 +14,7 @@ public interface WordMapper {
 
     @Mapping(target = "language", source = "language")
     @Mapping(target = "name", source = "name")
+    @Mapping(target = "type", source = "type")
     WordDTO toDTO(Word word);
 }
 

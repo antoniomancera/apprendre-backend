@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SubType {
     public enum SubTypeEnum {
-        SUSTANTIVE, VERB, ADJECTIVE, ADVERB, PRONOUN, PREPOSITION, CONJUNCTION, INTERJECTION
+        PERSONAL_PRONOUN,
     }
 
     @Id

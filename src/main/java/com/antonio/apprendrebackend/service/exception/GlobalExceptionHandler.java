@@ -106,6 +106,20 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(WordTypeNotVerbException.class)
+    public ResponseEntity<ErrorResponse> handleWordTypeNotVerbException(WordTypeNotVerbException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.WORD_TYPE_NOT_VERB,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(DeckWordPhraseTranslationNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDeckWordPhraseTranslation(DeckWordPhraseTranslationNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
@@ -119,4 +133,65 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorResponse);
     }
+
+    @ExceptionHandler(ConjugationVerbNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleConjugationVerbNotFoundException(ConjugationVerbNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.CONJUGATION_VERB_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(VerbGroupNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleVerbGroupNotFoundExceptionn(VerbGroupNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.VERB_GROUP_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(TypeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTypeNotFoundException(TypeNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.TYPE_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(WordNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWordNotFoundException(WordNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.WORD_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
 }
