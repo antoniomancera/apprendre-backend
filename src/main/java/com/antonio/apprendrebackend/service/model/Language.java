@@ -3,10 +3,12 @@ package com.antonio.apprendrebackend.service.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Getter
 @NoArgsConstructor
+@Getter
+@Setter
 public class Language {
     public enum LanguageEnum {
         FR, ES, EN

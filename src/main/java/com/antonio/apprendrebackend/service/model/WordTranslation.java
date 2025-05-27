@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.Random;
-
 @Entity
 @Getter
 @Setter
@@ -22,14 +19,6 @@ public class WordTranslation {
     @ManyToOne
     @JoinColumn(name = "word_sense_sp_id")
     private WordSense wordSenseSp;
-
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "level_id")

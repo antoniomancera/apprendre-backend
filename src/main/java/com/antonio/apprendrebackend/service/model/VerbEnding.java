@@ -4,19 +4,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @NoArgsConstructor
 @Getter
-public class ConjugationVerbForm {
+public class VerbEnding {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "person_gender_number_id")
-    private PersonGenderNumber personGenderNumber;
-
-    @ManyToOne
-    @JoinColumn(name = "tense_id")
-    private Tense tense;
+    private String name;
 }

@@ -1,10 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.dto.WordDTO;
-import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
-import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhraseTranslationsDTO;
 import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
-import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
 
 import java.util.List;
 

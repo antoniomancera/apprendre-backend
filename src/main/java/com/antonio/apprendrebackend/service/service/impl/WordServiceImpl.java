@@ -1,25 +1,14 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
-import com.antonio.apprendrebackend.service.dto.PhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordDTO;
-import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
-import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhraseTranslationsDTO;
 import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
-import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
-import com.antonio.apprendrebackend.service.mapper.PhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.mapper.WordMapper;
-import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
-import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.Type;
 import com.antonio.apprendrebackend.service.model.Word;
-import com.antonio.apprendrebackend.service.model.WordTranslation;
 import com.antonio.apprendrebackend.service.repository.WordRepository;
-import com.antonio.apprendrebackend.service.repository.WordTranslationRepository;
 import com.antonio.apprendrebackend.service.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -13,7 +13,6 @@ public interface WordSenseMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "word", source = "word")
     @Mapping(target = "sense", source = "sense")
-    @Mapping(target = "type", source = "type")
     WordSenseDTO toDTO(WordSense wordSense);
 }
 
