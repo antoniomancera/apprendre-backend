@@ -7,16 +7,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-public class ConjugationVerbForm {
+public class ConjugationRegularTenseEnding {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "person_gender_number_id")
-    private PersonGenderNumber personGenderNumber;
+    @JoinColumn(name = "verb_group_id")
+    private VerbGroup verbGroup;
 
     @ManyToOne
     @JoinColumn(name = "tense_id")
     private Tense tense;
+
+    @ManyToOne
+    @JoinColumn(name = "person_gender_number_id")
+    private PersonGenderNumber personGenderNumber;
+
+    private String ending;
 }
