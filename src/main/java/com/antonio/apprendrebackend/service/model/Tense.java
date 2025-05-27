@@ -3,10 +3,12 @@ package com.antonio.apprendrebackend.service.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 public class Tense {
     public enum TenseEnum {
         INF_FR, PART_PRE_FR, PART_PAST_FR, GER_FR, PRE_INF_FR,
