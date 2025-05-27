@@ -194,4 +194,81 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(PersonGenderNumberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePersonGenderNumberNotFoundExceptionException(PersonGenderNumberNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.PERSON_GENDER_NUMBER_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(WordCollectionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWordCollectionNotFoundException(WordCollectionNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.WORD_COLLECTION_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(WordCollectionItemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWordCollectionItemNotFoundException(WordCollectionItemNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.WORD_COLLECTION_ITEM_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+
+    @ExceptionHandler(TenseNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTenseNotFoundException(TenseNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.TENSE_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(WordSenseNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWordSenseNotFoundException(WordSenseNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.WORD_SENSE_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+
 }
