@@ -23,6 +23,10 @@ public class ConjugationVariationServiceImpl implements ConjugationVariationServ
      */
     @Override
     public ConjugationVariation getConjugationVariationByConjugationVerb(ConjugationVerb conjugationVerb) {
-        return conjugationVariationRepository.findByConjugationVerb(conjugationVerb).orElseThrow(() -> new ConjugationVariationFoundException(String.format("Not found any COnjugation variation for Conjugationverb %s", conjugationVerb.getId())));
+        Optional<ConjugationVariation> result = conjugationVariationRepository.findByConjugationVerb(conjugationVerb);
+        if (result == null) {
+            throw new ConjugationVariationFoundException(String.format("Not found any COnjugation variation for Conjugationverb %s", conjugationVerb.getId()));
+        }
+        return result.orElseThrow(() -> new ConjugationVariationFoundException(String.format("Not found any COnjugation variation for Conjugationverb %s", conjugationVerb.getId())));
     }
 }
