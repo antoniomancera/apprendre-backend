@@ -65,7 +65,7 @@ public class ConjugationVerbFormIrregularServiceImplTest {
                 .thenReturn(expectedIrregulars);
 
         List<ConjugationVerbFormIrregular> result = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation);
 
         // Then
         assertNotNull(result);
@@ -96,7 +96,7 @@ public class ConjugationVerbFormIrregularServiceImplTest {
                 .thenReturn(Arrays.asList());
 
         List<ConjugationVerbFormIrregular> result = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation);
 
         // Then
         assertNotNull(result);
@@ -115,7 +115,7 @@ public class ConjugationVerbFormIrregularServiceImplTest {
                 .thenReturn(Arrays.asList());
 
         List<ConjugationVerbFormIrregular> result = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation);
 
         // Then
         assertNotNull(result);
@@ -150,7 +150,7 @@ public class ConjugationVerbFormIrregularServiceImplTest {
                 .thenReturn(expectedIrregulars);
 
         List<ConjugationVerbFormIrregular> result = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation);
 
         // Then
         assertNotNull(result);
@@ -189,9 +189,9 @@ public class ConjugationVerbFormIrregularServiceImplTest {
                 .thenReturn(expectedIrregulars2);
 
         List<ConjugationVerbFormIrregular> result1 = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation1);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation1);
         List<ConjugationVerbFormIrregular> result2 = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation2);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation2);
 
         // Then
         assertNotNull(result1);
@@ -219,7 +219,7 @@ public class ConjugationVerbFormIrregularServiceImplTest {
                 .thenReturn(null);
 
         List<ConjugationVerbFormIrregular> result = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation);
 
         // Then
         assertNull(result);
@@ -253,7 +253,7 @@ public class ConjugationVerbFormIrregularServiceImplTest {
                 .thenReturn(expectedIrregulars);
 
         List<ConjugationVerbFormIrregular> result = conjugationVerbFormIrregularService
-                .findByConjugationVariation(conjugationVariation);
+                .getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation);
 
         // Then
         assertNotNull(result);

@@ -270,5 +270,20 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(ConjugationVariationFoundException.class)
+    public ResponseEntity<ErrorResponse> handleConjugationVariationNotFoundException(ConjugationVariationFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.CONJUGATION_VARIATION_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
 
 }

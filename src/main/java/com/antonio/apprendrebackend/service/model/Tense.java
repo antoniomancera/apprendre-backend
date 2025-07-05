@@ -11,9 +11,20 @@ import lombok.Setter;
 @Setter
 public class Tense {
     public enum TenseEnum {
-        INF_FR, PART_PRE_FR, PART_PAST_FR, GER_FR, PRE_INF_FR,
-        PAS_COM_INF_FR, IMP_INF_FR, FUT_SIMP_INF_FR, PLUS_PARF_INF_FR,
-        PRES_SUB_FR, PRE_CON_FR, PRE_IMP_FR
+        INF_FR,
+        PART_PRE_FR,
+        PART_PAST_FR,
+        GER_FR,
+        PRE_INF_FR,
+        PAS_COM_INF_FR,
+        IMP_INF_FR,
+        FUT_SIMP_INF_FR,
+        PLUS_PARF_INF_FR,
+        PRES_SUB_FR,
+        PRE_CON_FR,
+        PRE_IMP_FR,
+        PART_PAST_COM_FR,
+        GER_COM_FR
     }
 
     @Id
@@ -36,4 +47,6 @@ public class Tense {
     private Boolean isCompound;
 
     private Boolean isFinite;
+
+    private Boolean isInfinitive;
 }

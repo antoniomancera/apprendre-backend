@@ -9,18 +9,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ConjugationVerb {
+public class ConjugationVerbWordWordSense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "verb_auxiliary_id")
-    private VerbAuxiliary verbAuxiliary;
-
-    @ManyToOne
-    @JoinColumn(name = "verb_group_ending_id")
-    private VerbGroupEnding verbGroupEnding;
+    @JoinColumn(name = "conjugation_verb_id")
+    private ConjugationVerb conjugationVerb;
 
     @ManyToOne
     @JoinColumn(name = "word_id")
@@ -29,8 +25,4 @@ public class ConjugationVerb {
     @OneToOne
     @JoinColumn(name = "word_sense_id")
     private WordSense wordSense;
-
-    private Integer isReflexive;
 }
-
-

@@ -1,20 +1,24 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-public class ConjugationVerbFormPattern {
+@Getter
+@Setter
+public class TensePersonGenderNumber {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "conjugation_verb_form_id")
-    private ConjugationVerbForm conjugationVerbForm;
+    @JoinColumn(name = "tense_id")
+    private Tense tense;
 
     @ManyToOne
-    @JoinColumn(name = "verb_pattern_irregular_id")
-    private VerbPatternIrregular verbPatternIrregular;
+    @JoinColumn(name = "person_gender_number_id")
+    private PersonGenderNumber personGenderNumber;
 }

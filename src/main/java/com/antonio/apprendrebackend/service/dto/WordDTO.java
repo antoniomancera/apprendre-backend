@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WordDTO {
+    private Integer id;
     private LanguageDTO language;
     private String name;
     private Type type;
