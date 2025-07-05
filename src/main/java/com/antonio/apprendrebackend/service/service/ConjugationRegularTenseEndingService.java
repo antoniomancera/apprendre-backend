@@ -21,4 +21,34 @@ public interface ConjugationRegularTenseEndingService {
             VerbGroup.VerbGroupEnum verbGroupEnum,
             List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums
     );
+
+    /**
+     * Returns a list with the regular endings of a tense of a verbGroup given a list of personGenderNumbers, if not exists try to search if exist some ConjugationRegularTenseEndings
+     * not related to a verbGroup, that is, an ending for every verbGroup
+     *
+     * @param tenseId
+     * @param personGenderNumberEnums
+     * @param verbGroupId
+     * @return List<ConjugationRegularTenseEnding>
+     */
+    List<ConjugationRegularTenseEnding> getByTenseInPersonGenderNumberAndVerbGroup(
+            Integer tenseId,
+            List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums,
+            Integer verbGroupId
+    );
+
+    /**
+     * Returns a list with the regular endings of a tense of a verbGroup given a personGenderNumber, if not exists try to search if exist a ConjugationRegularTenseEnding
+     * not related to a verbGroup, that is, an ending for every verbGroup
+     *
+     * @param tenseId
+     * @param personGenderNumberEnum
+     * @param verbGroupId
+     * @return ConjugationRegularTenseEnding
+     */
+    ConjugationRegularTenseEnding getByTenseAndPersonGenderNumberAndVerbGroup(
+            Integer tenseId,
+            PersonGenderNumber.PersonGenderNumberEnum personGenderNumberEnum,
+            Integer verbGroupId
+    );
 }

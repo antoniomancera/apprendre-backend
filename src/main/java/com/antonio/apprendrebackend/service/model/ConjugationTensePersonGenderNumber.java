@@ -9,18 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ConjugationRegularTenseEnding {
+public class ConjugationTensePersonGenderNumber {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "verb_group_id")
-    private VerbGroup verbGroup;
-
-    @ManyToOne
-    @JoinColumn(name = "verb_group_ending_id")
-    private VerbGroupEnding verbGroupEnding;
 
     @ManyToOne
     @JoinColumn(name = "tense_id")
@@ -29,6 +21,4 @@ public class ConjugationRegularTenseEnding {
     @ManyToOne
     @JoinColumn(name = "person_gender_number_id")
     private PersonGenderNumber personGenderNumber;
-
-    private String ending;
 }

@@ -9,21 +9,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class VerbGroup {
-    public enum VerbGroupEnum {
-        FIRST_GROUP_FR, SECOND_GROUP_FR, THIRD_GROUP_FR
-    }
-
+public class ConjugationVerbWordWordSense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "language_id")
-    private Language language;
+    @JoinColumn(name = "conjugation_verb_id")
+    private ConjugationVerb conjugationVerb;
 
-    @Enumerated(EnumType.STRING)
-    private VerbGroupEnum verbGroupEnum;
+    @ManyToOne
+    @JoinColumn(name = "word_id")
+    private Word word;
 
-    private String name;
+    @OneToOne
+    @JoinColumn(name = "word_sense_id")
+    private WordSense wordSense;
 }

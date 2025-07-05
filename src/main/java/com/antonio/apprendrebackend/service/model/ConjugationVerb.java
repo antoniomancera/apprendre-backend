@@ -18,16 +18,19 @@ public class ConjugationVerb {
     @JoinColumn(name = "verb_auxiliary_id")
     private VerbAuxiliary verbAuxiliary;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "verb_group_ending_id")
     private VerbGroupEnding verbGroupEnding;
+
+    @ManyToOne
+    @JoinColumn(name = "word_id")
+    private Word word;
 
     @OneToOne
     @JoinColumn(name = "word_sense_id")
     private WordSense wordSense;
 
     private Integer isReflexive;
-
 }
 
 

@@ -9,16 +9,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ConjugationVerbForm {
+public class ConjugationRegularTenseBaseVariation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "person_gender_number_id")
-    private PersonGenderNumber personGenderNumber;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "tense_id")
     private Tense tense;
+
+    @ManyToOne
+    @JoinColumn(name = "conjugation_verb_form_base_id")
+    private ConjugationVerbForm conjugationVerbFormBase;
+
+    private Boolean isInfinitiveBase;
+
+    private Boolean isEndingInBase;
 }

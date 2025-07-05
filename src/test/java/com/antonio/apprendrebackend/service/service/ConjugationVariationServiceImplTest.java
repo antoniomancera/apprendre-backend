@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.exception.ConjugationVariationFoundException;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.ConjugationVariationRepository;
 import com.antonio.apprendrebackend.service.service.impl.ConjugationVariationServiceImpl;
@@ -47,19 +48,18 @@ public class ConjugationVariationServiceImplTest {
         when(conjugationVariationRepository.findByConjugationVerb(conjugationVerb))
                 .thenReturn(expectedVariation);
 
-        Optional<ConjugationVariation> result = conjugationVariationService.getByConjugationVerb(conjugationVerb);
+        ConjugationVariation result = conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals(1, result.get().getId());
-        assertEquals(conjugationVerb, result.get().getConjugationVerb());
-        assertEquals(irregularPattern, result.get().getConjugationIrregularPattern());
+        assertEquals(1, result.getId());
+        assertEquals(conjugationVerb, result.getConjugationVerb());
+        assertEquals(irregularPattern, result.getConjugationIrregularPattern());
         verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb);
     }
 
     @Test
-    void testGetByConjugationVerbWhenVariationDoesNotExist() {
+    void testGetByConjugationVerbWhenVariationDoesNotExist_ShouldThrowException() {
         // Given
         ConjugationVerb conjugationVerb = new ConjugationVerb();
         conjugationVerb.setId(2);
@@ -71,31 +71,13 @@ public class ConjugationVariationServiceImplTest {
         when(conjugationVariationRepository.findByConjugationVerb(conjugationVerb))
                 .thenReturn(expectedVariation);
 
-        Optional<ConjugationVariation> result = conjugationVariationService.getByConjugationVerb(conjugationVerb);
-
         // Then
-        assertNotNull(result);
-        assertFalse(result.isPresent());
-        assertTrue(result.isEmpty());
-        verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb);
-    }
+        ConjugationVariationFoundException exception = assertThrows(
+                ConjugationVariationFoundException.class,
+                () -> conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb)
+        );
 
-    @Test
-    void testGetByConjugationVerbWithNullConjugationVerb() {
-        // Given
-        ConjugationVerb conjugationVerb = null;
-        Optional<ConjugationVariation> expectedVariation = Optional.empty();
-
-        // When
-        when(conjugationVariationRepository.findByConjugationVerb(conjugationVerb))
-                .thenReturn(expectedVariation);
-
-        Optional<ConjugationVariation> result = conjugationVariationService.getByConjugationVerb(conjugationVerb);
-
-        // Then
-        assertNotNull(result);
-        assertFalse(result.isPresent());
-        assertTrue(result.isEmpty());
+        assertTrue(exception.getMessage().contains("Not found any COnjugation variation for Conjugationverb 2"));
         verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb);
     }
 
@@ -120,14 +102,13 @@ public class ConjugationVariationServiceImplTest {
         when(conjugationVariationRepository.findByConjugationVerb(conjugationVerb))
                 .thenReturn(expectedVariation);
 
-        Optional<ConjugationVariation> result = conjugationVariationService.getByConjugationVerb(conjugationVerb);
+        ConjugationVariation result = conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals(2, result.get().getId());
-        assertEquals(1, result.get().getConjugationVerb().getIsReflexive());
-        assertEquals(2, result.get().getConjugationIrregularPattern().getId());
+        assertEquals(2, result.getId());
+        assertEquals(1, result.getConjugationVerb().getIsReflexive());
+        assertEquals(2, result.getConjugationIrregularPattern().getId());
         verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb);
     }
 
@@ -155,23 +136,21 @@ public class ConjugationVariationServiceImplTest {
         when(conjugationVariationRepository.findByConjugationVerb(conjugationVerb2))
                 .thenReturn(expectedVariation2);
 
-        Optional<ConjugationVariation> result1 = conjugationVariationService.getByConjugationVerb(conjugationVerb1);
-        Optional<ConjugationVariation> result2 = conjugationVariationService.getByConjugationVerb(conjugationVerb2);
+        ConjugationVariation result1 = conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb1);
 
         // Then
         assertNotNull(result1);
-        assertTrue(result1.isPresent());
-        assertEquals(1, result1.get().getId());
+        assertEquals(1, result1.getId());
 
-        assertNotNull(result2);
-        assertFalse(result2.isPresent());
+        assertThrows(ConjugationVariationFoundException.class,
+                () -> conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb2));
 
         verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb1);
         verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb2);
     }
 
     @Test
-    void testGetByConjugationVerbRepositoryReturnsNull() {
+    void testGetByConjugationVerbRepositoryReturnsNull_ShouldThrowException() {
         // Given
         ConjugationVerb conjugationVerb = new ConjugationVerb();
         conjugationVerb.setId(4);
@@ -181,10 +160,10 @@ public class ConjugationVariationServiceImplTest {
         when(conjugationVariationRepository.findByConjugationVerb(conjugationVerb))
                 .thenReturn(null);
 
-        Optional<ConjugationVariation> result = conjugationVariationService.getByConjugationVerb(conjugationVerb);
-
         // Then
-        assertNull(result);
+        assertThrows(ConjugationVariationFoundException.class,
+                () -> conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb));
+
         verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb);
     }
 
@@ -221,17 +200,16 @@ public class ConjugationVariationServiceImplTest {
         when(conjugationVariationRepository.findByConjugationVerb(conjugationVerb))
                 .thenReturn(expectedVariation);
 
-        Optional<ConjugationVariation> result = conjugationVariationService.getByConjugationVerb(conjugationVerb);
+        ConjugationVariation result = conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals(3, result.get().getId());
-        assertEquals(5, result.get().getConjugationVerb().getId());
-        assertEquals(0, result.get().getConjugationVerb().getIsReflexive());
-        assertEquals(verbAuxiliary, result.get().getConjugationVerb().getVerbAuxiliary());
-        assertEquals(verbGroupEnding, result.get().getConjugationVerb().getVerbGroupEnding());
-        assertEquals(wordSense, result.get().getConjugationVerb().getWordSense());
+        assertEquals(3, result.getId());
+        assertEquals(5, result.getConjugationVerb().getId());
+        assertEquals(0, result.getConjugationVerb().getIsReflexive());
+        assertEquals(verbAuxiliary, result.getConjugationVerb().getVerbAuxiliary());
+        assertEquals(verbGroupEnding, result.getConjugationVerb().getVerbGroupEnding());
+        assertEquals(wordSense, result.getConjugationVerb().getWordSense());
         verify(conjugationVariationRepository, times(1)).findByConjugationVerb(conjugationVerb);
     }
 }
