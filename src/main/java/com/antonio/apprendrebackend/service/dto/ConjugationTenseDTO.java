@@ -5,13 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ConjugationTenseDTO {
     private TenseDTO tense;
-    private List<ConjugationWordPositionPersonGenderNumberDTO> conjugationWordPositionPersonGenderNumbers;
+    private Map<PersonGenderNumber.PersonGenderNumberEnum, List<ConjugationWordPositionDTO>> personGenderNumberConjugation;
 }

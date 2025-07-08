@@ -1,7 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.dto.ConjugationTenseDTO;
-import com.antonio.apprendrebackend.service.dto.ConjugationWordPositionPersonGenderNumberDTO;
+import com.antonio.apprendrebackend.service.dto.ConjugationWordPositionDTO;
 import com.antonio.apprendrebackend.service.dto.TenseDTO;
 import com.antonio.apprendrebackend.service.exception.ConjugationVerbNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.TenseMapper;
@@ -243,13 +243,23 @@ public class ConjugationVerbServiceImplTest {
 
         ConjugationTenseDTO conjugationTenseDTO = result.get(0);
         assertNotNull(conjugationTenseDTO.getTense());
-        assertEquals(1, conjugationTenseDTO.getConjugationWordPositionPersonGenderNumbers().size());
 
-        ConjugationWordPositionPersonGenderNumberDTO conjugationWordPosition =
-                conjugationTenseDTO.getConjugationWordPositionPersonGenderNumbers().get(0);
-        assertEquals(PersonGenderNumber.PersonGenderNumberEnum.FIRST_PLURAL_NEUTRAL,
-                conjugationWordPosition.getPersonGenderNumberEnum());
-        assertEquals("hablo", conjugationWordPosition.getConjugationRegularIrregularDTO().getConjugationRegular());
+        // Verificar que el mapa contiene la entrada esperada
+        Map<PersonGenderNumber.PersonGenderNumberEnum, List<ConjugationWordPositionDTO>> personGenderNumberConjugation =
+                conjugationTenseDTO.getPersonGenderNumberConjugation();
+        assertNotNull(personGenderNumberConjugation);
+        assertEquals(1, personGenderNumberConjugation.size());
+
+        assertTrue(personGenderNumberConjugation.containsKey(PersonGenderNumber.PersonGenderNumberEnum.FIRST_PLURAL_NEUTRAL));
+
+        List<ConjugationWordPositionDTO> conjugationWordPositions =
+                personGenderNumberConjugation.get(PersonGenderNumber.PersonGenderNumberEnum.FIRST_PLURAL_NEUTRAL);
+        assertNotNull(conjugationWordPositions);
+        assertEquals(1, conjugationWordPositions.size());
+
+        ConjugationWordPositionDTO conjugationWordPosition = conjugationWordPositions.get(0);
+        assertNotNull(conjugationWordPosition.getConjugationRegularIrregular());
+        assertEquals("hablo", conjugationWordPosition.getConjugationRegularIrregular().getConjugationRegular());
 
         // Verify interactions
         verify(wordSenseService, times(1)).getById(wordSenseId);
@@ -327,11 +337,22 @@ public class ConjugationVerbServiceImplTest {
         assertEquals(1, result.size());
 
         ConjugationTenseDTO conjugationTenseDTO = result.get(0);
-        ConjugationWordPositionPersonGenderNumberDTO conjugationWordPosition =
-                conjugationTenseDTO.getConjugationWordPositionPersonGenderNumbers().get(0);
 
-        assertEquals("soy", conjugationWordPosition.getConjugationRegularIrregularDTO().getConjugationIrregular());
-        assertEquals("so", conjugationWordPosition.getConjugationRegularIrregularDTO().getConjugationRegular());
+        // Verificar que el mapa contiene la entrada esperada para verbo irregular
+        Map<PersonGenderNumber.PersonGenderNumberEnum, List<ConjugationWordPositionDTO>> personGenderNumberConjugation =
+                conjugationTenseDTO.getPersonGenderNumberConjugation();
+        assertNotNull(personGenderNumberConjugation);
+        assertTrue(personGenderNumberConjugation.containsKey(PersonGenderNumber.PersonGenderNumberEnum.FIRST_PLURAL_NEUTRAL));
+
+        List<ConjugationWordPositionDTO> conjugationWordPositions =
+                personGenderNumberConjugation.get(PersonGenderNumber.PersonGenderNumberEnum.FIRST_PLURAL_NEUTRAL);
+        assertNotNull(conjugationWordPositions);
+        assertEquals(1, conjugationWordPositions.size());
+
+        ConjugationWordPositionDTO conjugationWordPosition = conjugationWordPositions.get(0);
+        assertNotNull(conjugationWordPosition.getConjugationRegularIrregular());
+        assertEquals("soy", conjugationWordPosition.getConjugationRegularIrregular().getConjugationIrregular());
+        assertEquals("so", conjugationWordPosition.getConjugationRegularIrregular().getConjugationRegular());
     }
 
     // Helper methods

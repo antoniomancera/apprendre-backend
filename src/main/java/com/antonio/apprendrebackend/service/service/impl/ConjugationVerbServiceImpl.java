@@ -2,7 +2,7 @@ package com.antonio.apprendrebackend.service.service.impl;
 
 import com.antonio.apprendrebackend.service.dto.ConjugationTenseDTO;
 import com.antonio.apprendrebackend.service.dto.ConjugationRegularIrregularDTO;
-import com.antonio.apprendrebackend.service.dto.ConjugationWordPositionPersonGenderNumberDTO;
+import com.antonio.apprendrebackend.service.dto.ConjugationWordPositionDTO;
 import com.antonio.apprendrebackend.service.exception.ConjugationVerbNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.TenseMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseMapper;
@@ -46,7 +46,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
     /**
      * Return the conjugationComplete of a verb
      *
-     * @param wordISenseId
+     * @param wordSenseId
      * @return
      */
     @Override
@@ -76,12 +76,13 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
             List<ConjugationVerbForm> conjugationNonExistVerbForms = conjugationNonExistService.getByConjugationNonExistByTenseAndPersonGenderNumber(tense, personGenderNumberEnums).stream().map(conj -> conj.getConjugationVerbForm()).collect(Collectors.toList());
             List<ConjugationVerbFormIrregular> conjugationVerbFormIrregulars = conjugationVerbFormIrregularService.getConjugationVerbFormIrregularsByConjugationVariation(conjugationVariation);
 
-            List<ConjugationWordPositionPersonGenderNumberDTO> conjugationWordPositionPersonGenderNumbers = new ArrayList<>();
+            Map<PersonGenderNumber.PersonGenderNumberEnum, List<ConjugationWordPositionDTO>> personGenderNumberConjugation = new HashMap<>();
             for (PersonGenderNumber.PersonGenderNumberEnum personGenderNumberEnum : personGenderNumberEnums) {
                 if (conjugationNonExistVerbForms.stream().anyMatch(conjugationNonExist ->
                         conjugationNonExist.getPersonGenderNumber().getPersonGenderNumberEnum().equals(personGenderNumberEnum))) {
                     continue;
                 }
+                List<ConjugationWordPositionDTO> conjugationWordPositions = new ArrayList<>();
 
                 ConjugationVerbFormIrregular conjugationVerbFormIrregular =
                         getConjugationVerbFormIrregularOtherwiseNull(conjugationVerbFormIrregulars, tense, personGenderNumberEnum);
@@ -91,11 +92,12 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                 ConjugationRegularIrregularDTO conjugationRegularIrregular =
                         createConjugationRegularIrregular(conjugationBase, ending, conjugationVerbFormIrregular);
 
-                conjugationWordPositionPersonGenderNumbers.add(
-                        new ConjugationWordPositionPersonGenderNumberDTO(personGenderNumberEnum, conjugationRegularIrregular)
+                conjugationWordPositions.add(
+                        new ConjugationWordPositionDTO(conjugationRegularIrregular)
                 );
+                personGenderNumberConjugation.put(personGenderNumberEnum, conjugationWordPositions);
             }
-            conjugationTenseDTOS.add(new ConjugationTenseDTO(tenseMapper.toDTO(tense), conjugationWordPositionPersonGenderNumbers));
+            conjugationTenseDTOS.add(new ConjugationTenseDTO(tenseMapper.toDTO(tense), personGenderNumberConjugation));
         }
 
         for (HashMap<Tense, List<ConjugationVerbCompoundStructureItem>> tenseConjugationMap : tenseCompounds) {
@@ -103,11 +105,12 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
             List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums = getPersonGenderNumberEnumsByTense(tense);
             List<ConjugationVerbForm> conjugationNonExistVerbForms = conjugationNonExistService.getByConjugationNonExistByTenseAndPersonGenderNumber(tense, personGenderNumberEnums).stream().map(conj -> conj.getConjugationVerbForm()).collect(Collectors.toList());
 
-            List<ConjugationWordPositionPersonGenderNumberDTO> conjugationWordPositionPersonGenderNumbers = new ArrayList<>();
+            Map<PersonGenderNumber.PersonGenderNumberEnum, List<ConjugationWordPositionDTO>> personGenderNumberConjugation = new HashMap<>();
             for (PersonGenderNumber.PersonGenderNumberEnum personGenderNumberEnum : personGenderNumberEnums) {
                 if (conjugationNonExistVerbForms.stream().anyMatch(conjugationNonExist -> conjugationNonExist.getPersonGenderNumber().getPersonGenderNumberEnum().equals(personGenderNumberEnum))) {
                     continue;
                 }
+                List<ConjugationWordPositionDTO> conjugationWordPositions = new ArrayList<>();
 
                 List<ConjugationVerbCompoundStructureItem> conjugationVerbCompoundStructureItems = conjugationVerbCompoundStructureItemService.getConjugationVerbCompoundStructureItemsByTenseId(tense.getId());
                 List<ConjugationVerbCompoundStructureItem> sortedConjugationItems = conjugationVerbCompoundStructureItems.stream()
@@ -115,7 +118,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                         .toList();
                 for (ConjugationVerbCompoundStructureItem item : sortedConjugationItems) {
                     if (item.getWordSense() != null) {
-                        conjugationWordPositionPersonGenderNumbers.add(new ConjugationWordPositionPersonGenderNumberDTO(personGenderNumberEnum, wordSenseMapper.toDTO(item.getWordSense()), item.getPosition()));
+                        conjugationWordPositions.add(new ConjugationWordPositionDTO(wordSenseMapper.toDTO(item.getWordSense()), item.getPosition()));
                     }
                     if (item.getTense() != null) {
                         Integer verbGroupId = getVerbGroupId(conjugationVerb, item);
@@ -140,8 +143,8 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                         ConjugationRegularIrregularDTO conjugationRegularIrregular =
                                 createConjugationRegularIrregular(conjugationBase, ending, conjugationVerbFormIrregular);
 
-                        conjugationWordPositionPersonGenderNumbers.add(
-                                new ConjugationWordPositionPersonGenderNumberDTO(personGenderNumberEnum, conjugationRegularIrregular, item.getPosition())
+                        conjugationWordPositions.add(
+                                new ConjugationWordPositionDTO(conjugationRegularIrregular, item.getPosition())
                         );
                     }
                     if (item.getConjugationVerbForm() != null) {
@@ -166,13 +169,14 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                         ConjugationRegularIrregularDTO conjugationRegularIrregular =
                                 createConjugationRegularIrregular(conjugationBase, conjugationRegularTenseEnding.getEnding(), conjugationVerbFormIrregular);
 
-                        conjugationWordPositionPersonGenderNumbers.add(
-                                new ConjugationWordPositionPersonGenderNumberDTO(personGenderNumberEnum, conjugationRegularIrregular, item.getPosition())
+                        conjugationWordPositions.add(
+                                new ConjugationWordPositionDTO(conjugationRegularIrregular, item.getPosition())
                         );
                     }
+                    personGenderNumberConjugation.put(personGenderNumberEnum, conjugationWordPositions);
                 }
             }
-            conjugationTenseDTOS.add(new ConjugationTenseDTO(tenseMapper.toDTO(tense), conjugationWordPositionPersonGenderNumbers));
+            conjugationTenseDTOS.add(new ConjugationTenseDTO(tenseMapper.toDTO(tense), personGenderNumberConjugation));
         }
 
         return conjugationTenseDTOS;
