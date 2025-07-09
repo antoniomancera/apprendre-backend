@@ -42,7 +42,7 @@ public class PhraseTranslationServiceImplTest {
     private WordPhraseTranslationService wordPhraseTranslationService;
 
     @Mock
-    private DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
+    private DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     @Mock
     private WordTranslationMapper wordTranslationMapper;
@@ -101,7 +101,7 @@ public class PhraseTranslationServiceImplTest {
         WordTranslationDTO wordTranslationDTO2 = new WordTranslationDTO();
         wordTranslationDTO2.setId(2);
 
-        when(deckUserWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(phrases);
+        when(deckWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(phrases);
         when(wordPhraseTranslationService.getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1)).thenReturn(wordTranslations1);
         when(wordPhraseTranslationService.getWordTranslationsByDeckIdPhraseTranslationId(deckId, 2)).thenReturn(wordTranslations2);
         when(phraseTranslationMapper.toDTO(phraseTranslation1)).thenReturn(phraseDTO1);
@@ -122,7 +122,7 @@ public class PhraseTranslationServiceImplTest {
         assertEquals(1, result.get(1).getWordTranslations().size());
         assertEquals(wordTranslationDTO2, result.get(1).getWordTranslations().get(0));
 
-        verify(deckUserWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
+        verify(deckWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
         verify(wordPhraseTranslationService, times(1)).getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1);
         verify(wordPhraseTranslationService, times(1)).getWordTranslationsByDeckIdPhraseTranslationId(deckId, 2);
         verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation1);
@@ -135,7 +135,7 @@ public class PhraseTranslationServiceImplTest {
     void testGetAllPhrasesWithWordTranslationsByDeck_ThrowsExceptionWhenNoPhrasesFound() {
         // Given
         Integer deckId = 1;
-        when(deckUserWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(Collections.emptyList());
+        when(deckWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(Collections.emptyList());
 
         // When / Then
         PhraseNotFoundException exception = assertThrows(
@@ -144,7 +144,7 @@ public class PhraseTranslationServiceImplTest {
         );
 
         assertEquals(String.format("Not found any phrase of deck %s", deckId), exception.getMessage());
-        verify(deckUserWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
+        verify(deckWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
         verify(wordPhraseTranslationService, never()).getWordTranslationsByDeckIdPhraseTranslationId(anyInt(), anyInt());
     }
 
@@ -252,7 +252,7 @@ public class PhraseTranslationServiceImplTest {
         PhraseTranslationDTO phraseDTO = new PhraseTranslationDTO();
         phraseDTO.setId(1);
 
-        when(deckUserWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(phrases);
+        when(deckWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(phrases);
         when(wordPhraseTranslationService.getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1)).thenReturn(emptyWordTranslations);
         when(phraseTranslationMapper.toDTO(phraseTranslation)).thenReturn(phraseDTO);
 
@@ -265,7 +265,7 @@ public class PhraseTranslationServiceImplTest {
         assertEquals(phraseDTO, result.get(0).getPhrase());
         assertTrue(result.get(0).getWordTranslations().isEmpty());
 
-        verify(deckUserWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
+        verify(deckWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
         verify(wordPhraseTranslationService, times(1)).getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1);
         verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation);
         verify(wordTranslationMapper, never()).toDTO(any());

@@ -1,21 +1,24 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
 public class ConjugationVerbForm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "person_genre_number_id")
+    @JoinColumn(name = "person_gender_number_id")
     private PersonGenderNumber personGenderNumber;
 
     @ManyToOne
     @JoinColumn(name = "tense_id")
     private Tense tense;
-
 }

@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.model.UserRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,5 +14,5 @@ public interface UserRequestService {
      * @param message
      * @return
      */
-    UserRequest addUserRequest(@PathVariable String email, @RequestParam String subject, @RequestParam String message);
+    UserRequest addUserRequest(UserInfo userInfo, String email, String subject, String message);
 }

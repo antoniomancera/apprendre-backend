@@ -28,7 +28,7 @@ public interface WordPhraseTranslationService {
      * @param deckId
      * @param attempt
      * @return AttemptResultDTO with result and new WordPhraseTranslation in case of success
-     * @throws DeckUserWordPhraseTranslationNotFoundException if not exist anyone
+     * @throws DeckWordPhraseTranslationNotFoundException if not exist anyone
      */
     AttemptResultDTO attemptsWordPhraseTranslation(UserInfo userInfo, Integer wordPhraseId, Integer deckId, String attempt);
 

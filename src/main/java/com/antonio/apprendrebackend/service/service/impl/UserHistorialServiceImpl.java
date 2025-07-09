@@ -68,7 +68,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
         Map<String, UserHistorialDTO> groupedHistorialMap = new HashMap<>();
         for (UserHistorial historial : userHistorialList) {
             Integer deckId = historial.getDeckId();
-            Integer wordTranslationId = historial.getDeckUserWordPhraseTranslation().getId();
+            Integer wordTranslationId = historial.getDeckWordPhraseTranslation().getId();
 
             String key = deckId + "-" + wordTranslationId;
             UserHistorialDTO existingHistorialDTO = groupedHistorialMap.get(key);

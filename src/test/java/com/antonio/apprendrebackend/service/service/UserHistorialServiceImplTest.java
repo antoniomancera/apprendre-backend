@@ -3,7 +3,7 @@ package com.antonio.apprendrebackend.service.service;
 import com.antonio.apprendrebackend.service.dto.UserHistorialDTO;
 import com.antonio.apprendrebackend.service.exception.UserHistorialNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.UserHistorialMapper;
-import com.antonio.apprendrebackend.service.model.DeckUserWordPhraseTranslation;
+import com.antonio.apprendrebackend.service.model.DeckWordPhraseTranslation;
 import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.repository.UserHistorialRespository;
@@ -49,10 +49,10 @@ public class UserHistorialServiceImplTest {
         userInfo.setId(1);
         userInfo.setUserName("testUser");
 
-        DeckUserWordPhraseTranslation translation1 = new DeckUserWordPhraseTranslation();
+        DeckWordPhraseTranslation translation1 = new DeckWordPhraseTranslation();
         translation1.setId(101);
 
-        DeckUserWordPhraseTranslation translation2 = new DeckUserWordPhraseTranslation();
+        DeckWordPhraseTranslation translation2 = new DeckWordPhraseTranslation();
         translation2.setId(102);
 
         userHistorial1 = new UserHistorial();
@@ -61,7 +61,7 @@ public class UserHistorialServiceImplTest {
         userHistorial1.setDate(System.currentTimeMillis() - 24 * 60 * 60 * 1000); // yesterday
         userHistorial1.setSuccess(1);
         userHistorial1.setDeckId(1);
-        userHistorial1.setDeckUserWordPhraseTranslation(translation1);
+        userHistorial1.setDeckWordPhraseTranslation(translation1);
 
         userHistorial2 = new UserHistorial();
         userHistorial2.setId(2);
@@ -69,7 +69,7 @@ public class UserHistorialServiceImplTest {
         userHistorial2.setDate(System.currentTimeMillis()); // today
         userHistorial2.setSuccess(0);
         userHistorial2.setDeckId(1);
-        userHistorial2.setDeckUserWordPhraseTranslation(translation2);
+        userHistorial2.setDeckWordPhraseTranslation(translation2);
     }
 
     @Test
@@ -189,7 +189,7 @@ public class UserHistorialServiceImplTest {
         userHistorial2SameTranslation.setDate(System.currentTimeMillis());
         userHistorial2SameTranslation.setSuccess(1);
         userHistorial2SameTranslation.setDeckId(1);
-        userHistorial2SameTranslation.setDeckUserWordPhraseTranslation(userHistorial1.getDeckUserWordPhraseTranslation());
+        userHistorial2SameTranslation.setDeckWordPhraseTranslation(userHistorial1.getDeckWordPhraseTranslation());
 
         List<UserHistorial> historialList = Arrays.asList(userHistorial1, userHistorial2SameTranslation);
 

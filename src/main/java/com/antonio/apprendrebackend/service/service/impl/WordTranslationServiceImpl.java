@@ -3,14 +3,13 @@ package com.antonio.apprendrebackend.service.service.impl;
 import com.antonio.apprendrebackend.service.dto.PhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhraseTranslationsDTO;
-import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
 import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
 import com.antonio.apprendrebackend.service.repository.WordTranslationRepository;
-import com.antonio.apprendrebackend.service.service.DeckUserWordPhraseTranslationService;
+import com.antonio.apprendrebackend.service.service.DeckWordPhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.WordTranslationService;
 
@@ -37,7 +36,7 @@ public class WordTranslationServiceImpl implements WordTranslationService {
 
 
     @Autowired
-    DeckUserWordPhraseTranslationService deckUserWordPhraseTranslationService;
+    DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     /**
      * Get All WordTranslation and their Phrases associated given a deck
@@ -49,7 +48,7 @@ public class WordTranslationServiceImpl implements WordTranslationService {
     @Override
     public List<WordTranslationWithPhraseTranslationsDTO> getAllWordTranslationsWithPhrasesByDeck(Integer deckId) {
         System.out.println(deckId);
-        List<WordTranslation> wordTranslations = deckUserWordPhraseTranslationService.getWordTranslationsByDeckId(deckId);
+        List<WordTranslation> wordTranslations = deckWordPhraseTranslationService.getWordTranslationsByDeckId(deckId);
         if (wordTranslations.isEmpty() || wordTranslations.size() == 0) {
             throw new WordTranslationNotFoundException("Not found any wordTranslation");
         }

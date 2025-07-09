@@ -18,9 +18,5 @@ public class WordSense {
     @JoinColumn(name = "word_id")
     private Word word;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
-
     private String sense;
 }
