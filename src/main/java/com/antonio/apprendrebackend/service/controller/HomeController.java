@@ -10,6 +10,7 @@ import com.antonio.apprendrebackend.service.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class HomeController {
      */
     @GetMapping
     public @ResponseBody ResponseEntity<?> getHome() {
-        UserInfo userInfo = new UserInfo(1, "1");
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         Home home = homeService.getHome(userInfo);
         return ResponseEntity.ok(home);
     }

@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserHistorialDTO {
     private Integer id;
-    private DeckUserWordPhraseTranslationDTO deckUserWordPhraseTranslation;
+    private DeckWordPhraseTranslationDTO deckWordPhraseTranslation;
     private Long date;
     private Integer success;
     private Integer attempts;

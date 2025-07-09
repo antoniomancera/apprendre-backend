@@ -12,8 +12,10 @@ import org.mapstruct.factory.Mappers;
 public interface WordMapper {
     WordMapper INSTANCE = Mappers.getMapper(WordMapper.class);
 
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "language", source = "language")
     @Mapping(target = "name", source = "name")
+    @Mapping(target = "type", source = "type")
     WordDTO toDTO(Word word);
 }
 

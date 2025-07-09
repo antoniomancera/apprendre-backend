@@ -1,26 +1,28 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
 public class ConjugationVariation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "conjugation_non_exist_id")
-    private ConjugationNonExist conjugationNonExist;
+    @OneToOne
+    @JoinColumn(name = "conjugation_verb_id")
+    private ConjugationVerb conjugationVerb;
 
     @ManyToOne
     @JoinColumn(name = "conjugation_irregular_pattern_id")
     private ConjugationIrregularPattern conjugationIrregularPattern;
-
-    @ManyToOne
-    @JoinColumn(name = "conjugation_verb_form_id")
-    private ConjugationVerbForm conjugationVerbForm;
 }
 
 

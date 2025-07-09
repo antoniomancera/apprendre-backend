@@ -15,11 +15,4 @@ public class UserInfo {
     private Integer id;
     private String supabaseId;
     private String userName;
-
-
-    //borrar
-    public UserInfo(Integer id, String supabaseId) {
-        this.id = id;
-        this.supabaseId = supabaseId;
-    }
 }

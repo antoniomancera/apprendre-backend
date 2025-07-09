@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.Random;
-
 @Entity
 @Getter
 @Setter
@@ -24,16 +21,12 @@ public class WordTranslation {
     private WordSense wordSenseSp;
 
     @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne
     @JoinColumn(name = "level_id")
     private Level level;
+
+    @ManyToOne
+    @JoinColumn(name = "conjugation_verb_form_id")
+    private ConjugationVerbForm conjugationVerbForm;
 
     private Integer attempts;
     private Integer successes;
