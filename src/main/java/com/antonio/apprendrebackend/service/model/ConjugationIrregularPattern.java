@@ -16,10 +16,6 @@ public class ConjugationIrregularPattern {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany
-    @JoinColumn(name = "conjugation_derivation_patron_tense_id")
-    private List<ConjugationVerbForm> conjugationDerivationPatronTense;
-
     @ManyToOne
     @JoinColumn(name = "conjugation_patron_tense_finite_id")
     private ConjugationPatronTenseFinite conjugationPatronTenseFinite;

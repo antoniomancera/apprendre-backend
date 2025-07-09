@@ -23,12 +23,6 @@ public class ConjugationVariation {
     @ManyToOne
     @JoinColumn(name = "conjugation_irregular_pattern_id")
     private ConjugationIrregularPattern conjugationIrregularPattern;
-
-    @OneToMany(mappedBy = "conjugationVariation", cascade = CascadeType.ALL)
-    private List<ConjugationNonExist> conjugationNonExist;
-
-    @OneToMany(mappedBy = "conjugationVariation", cascade = CascadeType.ALL)
-    private List<ConjugationVerbFormIrregular> conjugationVerbFormIrregulars;
 }
 
 
