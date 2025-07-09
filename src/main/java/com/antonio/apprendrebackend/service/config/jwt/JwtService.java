@@ -28,10 +28,24 @@ public class JwtService {
     }
 
     private static Claims extractClaims(String token) {
-        String secretKey = "";
-        Dotenv dotenv = Dotenv.load();
-        secretKey = dotenv.get("JWT_SECRET_KEY");
-        return Jwts.parser().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token).getBody();
+        // For the render version try to get the variable from environment
+        String secretKey = System.getenv("JWT_SECRET_KEY");
+
+        // For local, try to get from .env local
+        if (secretKey == null || secretKey.isEmpty()) {
+            Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+            secretKey = dotenv.get("JWT_SECRET_KEY");
+        }
+
+        if (secretKey == null || secretKey.isEmpty()) {
+            throw new IllegalStateException("JWT_SECRET_KEY is not defined .env");
+        }
+
+        return Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private boolean isTokenExpired(String token) {
