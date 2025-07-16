@@ -15,7 +15,7 @@ public interface DeckWordPhraseTranslationRespository extends CrudRepository<Dec
      *
      * @return
      */
-    @Query(value = "SELECT dwt.* FROM deck_user_word_phrase_translation dwt inner join deck_user ud on dwt.deck_user_id = ud.id WHERE ud.user_id=:userId ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT dwt.* FROM deck_word_phrase_translation dwt inner join deck ud on dwt.deck_id = ud.id WHERE ud.user_id=:userId ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     Optional<DeckWordPhraseTranslation> findRandomUserDeckWordPhraseTranslationWithByUser(Integer userId);
 
 
@@ -25,7 +25,7 @@ public interface DeckWordPhraseTranslationRespository extends CrudRepository<Dec
      * @param deckId
      * @return
      */
-    @Query(value = "SELECT dwt.* FROM deck_user_word_phrase_translation dwt inner join deck_user ud on dwt.deck_user_id = ud.id WHERE dwt.deck_user_id = :deckId and ud.user_id=:userId ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT dwt.* FROM deck_word_phrase_translation dwt inner join deck ud on dwt.deck_id = ud.id WHERE dwt.deck_id = :deckId and ud.user_id=:userId ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     Optional<DeckWordPhraseTranslation> findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId, Integer userId);
 
     Optional<DeckWordPhraseTranslation> findByDeckIdAndWordPhraseTranslationId(Integer deckId, Integer wordPhraseTranslationId);

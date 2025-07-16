@@ -13,7 +13,7 @@ public class DeckWordPhraseTranslation {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "deck_user_id", nullable = false)
+    @JoinColumn(name = "deck_id", nullable = false)
     private Deck deck;
 
     @ManyToOne
