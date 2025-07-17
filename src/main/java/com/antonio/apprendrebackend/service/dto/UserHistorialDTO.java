@@ -13,7 +13,7 @@ public class UserHistorialDTO {
     private Integer id;
     private DeckWordPhraseTranslationDTO deckWordPhraseTranslation;
     private Long date;
-    private Integer success;
+    private SuccessDTO success;
     private Integer attempts;
-    private Integer deckId;
+    private DeckDTO deck;
 }

@@ -20,28 +20,32 @@ public class UserHistorial {
     @JoinColumn(name = "user_id")
     private UserInfo userInfo;
 
-    @Column(name = "deck_id")
-    private Integer deckId;
+    @ManyToOne
+    @JoinColumn(name = "deck_id")
+    private Deck deck;
+
+    @ManyToOne
+    @JoinColumn(name = "success_id")
+    private Success success;
 
     private Long date;
-
-    private Integer success;
 
     public UserHistorial() {
         this.date = System.currentTimeMillis();
     }
 
-    public UserHistorial(DeckWordPhraseTranslation deckWordPhraseTranslation, Integer success, Integer deckId) {
+    public UserHistorial(DeckWordPhraseTranslation deckWordPhraseTranslation, UserInfo userInfo, Success success, Deck deck) {
         this.deckWordPhraseTranslation = deckWordPhraseTranslation;
+        this.userInfo = userInfo;
         this.date = System.currentTimeMillis();
         this.success = success;
-        this.deckId = deckId;
+        this.deck = deck;
     }
 
-    public UserHistorial(DeckWordPhraseTranslation deckWordPhraseTranslation, Long date, Integer success, Integer deckId) {
+    public UserHistorial(DeckWordPhraseTranslation deckWordPhraseTranslation, Long date, Success success, Deck deck) {
         this.deckWordPhraseTranslation = deckWordPhraseTranslation;
         this.date = date;
         this.success = success;
-        this.deckId = deckId;
+        this.deck = deck;
     }
 }

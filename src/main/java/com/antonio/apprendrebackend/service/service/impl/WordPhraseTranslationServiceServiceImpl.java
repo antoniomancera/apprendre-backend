@@ -5,9 +5,9 @@ import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.mapper.WordPhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.WordPhraseTranslationRepository;
-import com.antonio.apprendrebackend.service.service.DeckWordPhraseTranslationService;
-import com.antonio.apprendrebackend.service.service.UserHistorialService;
-import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
+import com.antonio.apprendrebackend.service.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +15,25 @@ import java.util.List;
 
 @Service
 public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTranslationService {
+    private static final Logger logger = LoggerFactory.getLogger(WordPhraseTranslationServiceServiceImpl.class);
 
     @Autowired
-    DeckWordPhraseTranslationService deckWordPhraseTranslationService;
+    private DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     @Autowired
-    WordPhraseTranslationMapper wordPhraseTranslationMapper;
+    private WordPhraseTranslationMapper wordPhraseTranslationMapper;
 
     @Autowired
-    UserHistorialService userHistorialService;
+    private UserHistorialService userHistorialService;
 
     @Autowired
-    WordPhraseTranslationRepository wordPhraseTranslationRepository;
+    private DeckService deckService;
+
+    @Autowired
+    private SuccessService successService;
+
+    @Autowired
+    private WordPhraseTranslationRepository wordPhraseTranslationRepository;
 
     /**
      * Return a Random WordTranslation depending on an optional deck
@@ -36,6 +43,8 @@ public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTransl
      */
     @Override
     public WordPhraseTranslationDTO getRandomWordPhraseTranslation(UserInfo userInfo, Integer deckId) {
+        logger.info(String.format("Get a random WordPhraseTranslation of the deck: %d", deckId));
+
         DeckWordPhraseTranslation deckWordTranslation;
         if (deckId != null) {
             deckWordTranslation = deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId);
@@ -57,10 +66,13 @@ public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTransl
      */
     @Override
     public AttemptResultDTO attemptsWordPhraseTranslation(UserInfo userInfo, Integer wordPhraseId, Integer deckId, String attempt) {
+        logger.info(String.format("Attempts: %s, for the wordPhraseTranslation:  %d, of deck: %d", attempt, wordPhraseId, deckId));
+
         DeckWordPhraseTranslation deckWordPhraseTranslation = deckWordPhraseTranslationService.getByDeckIdAndWordPhraseTranslationId(deckId, wordPhraseId);
+        Deck deck = deckService.getDeckbyId(deckId);
         Boolean hasSuccess = deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseFr().getWord().getName().equals(attempt);
         updateStats(hasSuccess, deckWordPhraseTranslation);
-        userHistorialService.postUserHistorial(new UserHistorial(deckWordPhraseTranslation, hasSuccess ? 1 : 0, deckId));
+        userHistorialService.postUserHistorial(new UserHistorial(deckWordPhraseTranslation, userInfo, successService.getSuccessByAttemptAndWordSense(attempt, deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseFr()), deck));
         if (hasSuccess) {
             return new AttemptResultDTO(true, getRandomWordPhraseTranslation(userInfo, deckId));
         }
@@ -76,6 +88,8 @@ public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTransl
      */
     @Override
     public List<PhraseTranslation> getPhrasesByDeckIdAndWordTranslationId(Integer deckId, Integer wordTranslationId) {
+        logger.info(String.format("Getting all the phrases for deck: %d, and wordTranslation: %d", deckId, wordTranslationId));
+
         return wordPhraseTranslationRepository.findPhrasesByDeckIdAndWordTranslationId(deckId, wordTranslationId);
     }
 
@@ -88,6 +102,8 @@ public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTransl
      */
     @Override
     public List<WordTranslation> getWordTranslationsByDeckIdPhraseTranslationId(Integer deckId, Integer phraseTranslationId) {
+        logger.info(String.format("Getting all the wordTranslations for deck: %d, and phrase: %d", deckId, phraseTranslationId));
+
         return wordPhraseTranslationRepository.findWordTranslationsByDeckIdPhraseTranslationId(deckId, phraseTranslationId);
     }
 

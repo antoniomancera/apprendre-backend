@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.exception.DeckNotFoundException;
 import com.antonio.apprendrebackend.service.model.Deck;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 
@@ -12,4 +13,13 @@ public interface DeckService {
      * @return List<Deck>
      */
     List<Deck> getActiveDecks(UserInfo userInfo);
+
+    /**
+     * Get a deck by their id
+     *
+     * @param deckId
+     * @return Deck
+     * @throws DeckNotFoundException if not found anyone with their id
+     */
+    Deck getDeckbyId(Integer deckId);
 }
