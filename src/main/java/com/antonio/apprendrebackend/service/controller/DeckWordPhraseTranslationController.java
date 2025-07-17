@@ -4,6 +4,8 @@ import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/deckWordPhrase")
 public class DeckWordPhraseTranslationController {
+    private static final Logger logger = LoggerFactory.getLogger(DeckWordPhraseTranslationController.class);
+
     @Autowired
     WordPhraseTranslationService wordPhraseTranslationService;
 
@@ -27,6 +31,8 @@ public class DeckWordPhraseTranslationController {
      */
     @GetMapping(path = {"/getRandom/{deckId}", "/getRandom"})
     public @ResponseBody ResponseEntity<?> getRandomWordPhraseTranslation(@PathVariable(required = false) Integer deckId) {
+        logger.info(String.format("Get a random WordPhraseTranslation of the deck: %d", deckId));
+
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         WordPhraseTranslationDTO wordPhraseRandom = wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
         return ResponseEntity.ok(wordPhraseRandom);
@@ -44,6 +50,8 @@ public class DeckWordPhraseTranslationController {
      */
     @PutMapping(path = "/attempts/{wordPhraseId}")
     public @ResponseBody ResponseEntity<?> attemptsWordPhraseTranslation(@PathVariable Integer wordPhraseId, @RequestParam Integer deckId, @RequestParam String attempt) {
+        logger.info(String.format("Attempts: %s, for the wordPhraseTranslation:  %d, of deck: %d", attempt, wordPhraseId, deckId));
+
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         AttemptResultDTO wordPhraseTranslationDTO = wordPhraseTranslationService.attemptsWordPhraseTranslation(userInfo, wordPhraseId, deckId, attempt);
         return ResponseEntity.ok(wordPhraseTranslationDTO);
