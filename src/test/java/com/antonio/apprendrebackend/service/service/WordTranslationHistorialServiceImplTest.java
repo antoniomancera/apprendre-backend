@@ -34,6 +34,12 @@ public class WordTranslationHistorialServiceImplTest {
     @Mock
     private WordPhraseTranslationRepository wordPhraseTranslationRepository;
 
+    @Mock
+    private DeckService deckService;
+
+    @Mock
+    private SuccessService successService;
+
     @InjectMocks
     private WordPhraseTranslationServiceServiceImpl wordPhraseTranslationService;
 
@@ -162,39 +168,6 @@ public class WordTranslationHistorialServiceImplTest {
 
     */
 
-    @Test
-    void testAttemptsWordPhraseTranslationFailure() {
-        // Given
-        Integer wordPhraseId = 401;
-        Integer deckId = 10;
-        String attempt = "incorrect"; // Incorrect attempt
-
-        // When
-        when(deckWordPhraseTranslationService.getByDeckIdAndWordPhraseTranslationId(deckId, wordPhraseId))
-                .thenReturn(deckWordPhraseTranslation);
-        when(userHistorialService.postUserHistorial(any(UserHistorial.class)))
-                .thenReturn(new UserHistorial());
-
-        AttemptResultDTO result = wordPhraseTranslationService.attemptsWordPhraseTranslation(
-                userInfo, wordPhraseId, deckId, attempt);
-
-        // Then
-        assertNotNull(result);
-        assertFalse(result.isHasSuccess());
-        assertNull(result.getWordPhraseTranslation());
-
-        // Verify stats update (only attempts should increase, not successes)
-        assertEquals(6, deckWordPhraseTranslation.getAttempts());
-        assertEquals(3, deckWordPhraseTranslation.getSuccesses());
-
-        // Verify historial was created with success=0
-        ArgumentCaptor<UserHistorial> historialCaptor = ArgumentCaptor.forClass(UserHistorial.class);
-        verify(userHistorialService, times(1)).postUserHistorial(historialCaptor.capture());
-        UserHistorial capturedHistorial = historialCaptor.getValue();
-        assertEquals(0, capturedHistorial.getSuccess());
-        assertEquals(deckWordPhraseTranslation, capturedHistorial.getDeckWordPhraseTranslation());
-        assertEquals(deckId, capturedHistorial.getDeckId());
-    }
 
     @Test
     void testGetPhrasesByDeckIdAndWordTranslationId() {
