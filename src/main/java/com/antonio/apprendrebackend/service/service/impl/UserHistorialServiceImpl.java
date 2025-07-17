@@ -7,6 +7,8 @@ import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.repository.UserHistorialRespository;
 import com.antonio.apprendrebackend.service.service.UserHistorialService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ import static com.antonio.apprendrebackend.service.util.GeneralConstants.ONE_DAY
 
 @Service
 public class UserHistorialServiceImpl implements UserHistorialService {
+    private static final Logger logger = LoggerFactory.getLogger(UserHistorialServiceImpl.class);
+
     @Autowired
     UserHistorialRespository userHistorialRespository;
 
@@ -33,6 +37,8 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public List<UserHistorial> getUserHistorialLastWeek(UserInfo userInfo) {
+        logger.debug("Getting userHistorial of the last week");
+
         LocalDate today = LocalDate.now();
         long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
@@ -47,11 +53,15 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public Optional<UserHistorial> getLastUserHistorial(UserInfo userInfo) {
+        logger.debug("Getting last userHistorial");
+
         return userHistorialRespository.findFirstByUserInfoOrderByDateDesc(userInfo);
     }
 
     @Override
     public List<UserHistorialDTO> getDeckWordTranslationHistorialByDayMillis(UserInfo userInfo, Long dayMillis) {
+        logger.debug("Getting the userHistorial of the day: %d", dayMillis);
+
         if (dayMillis == null) {
             throw new IllegalArgumentException("The argument is null");
         }
@@ -67,7 +77,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
 
         Map<String, UserHistorialDTO> groupedHistorialMap = new HashMap<>();
         for (UserHistorial historial : userHistorialList) {
-            Integer deckId = historial.getDeckId();
+            Integer deckId = historial.getDeck().getId();
             Integer wordTranslationId = historial.getDeckWordPhraseTranslation().getId();
 
             String key = deckId + "-" + wordTranslationId;
@@ -78,7 +88,9 @@ public class UserHistorialServiceImpl implements UserHistorialService {
                 newHistorialDTO.setAttempts(1);
                 groupedHistorialMap.put(key, newHistorialDTO);
             } else {
-                existingHistorialDTO.setSuccess(existingHistorialDTO.getSuccess() + historial.getSuccess());
+                existingHistorialDTO.getSuccess().setScore(
+                        existingHistorialDTO.getSuccess().getScore() + historial.getSuccess().getScore()
+                );
                 existingHistorialDTO.setAttempts(existingHistorialDTO.getAttempts() + 1);
             }
         }
@@ -93,6 +105,8 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public UserHistorial postUserHistorial(UserHistorial userHistorial) {
+        logger.debug("Saving a new UserHistorial");
+
         return userHistorialRespository.save(userHistorial);
     }
 }

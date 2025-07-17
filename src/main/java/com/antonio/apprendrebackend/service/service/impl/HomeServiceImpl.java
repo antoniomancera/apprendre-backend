@@ -7,6 +7,8 @@ import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.Home;
 import com.antonio.apprendrebackend.service.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class HomeServiceImpl implements HomeService {
+    private static final Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
+
     @Autowired
     GoalService goalService;
     @Autowired
@@ -37,6 +41,8 @@ public class HomeServiceImpl implements HomeService {
      */
     @Override
     public Home getHome(UserInfo userInfo) {
+        logger.debug("Getting all the information related to home page for the user");
+        
         Home home = new Home();
         home.setWeekStats(statsService.getDailyStatsLastWeek(userInfo));
         home.setGoal(goalMapper.toDTO(goalService.getActiveGoal(userInfo)));
@@ -45,8 +51,9 @@ public class HomeServiceImpl implements HomeService {
                 .map(deck -> deckMapper.toDTO(deck))
                 .collect(Collectors.toList()));
 
-        home.setLastDeckId(userHistorialService.getLastUserHistorial(userInfo)
-                .map(UserHistorial::getDeckId)
+        home.setLastDeck(userHistorialService.getLastUserHistorial(userInfo)
+                .map(UserHistorial::getDeck)
+                .map(deck -> deckMapper.toDTO(deck))
                 .orElse(null));
 
         if (home == null) {
