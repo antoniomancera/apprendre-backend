@@ -328,5 +328,38 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(DeckNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDeckNotFoundException(DeckNotFoundException ex, WebRequest request) {
+        logger.warn("DeckNotFoundException: {} - Path: {}", ex.getMessage(), request.getDescription(false));
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.DECK_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(SuccessNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSuccessNotFoundException(SuccessNotFoundException ex, WebRequest request) {
+        logger.warn("SuccessNotFoundException: {} - Path: {}", ex.getMessage(), request.getDescription(false));
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.SUCCESS_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
 
 }
