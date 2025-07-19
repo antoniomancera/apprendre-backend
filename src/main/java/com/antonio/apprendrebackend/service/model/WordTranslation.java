@@ -28,20 +28,10 @@ public class WordTranslation {
     @JoinColumn(name = "conjugation_verb_form_id")
     private ConjugationVerbForm conjugationVerbForm;
 
-    private Integer attempts;
-    private Integer successes;
     private Integer importanceIndex;
-
-
-    public WordTranslation() {
-        this.attempts = 0;
-        this.successes = 0;
-    }
 
     public WordTranslation(WordSense wordSenseFr, WordSense wordSenseSp) {
         this.wordSenseFr = wordSenseFr;
         this.wordSenseSp = wordSenseSp;
-        this.attempts = 0;
-        this.successes = 0;
     }
 }
