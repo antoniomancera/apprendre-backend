@@ -11,14 +11,10 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface WordTranslationMapper {
-
     WordTranslationMapper INSTANCE = Mappers.getMapper(WordTranslationMapper.class);
-
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "wordSenseFr", source = "wordSenseFr")
     @Mapping(target = "wordSenseSp", source = "wordSenseSp")
-    @Mapping(target = "attempts", source = "attempts")
-    @Mapping(target = "successes", source = "successes")
     WordTranslationDTO toDTO(WordTranslation wordTranslation);
 }
