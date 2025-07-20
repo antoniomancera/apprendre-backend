@@ -25,8 +25,19 @@ public interface DeckWordPhraseTranslationRespository extends CrudRepository<Dec
      * @param deckId
      * @return
      */
-    @Query(value = "SELECT dwt.* FROM deck_word_phrase_translation dwt inner join deck ud on dwt.deck_id = ud.id WHERE dwt.deck_id = :deckId and ud.user_id=:userId ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
-    Optional<DeckWordPhraseTranslation> findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId, Integer userId);
+    @Query(value = """
+            SELECT dwpt.* FROM (
+                SELECT *,
+                       SUM(current_weight) OVER (ORDER BY id) as running_total,
+                       (SELECT SUM(current_weight) FROM deck_word_phrase_translation WHERE deck_id = :deckId) as total_weight
+                FROM deck_word_phrase_translation
+                WHERE deck_id = :deckId AND current_weight > 0
+                ORDER BY id
+            ) dwpt
+            WHERE dwpt.running_total >= (FLOOR(RANDOM() * dwpt.total_weight) + 1)
+            LIMIT 1
+            """, nativeQuery = true)
+    Optional<DeckWordPhraseTranslation> findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId);
 
     Optional<DeckWordPhraseTranslation> findByDeckIdAndWordPhraseTranslationId(Integer deckId, Integer wordPhraseTranslationId);
 

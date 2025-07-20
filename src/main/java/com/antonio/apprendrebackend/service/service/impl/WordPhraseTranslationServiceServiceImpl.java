@@ -47,7 +47,7 @@ public class WordPhraseTranslationServiceServiceImpl implements WordPhraseTransl
 
         DeckWordPhraseTranslation deckWordTranslation;
         if (deckId != null) {
-            deckWordTranslation = deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId);
+            deckWordTranslation = deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
         } else {
             deckWordTranslation = deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId());
         }

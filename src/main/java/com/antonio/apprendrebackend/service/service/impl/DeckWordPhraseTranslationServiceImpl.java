@@ -37,12 +37,11 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
      * Return a WordTranslation of a deck
      *
      * @param deckId
-     * @param userId
      * @return DeckWordPhraseTranslation
      */
     @Override
-    public DeckWordPhraseTranslation getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId, Integer userId) {
-        Optional<DeckWordPhraseTranslation> deckWordPhraseTranslation = deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId, userId);
+    public DeckWordPhraseTranslation getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId) {
+        Optional<DeckWordPhraseTranslation> deckWordPhraseTranslation = deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
         if (deckWordPhraseTranslation.isEmpty()) {
             throw new DeckWordPhraseTranslationNotFoundException(String.format("Word not found for deck", deckId));
         }
