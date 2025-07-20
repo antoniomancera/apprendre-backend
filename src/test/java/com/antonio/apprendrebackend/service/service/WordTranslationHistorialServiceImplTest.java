@@ -90,7 +90,7 @@ public class WordTranslationHistorialServiceImplTest {
         expectedDto.setId(401);
 
         // When
-        when(deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId))
+        when(deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId))
                 .thenReturn(deckWordPhraseTranslation);
         when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
 
@@ -100,7 +100,7 @@ public class WordTranslationHistorialServiceImplTest {
         assertNotNull(result);
         assertEquals(401, result.getId());
         verify(deckWordPhraseTranslationService, times(1))
-                .getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(userInfo.getId(), deckId);
+                .getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
         verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation);
     }
 

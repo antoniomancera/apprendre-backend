@@ -72,39 +72,37 @@ public class DeckWordPhraseTranslationServiceImplTest {
     void testGetRandomUserDeckWordPhraseTranslationWithByDeckAndUser_ReturnsTranslation() {
         // Given
         Integer deckId = 1;
-        Integer userId = 1;
         DeckWordPhraseTranslation mockTranslation = new DeckWordPhraseTranslation();
-        when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId, userId))
+        when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId))
                 .thenReturn(Optional.of(mockTranslation));
 
         // When
         DeckWordPhraseTranslation result = deckWordPhraseTranslationService
-                .getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId, userId);
+                .getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
 
         // Then
         assertNotNull(result);
         assertEquals(mockTranslation, result);
         verify(deckWordPhraseTranslationRespository, times(1))
-                .findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId, userId);
+                .findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
     }
 
     @Test
     void testGetRandomUserDeckWordPhraseTranslationWithByDeckAndUser_ThrowsExceptionWhenNotFound() {
         // Given
         Integer deckId = 1;
-        Integer userId = 1;
-        when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId, userId))
+        when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId))
                 .thenReturn(Optional.empty());
 
         // When / Then
         DeckWordPhraseTranslationNotFoundException exception = assertThrows(
                 DeckWordPhraseTranslationNotFoundException.class,
-                () -> deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId, userId)
+                () -> deckWordPhraseTranslationService.getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId)
         );
 
         assertEquals("Word not found for deck", exception.getMessage());
         verify(deckWordPhraseTranslationRespository, times(1))
-                .findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId, userId);
+                .findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
     }
 
     @Test

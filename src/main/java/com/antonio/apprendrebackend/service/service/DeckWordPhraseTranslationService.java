@@ -20,10 +20,9 @@ public interface DeckWordPhraseTranslationService {
      * Return a WordTranslation of a deck
      *
      * @param deckId
-     * @param userId
      * @return DeckWordPhraseTranslation
      */
-    DeckWordPhraseTranslation getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId, Integer userId);
+    DeckWordPhraseTranslation getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId);
 
     /**
      * Get DeckWordPhraseTranslation given a Deck and a WordPhraseTranslation
