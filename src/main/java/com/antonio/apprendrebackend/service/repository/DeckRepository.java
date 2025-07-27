@@ -11,4 +11,6 @@ public interface DeckRepository extends CrudRepository<Deck, Integer> {
     List<Deck> findByEndDateNullAndUserInfo(UserInfo userInfo);
 
     Optional<Deck> findById(Integer deckId);
+
+    List<Deck> findByName(String name);
 }

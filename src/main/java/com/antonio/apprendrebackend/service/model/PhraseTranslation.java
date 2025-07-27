@@ -21,4 +21,6 @@ public class PhraseTranslation {
     private Phrase phraseSp;
 
     private String description;
+
+    private Integer baseWeight;
 }

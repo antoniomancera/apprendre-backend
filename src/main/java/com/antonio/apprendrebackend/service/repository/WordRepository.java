@@ -12,4 +12,6 @@ import java.util.List;
 public interface WordRepository extends CrudRepository<Word, Integer> {
 
     List<Word> findByType(Type type);
+
+    Page<Word> findAll(Pageable pageable);
 }

@@ -1,9 +1,11 @@
 package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
+import com.antonio.apprendrebackend.service.dto.DeckDTO;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
+import com.antonio.apprendrebackend.service.model.CreateDeckWithWordPhraseTranslationRequest;
 import com.antonio.apprendrebackend.service.model.UserInfo;
-import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
+import com.antonio.apprendrebackend.service.service.DeckWordPhraseTranslationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ public class DeckWordPhraseTranslationController {
     private static final Logger logger = LoggerFactory.getLogger(DeckWordPhraseTranslationController.class);
 
     @Autowired
-    WordPhraseTranslationService wordPhraseTranslationService;
+    DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     /**
      * Method that returns a word and a phrase, the deck is optional
@@ -34,7 +36,7 @@ public class DeckWordPhraseTranslationController {
         logger.info(String.format("Get a random WordPhraseTranslation of the deck: %d", deckId));
 
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        WordPhraseTranslationDTO wordPhraseRandom = wordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
+        WordPhraseTranslationDTO wordPhraseRandom = deckWordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
         return ResponseEntity.ok(wordPhraseRandom);
     }
 
@@ -53,7 +55,24 @@ public class DeckWordPhraseTranslationController {
         logger.info(String.format("Attempts: %s, for the wordPhraseTranslation:  %d, of deck: %d", attempt, wordPhraseId, deckId));
 
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        AttemptResultDTO wordPhraseTranslationDTO = wordPhraseTranslationService.attemptsWordPhraseTranslation(userInfo, wordPhraseId, deckId, attempt);
+        AttemptResultDTO wordPhraseTranslationDTO = deckWordPhraseTranslationService.attemptsWordPhraseTranslation(userInfo, wordPhraseId, deckId, attempt);
         return ResponseEntity.ok(wordPhraseTranslationDTO);
+    }
+
+    /**
+     * Create a deck with a name and a description, besides, a list of deckWordPhraseTranslation is created linked
+     * to the deck
+     *
+     * @param request
+     * @return HTTP respond with the DeckDTO created
+     * @throws WordPhraseTranslationNotFoundException if any wordPhraseTranslation is not found
+     */
+    @PostMapping(path = "add")
+    public @ResponseBody ResponseEntity<?> createDeckWithWordPhraseTranslation(@RequestBody CreateDeckWithWordPhraseTranslationRequest request) {
+        logger.info(String.format("Created a deck with name %s", request.getName()));
+
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        DeckDTO deck = deckWordPhraseTranslationService.createDeckWithWordPhraseTranslation(userInfo, request.getName(), request.getDescription(), request.getWordPhraseTranslationIds());
+        return ResponseEntity.ok(deck);
     }
 }
