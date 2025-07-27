@@ -22,4 +22,11 @@ public class Deck {
     private String description;
     private Long beginDate;
     private Long endDate;
+
+    public Deck(UserInfo userInfo, String name, String description) {
+        this.userInfo = userInfo;
+        this.name = name;
+        this.description = description;
+        this.beginDate = System.currentTimeMillis();
+    }
 }
