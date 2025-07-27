@@ -282,7 +282,6 @@ public class DeckWordPhraseTranslationServiceImplTest {
         WordPhraseTranslationDTO expectedDto = new WordPhraseTranslationDTO();
         expectedDto.setId(401);
 
-        // Mock the repository call directly instead of calling the service method
         when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId))
                 .thenReturn(Optional.of(deckWordPhraseTranslation));
         when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
@@ -305,7 +304,6 @@ public class DeckWordPhraseTranslationServiceImplTest {
         WordPhraseTranslationDTO expectedDto = new WordPhraseTranslationDTO();
         expectedDto.setId(401);
 
-        // Mock the repository call directly instead of calling the service method
         when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId()))
                 .thenReturn(Optional.of(deckWordPhraseTranslation));
         when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
@@ -336,8 +334,6 @@ public class DeckWordPhraseTranslationServiceImplTest {
                 .thenReturn(Optional.of(deckWordPhraseTranslation));
         when(deckService.getDeckbyId(deckId)).thenReturn(deck);
         when(successService.getSuccessByAttemptAndWordSense(attempt, wordSenseFr)).thenReturn(success);
-
-        // Mock the repository call for getRandomWordPhraseTranslation
         when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId))
                 .thenReturn(Optional.of(deckWordPhraseTranslation));
         when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(nextWordDto);
@@ -351,7 +347,6 @@ public class DeckWordPhraseTranslationServiceImplTest {
         assertTrue(result.isHasSuccess());
         assertNotNull(result.getWordPhraseTranslation());
 
-        // Verify stats were updated
         assertEquals(6, deckWordPhraseTranslation.getAttempts());
         assertEquals(4, deckWordPhraseTranslation.getSuccesses());
 
@@ -381,12 +376,10 @@ public class DeckWordPhraseTranslationServiceImplTest {
         assertFalse(result.isHasSuccess());
         assertNull(result.getWordPhraseTranslation());
 
-        // Verify stats were updated
         assertEquals(6, deckWordPhraseTranslation.getAttempts()); // 5 + 1
         assertEquals(3, deckWordPhraseTranslation.getSuccesses()); // No change
 
         verify(userHistorialService, times(1)).postUserHistorial(any(UserHistorial.class));
-        // Remove the problematic verify call - don't verify the service itself
         verify(deckWordPhraseTranslationRespository, never())
                 .findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(any());
     }
@@ -405,18 +398,17 @@ public class DeckWordPhraseTranslationServiceImplTest {
         expectedDeckDTO.setId(1);
         expectedDeckDTO.setName(name);
 
-        // Create properly initialized WordPhraseTranslation objects
         WordPhraseTranslation wordPhraseTranslation1 = new WordPhraseTranslation();
         wordPhraseTranslation1.setId(401);
-        wordPhraseTranslation1.setWordTranslation(wordTranslation); // Set the WordTranslation
+        wordPhraseTranslation1.setWordTranslation(wordTranslation);
 
         WordPhraseTranslation wordPhraseTranslation2 = new WordPhraseTranslation();
         wordPhraseTranslation2.setId(402);
-        wordPhraseTranslation2.setWordTranslation(wordTranslation); // Set the WordTranslation
+        wordPhraseTranslation2.setWordTranslation(wordTranslation);
 
         WordPhraseTranslation wordPhraseTranslation3 = new WordPhraseTranslation();
         wordPhraseTranslation3.setId(403);
-        wordPhraseTranslation3.setWordTranslation(wordTranslation); // Set the WordTranslation
+        wordPhraseTranslation3.setWordTranslation(wordTranslation);
 
         when(deckService.createDeck(any(Deck.class))).thenReturn(createdDeck);
         when(wordPhraseTranslationService.getWordPhraseTranslationById(401)).thenReturn(wordPhraseTranslation1);

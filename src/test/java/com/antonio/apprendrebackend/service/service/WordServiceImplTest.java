@@ -64,7 +64,6 @@ public class WordServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Common test data
         verbType = new Type();
         verbType.setId(1);
         verbType.setType(Type.TypeEnum.VERB);
@@ -282,13 +281,11 @@ public class WordServiceImplTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        // Verify first word with senses
         WordWithSenseDTO firstWordWithSense = result.get(0);
         assertEquals("run", firstWordWithSense.getWord().getName());
         assertEquals(1, firstWordWithSense.getWordSenses().size());
         assertEquals(wordSenseDTO2.getId(), firstWordWithSense.getWordSenses().get(0).getId());
 
-        // Verify second word with senses
         WordWithSenseDTO secondWordWithSense = result.get(1);
         assertEquals("jump", secondWordWithSense.getWord().getName());
         assertEquals(1, secondWordWithSense.getWordSenses().size());
@@ -402,7 +399,7 @@ public class WordServiceImplTest {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         List<Word> words = Arrays.asList(verb2);
-        Page<Word> wordPage = new PageImpl<>(words, pageable, 2); // Total elements = 2
+        Page<Word> wordPage = new PageImpl<>(words, pageable, 2);
 
         List<WordSense> wordSenses = Arrays.asList(wordSense2);
 

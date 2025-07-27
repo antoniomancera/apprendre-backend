@@ -45,21 +45,18 @@ public class WordPhraseTranslationServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Setup PhraseTranslation objects
         phraseTranslation1 = new PhraseTranslation();
         phraseTranslation1.setId(1);
 
         phraseTranslation2 = new PhraseTranslation();
         phraseTranslation2.setId(2);
 
-        // Setup WordTranslation objects
         wordTranslation1 = new WordTranslation();
         wordTranslation1.setId(101);
 
         wordTranslation2 = new WordTranslation();
         wordTranslation2.setId(102);
 
-        // Setup WordPhraseTranslation objects
         wordPhraseTranslation1 = new WordPhraseTranslation();
         wordPhraseTranslation1.setId(1001);
         wordPhraseTranslation1.setWordTranslation(wordTranslation1);
@@ -68,7 +65,6 @@ public class WordPhraseTranslationServiceImplTest {
         wordPhraseTranslation2.setId(1002);
         wordPhraseTranslation2.setWordTranslation(wordTranslation2);
 
-        // Setup WordPhraseTranslationDTO objects
         wordPhraseTranslationDTO1 = new WordPhraseTranslationDTO();
         wordPhraseTranslationDTO1.setId(1001);
 
