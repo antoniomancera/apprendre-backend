@@ -21,9 +21,9 @@ public class Level {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    private LevelEnum name;
+    private LevelEnum code;
 
-    public Level(LevelEnum name) {
-        this.name = name;
+    public Level(LevelEnum code) {
+        this.code = code;
     }
 }

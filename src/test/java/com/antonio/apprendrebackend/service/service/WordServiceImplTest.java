@@ -67,7 +67,7 @@ public class WordServiceImplTest {
         // Common test data
         verbType = new Type();
         verbType.setId(1);
-        verbType.setName(Type.TypeEnum.VERB);
+        verbType.setCode(Type.TypeEnum.VERB);
 
         verb1 = new Word();
         verb1.setId(1);

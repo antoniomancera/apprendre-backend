@@ -30,7 +30,7 @@ public class TypeServiceImplTest {
         MockitoAnnotations.openMocks(this);
         type = new Type();
         type.setId(1);
-        type.setName(Type.TypeEnum.VERB);
+        type.setCode(Type.TypeEnum.VERB);
     }
 
     @Test
@@ -40,14 +40,14 @@ public class TypeServiceImplTest {
         Optional<Type> typeOptional = Optional.of(type);
 
         // When
-        when(typeRepository.findByName(typeEnum)).thenReturn(typeOptional);
+        when(typeRepository.findByCode(typeEnum)).thenReturn(typeOptional);
         Type result = typeService.getByType(typeEnum);
 
         // Then
         assertNotNull(result);
         assertEquals(1, result.getId());
-        assertEquals(Type.TypeEnum.VERB, result.getName());
-        verify(typeRepository, times(1)).findByName(typeEnum);
+        assertEquals(Type.TypeEnum.VERB, result.getCode());
+        verify(typeRepository, times(1)).findByCode(typeEnum);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class TypeServiceImplTest {
         Optional<Type> emptyOptional = Optional.empty();
 
         // When
-        when(typeRepository.findByName(typeEnum)).thenReturn(emptyOptional);
+        when(typeRepository.findByCode(typeEnum)).thenReturn(emptyOptional);
 
         // Then
         TypeNotFoundException exception = assertThrows(TypeNotFoundException.class, () -> {
@@ -66,7 +66,7 @@ public class TypeServiceImplTest {
 
         assertTrue(exception.getMessage().contains("Not found any type"));
         assertTrue(exception.getMessage().contains(typeEnum.toString()));
-        verify(typeRepository, times(1)).findByName(typeEnum);
+        verify(typeRepository, times(1)).findByCode(typeEnum);
     }
 
     @Test
@@ -75,19 +75,19 @@ public class TypeServiceImplTest {
         Type.TypeEnum typeEnum = Type.TypeEnum.SUSTANTIVE;
         Type phraseType = new Type();
         phraseType.setId(2);
-        phraseType.setName(Type.TypeEnum.SUSTANTIVE);
+        phraseType.setCode(Type.TypeEnum.SUSTANTIVE);
         Optional<Type> typeOptional = Optional.of(phraseType);
 
         // When
-        when(typeRepository.findByName(typeEnum)).thenReturn(typeOptional);
+        when(typeRepository.findByCode(typeEnum)).thenReturn(typeOptional);
 
         Type result = typeService.getByType(typeEnum);
 
         // Then
         assertNotNull(result);
         assertEquals(2, result.getId());
-        assertEquals(Type.TypeEnum.SUSTANTIVE, result.getName());
-        verify(typeRepository, times(1)).findByName(typeEnum);
+        assertEquals(Type.TypeEnum.SUSTANTIVE, result.getCode());
+        verify(typeRepository, times(1)).findByCode(typeEnum);
     }
 
 }

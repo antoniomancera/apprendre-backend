@@ -22,10 +22,10 @@ public class Type {
 
 
     @Enumerated(EnumType.STRING)
-    private TypeEnum name;
+    private TypeEnum code;
 
 
-    public Type(TypeEnum name) {
-        this.name = name;
+    public Type(TypeEnum code) {
+        this.code = code;
     }
 }

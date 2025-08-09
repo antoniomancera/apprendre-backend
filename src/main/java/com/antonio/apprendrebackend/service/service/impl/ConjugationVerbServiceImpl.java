@@ -93,7 +93,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                 ConjugationVerbFormIrregular conjugationVerbFormIrregular =
                         getConjugationVerbFormIrregularOtherwiseNull(conjugationVerbFormIrregulars, tense, personGenderNumberEnum);
 
-                String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, tense.getTenseEnum(), personGenderNumberEnum);
+                String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, tense.getCode(), personGenderNumberEnum);
 
                 ConjugationRegularIrregularDTO conjugationRegularIrregular =
                         createConjugationRegularIrregular(conjugationBase, ending, conjugationVerbFormIrregular);
@@ -144,7 +144,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                         ConjugationVerbFormIrregular conjugationVerbFormIrregular =
                                 getConjugationVerbFormIrregularOtherwiseNull(conjugationVerbFormIrregulars, item.getTense(), personGenderNumberEnum);
 
-                        String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, item.getTense().getTenseEnum(), personGenderNumberEnum);
+                        String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, item.getTense().getCode(), personGenderNumberEnum);
 
                         ConjugationRegularIrregularDTO conjugationRegularIrregular =
                                 createConjugationRegularIrregular(conjugationBase, ending, conjugationVerbFormIrregular);
@@ -265,7 +265,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
 
         return conjugationVerbFormIrregulars.stream()
                 .filter(irregular ->
-                        irregular.getConjugationVerbForm().getTense().getTenseEnum().equals(tense.getTenseEnum()) &&
+                        irregular.getConjugationVerbForm().getTense().getCode().equals(tense.getCode()) &&
                                 irregular.getConjugationVerbForm().getPersonGenderNumber().getPersonGenderNumberEnum().equals(personGenderNumberEnum))
                 .findFirst()
                 .orElse(null);
@@ -274,7 +274,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
     private ConjugationRegularTenseEnding getConjugationRegularTenseEndingByTenseEnumAndPersonGenderNumberEnum(List<ConjugationRegularTenseEnding> conjugationRegularTenseEndings, Tense.TenseEnum tenseEnum, PersonGenderNumber.PersonGenderNumberEnum personGenderNumberEnum) {
         if (conjugationRegularTenseEndings == null) return null;
         return conjugationRegularTenseEndings.stream()
-                .filter(ending -> ending.getTense().getTenseEnum().equals(tenseEnum) &&
+                .filter(ending -> ending.getTense().getCode().equals(tenseEnum) &&
                         ending.getPersonGenderNumber().getPersonGenderNumberEnum().equals(personGenderNumberEnum))
                 .findFirst()
                 .orElse(null);

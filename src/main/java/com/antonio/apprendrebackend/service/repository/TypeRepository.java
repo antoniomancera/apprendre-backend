@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface TypeRepository extends CrudRepository<Type, Integer> {
     List<Type> findAll();
 
-    Optional<Type> findByName(Type.TypeEnum name);
+    Optional<Type> findByCode(Type.TypeEnum code);
 }
