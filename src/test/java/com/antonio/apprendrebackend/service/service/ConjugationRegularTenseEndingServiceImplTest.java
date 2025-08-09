@@ -57,7 +57,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         List<ConjugationRegularTenseEnding> expectedEndings = Arrays.asList(ending1, ending2, ending3);
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(expectedEndings);
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -74,7 +74,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertEquals(3, result.get(2).getId());
         assertEquals("-an", result.get(2).getEnding());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
@@ -88,7 +88,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         );
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(Arrays.asList());
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -99,7 +99,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
@@ -113,7 +113,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         );
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(Arrays.asList());
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -124,7 +124,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
@@ -138,7 +138,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         );
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(Arrays.asList());
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -149,7 +149,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
@@ -161,7 +161,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums = null;
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(Arrays.asList());
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -172,7 +172,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
@@ -184,7 +184,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums = Arrays.asList();
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(Arrays.asList());
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -195,7 +195,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
@@ -207,7 +207,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums = null;
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(Arrays.asList());
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -218,7 +218,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
@@ -238,7 +238,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         List<ConjugationRegularTenseEnding> expectedEndings = Arrays.asList(ending);
 
         // When
-        when(conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+        when(conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                 tenseEnum, verbGroupEnum, personGenderNumberEnums)).thenReturn(expectedEndings);
 
         List<ConjugationRegularTenseEnding> result = conjugationRegularTenseEndingService
@@ -251,7 +251,7 @@ public class ConjugationRegularTenseEndingServiceImplTest {
         assertEquals(1, result.get(0).getId());
         assertEquals("-ía", result.get(0).getEnding());
         verify(conjugationRegularTenseEndingRepository, times(1))
-                .findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+                .findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
                         tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 }
