@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.WordFilterOptionsDTO;
 import com.antonio.apprendrebackend.service.exception.WordSenseNotFoundException;
 import com.antonio.apprendrebackend.service.model.WordSense;
 

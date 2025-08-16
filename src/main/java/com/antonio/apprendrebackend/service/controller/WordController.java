@@ -1,7 +1,6 @@
 package com.antonio.apprendrebackend.service.controller;
 
-import com.antonio.apprendrebackend.service.dto.WordDTO;
-import com.antonio.apprendrebackend.service.dto.WordWithSenseDTO;
+import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.WordService;
@@ -48,12 +47,37 @@ public class WordController {
      */
     @GetMapping(path = "/paginated/{pageNumber}/{pageSize}")
     public @ResponseBody ResponseEntity<List<WordWithSenseDTO>> getWordWithSensePaginated(
-            @RequestParam(defaultValue = "0") int pageNumber,
-            @RequestParam(defaultValue = "10") int pageSize
+            @PathVariable int pageNumber,
+            @PathVariable int pageSize
     ) {
         logger.info(String.format("Get the page: %d with: %d elements of words with theirs wordSenses", pageNumber, pageSize));
 
+        SecurityContextHolder.getContext().getAuthentication().getCredentials();
         List<WordWithSenseDTO> words = wordService.getWordWithSensePaginated(pageNumber, pageSize);
         return ResponseEntity.ok(words);
     }
+
+
+    @GetMapping(path = "/allFilters/")
+    public @ResponseBody ResponseEntity<WordFilterOptionsDTO> getAllWordFilterOptions(
+
+    ) {
+        logger.info(String.format("Get the page1: elements of words with theirs wordSenses"));
+
+        SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        WordFilterOptionsDTO wordSenseFilters = wordService.getAllWordFilterOptions();
+        return ResponseEntity.ok(wordSenseFilters);
+    }
+
+    @GetMapping(path = "appplyFilters/paginated/{pageNumber}/{pageSize}")
+    public @ResponseBody ResponseEntity<List<WordWithSenseDTO>> getWordWithSensePaginatedAplyingWordSenseFilter(
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize, @RequestBody WordFilterOptionsDTO wordSenseFilter
+    ) {
+
+        SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        List<WordWithSenseDTO> words = wordService.getWordWithSensePaginatedAplyingWordSenseFilter(pageNumber, pageSize, wordSenseFilter);
+        return ResponseEntity.ok(words);
+    }
+
 }

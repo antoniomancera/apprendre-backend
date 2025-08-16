@@ -1,16 +1,13 @@
 package com.antonio.apprendrebackend.service.service;
 
 
-import com.antonio.apprendrebackend.service.dto.WordDTO;
-import com.antonio.apprendrebackend.service.dto.WordSenseWithoutWordDTO;
-import com.antonio.apprendrebackend.service.dto.WordWithSenseDTO;
+import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.WordMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseWithoutWordMapper;
-import com.antonio.apprendrebackend.service.model.Type;
-import com.antonio.apprendrebackend.service.model.Word;
-import com.antonio.apprendrebackend.service.model.WordSense;
+import com.antonio.apprendrebackend.service.model.*;
+import com.antonio.apprendrebackend.service.model.Number;
 import com.antonio.apprendrebackend.service.repository.WordRepository;
 import com.antonio.apprendrebackend.service.service.impl.WordServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +36,27 @@ public class WordServiceImplTest {
     private TypeService typeService;
 
     @Mock
+    private LevelService levelService;
+
+    @Mock
+    private CategoryService categoryService;
+
+    @Mock
+    private PersonService personService;
+
+    @Mock
+    private GenderService genderService;
+
+    @Mock
+    private NumberService numberService;
+
+    @Mock
+    private MoodService moodService;
+
+    @Mock
+    private TenseService tenseService;
+
+    @Mock
     private WordMapper wordMapper;
 
     @InjectMocks
@@ -64,7 +82,6 @@ public class WordServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Common test data
         verbType = new Type();
         verbType.setId(1);
         verbType.setCode(Type.TypeEnum.VERB);
@@ -282,13 +299,11 @@ public class WordServiceImplTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        // Verify first word with senses
         WordWithSenseDTO firstWordWithSense = result.get(0);
         assertEquals("run", firstWordWithSense.getWord().getName());
         assertEquals(1, firstWordWithSense.getWordSenses().size());
         assertEquals(wordSenseDTO2.getId(), firstWordWithSense.getWordSenses().get(0).getId());
 
-        // Verify second word with senses
         WordWithSenseDTO secondWordWithSense = result.get(1);
         assertEquals("jump", secondWordWithSense.getWord().getName());
         assertEquals(1, secondWordWithSense.getWordSenses().size());
@@ -402,7 +417,7 @@ public class WordServiceImplTest {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         List<Word> words = Arrays.asList(verb2);
-        Page<Word> wordPage = new PageImpl<>(words, pageable, 2); // Total elements = 2
+        Page<Word> wordPage = new PageImpl<>(words, pageable, 2);
 
         List<WordSense> wordSenses = Arrays.asList(wordSense2);
 
@@ -420,5 +435,155 @@ public class WordServiceImplTest {
         assertEquals("jump", result.get(0).getWord().getName());
 
         verify(wordRepository, times(1)).findAll(pageable);
+    }
+
+
+    @Test
+    void testGetAllWordFilterSuccess() {
+        // Given
+        Type type1 = new Type();
+        type1.setId(1);
+        type1.setCode(Type.TypeEnum.SUSTANTIVE);
+        List<Type> types = Arrays.asList(type1);
+
+        Level level1 = new Level();
+        level1.setId(1);
+        level1.setCode(Level.LevelEnum.A1);
+        List<Level> levels = Arrays.asList(level1);
+
+        Category category1 = new Category();
+        category1.setId(1);
+        category1.setName("Animals");
+        List<Category> categories = Arrays.asList(category1);
+
+        Person person1 = new Person();
+        person1.setId(1);
+        person1.setCode("First Person");
+        List<Person> persons = Arrays.asList(person1);
+
+        Gender gender1 = new Gender();
+        gender1.setId(1);
+        gender1.setCode("Masculine");
+        List<Gender> genders = Arrays.asList(gender1);
+
+        com.antonio.apprendrebackend.service.model.Number number1 = new com.antonio.apprendrebackend.service.model.Number();
+        number1.setId(1);
+        number1.setCode("Singular");
+        List<com.antonio.apprendrebackend.service.model.Number> numbers = Arrays.asList(number1);
+
+        MoodWithTenseDTO moodWithTense1 = new MoodWithTenseDTO();
+        List<MoodWithTenseDTO> moodWithTenses = Arrays.asList(moodWithTense1);
+
+        // When
+        when(typeService.getAllTypes()).thenReturn(types);
+        when(levelService.getAllLevels()).thenReturn(levels);
+        when(categoryService.getAllCategories()).thenReturn(categories);
+        when(personService.getAllPersons()).thenReturn(persons);
+        when(genderService.getAllGenders()).thenReturn(genders);
+        when(numberService.getAllNumbers()).thenReturn(numbers);
+        when(tenseService.getAllMoodWithTense()).thenReturn(moodWithTenses);
+
+        WordFilterOptionsDTO result = wordService.getAllWordFilterOptions();
+
+        // Then
+        assertNotNull(result);
+        assertNotNull(result.getTypes());
+        assertNotNull(result.getLevels());
+        assertNotNull(result.getCategories());
+        assertNotNull(result.getPersons());
+        assertNotNull(result.getGenders());
+        assertNotNull(result.getNumbers());
+        assertNotNull(result.getMoodWithTenses());
+
+        assertEquals(1, result.getTypes().size());
+        assertEquals(1, result.getLevels().size());
+        assertEquals(1, result.getCategories().size());
+        assertEquals(1, result.getPersons().size());
+        assertEquals(1, result.getGenders().size());
+        assertEquals(1, result.getNumbers().size());
+        assertEquals(1, result.getMoodWithTenses().size());
+
+        assertEquals(Type.TypeEnum.SUSTANTIVE, result.getTypes().get(0).getCode());
+        assertEquals(Level.LevelEnum.A1, result.getLevels().get(0).getCode());
+        assertEquals("Animals", result.getCategories().get(0).getName());
+        assertEquals("First Person", result.getPersons().get(0).getCode());
+        assertEquals("Masculine", result.getGenders().get(0).getCode());
+        assertEquals("Singular", result.getNumbers().get(0).getCode());
+
+        verify(typeService, times(1)).getAllTypes();
+        verify(levelService, times(1)).getAllLevels();
+        verify(categoryService, times(1)).getAllCategories();
+        verify(personService, times(1)).getAllPersons();
+        verify(genderService, times(1)).getAllGenders();
+        verify(numberService, times(1)).getAllNumbers();
+        verify(tenseService, times(1)).getAllMoodWithTense();
+    }
+
+    @Test
+    void testGetAllWordSenseFilterWithEmptyLists() {
+        // Given
+        List<Type> emptyTypes = new ArrayList<>();
+        List<Level> emptyLevels = new ArrayList<>();
+        List<Category> emptyCategories = new ArrayList<>();
+        List<Person> emptyPersons = new ArrayList<>();
+        List<Gender> emptyGenders = new ArrayList<>();
+        List<Number> emptyNumbers = new ArrayList<>();
+        List<MoodWithTenseDTO> emptyMoodWithTenses = new ArrayList<>();
+
+        // When
+        when(typeService.getAllTypes()).thenReturn(emptyTypes);
+        when(levelService.getAllLevels()).thenReturn(emptyLevels);
+        when(categoryService.getAllCategories()).thenReturn(emptyCategories);
+        when(personService.getAllPersons()).thenReturn(emptyPersons);
+        when(genderService.getAllGenders()).thenReturn(emptyGenders);
+        when(numberService.getAllNumbers()).thenReturn(emptyNumbers);
+        when(tenseService.getAllMoodWithTense()).thenReturn(emptyMoodWithTenses);
+
+        WordFilterOptionsDTO result = wordService.getAllWordFilterOptions();
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.getTypes().isEmpty());
+        assertTrue(result.getLevels().isEmpty());
+        assertTrue(result.getCategories().isEmpty());
+        assertTrue(result.getPersons().isEmpty());
+        assertTrue(result.getGenders().isEmpty());
+        assertTrue(result.getNumbers().isEmpty());
+        assertTrue(result.getMoodWithTenses().isEmpty());
+
+        verify(typeService, times(1)).getAllTypes();
+        verify(levelService, times(1)).getAllLevels();
+        verify(categoryService, times(1)).getAllCategories();
+        verify(personService, times(1)).getAllPersons();
+        verify(genderService, times(1)).getAllGenders();
+        verify(numberService, times(1)).getAllNumbers();
+        verify(tenseService, times(1)).getAllMoodWithTense();
+    }
+
+    @Test
+    void testGetAllWordSenseFilterServicesCalledOnce() {
+        // Given
+        when(typeService.getAllTypes()).thenReturn(new ArrayList<>());
+        when(levelService.getAllLevels()).thenReturn(new ArrayList<>());
+        when(categoryService.getAllCategories()).thenReturn(new ArrayList<>());
+        when(personService.getAllPersons()).thenReturn(new ArrayList<>());
+        when(genderService.getAllGenders()).thenReturn(new ArrayList<>());
+        when(numberService.getAllNumbers()).thenReturn(new ArrayList<>());
+        when(tenseService.getAllMoodWithTense()).thenReturn(new ArrayList<>());
+
+        // When
+        wordService.getAllWordFilterOptions();
+
+        // Then
+        verify(typeService, times(1)).getAllTypes();
+        verify(levelService, times(1)).getAllLevels();
+        verify(categoryService, times(1)).getAllCategories();
+        verify(personService, times(1)).getAllPersons();
+        verify(genderService, times(1)).getAllGenders();
+        verify(numberService, times(1)).getAllNumbers();
+        verify(tenseService, times(1)).getAllMoodWithTense();
+
+        verifyNoMoreInteractions(typeService, levelService, categoryService,
+                personService, genderService, numberService, tenseService);
     }
 }

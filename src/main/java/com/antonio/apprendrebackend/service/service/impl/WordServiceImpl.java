@@ -1,13 +1,15 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
+import com.antonio.apprendrebackend.service.dto.MoodWithTenseDTO;
 import com.antonio.apprendrebackend.service.dto.WordDTO;
+import com.antonio.apprendrebackend.service.dto.WordFilterOptionsDTO;
 import com.antonio.apprendrebackend.service.dto.WordWithSenseDTO;
 import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.WordMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseWithoutWordMapper;
-import com.antonio.apprendrebackend.service.model.Type;
-import com.antonio.apprendrebackend.service.model.Word;
+import com.antonio.apprendrebackend.service.model.*;
+import com.antonio.apprendrebackend.service.model.Number;
 import com.antonio.apprendrebackend.service.repository.WordRepository;
 import com.antonio.apprendrebackend.service.service.*;
 import org.slf4j.Logger;
@@ -31,6 +33,21 @@ public class WordServiceImpl implements WordService {
     private TypeService typeService;
     @Autowired
     private WordSenseService wordSenseService;
+
+    @Autowired
+    private LevelService levelService;
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private PersonService personService;
+    @Autowired
+    private GenderService genderService;
+    @Autowired
+    private NumberService numberService;
+    @Autowired
+    private MoodService moodService;
+    @Autowired
+    private TenseService tenseService;
     @Autowired
     private WordMapper wordMapper;
     @Autowired
@@ -94,5 +111,34 @@ public class WordServiceImpl implements WordService {
             wordWithSenseDTOS.add(new WordWithSenseDTO(word, wordSenseService.getWordSensesByWordId(word.getId()).stream().map(wordSenseWithoutWordMapper::toDTO).collect(Collectors.toList())));
         });
         return wordWithSenseDTOS;
+    }
+
+    /**
+     * Get a list with all the parameters availables to filter for word and wordSense, that are;
+     * for all level, category, part of speech; for part of speech variables  person, gender, number;
+     * and finally for part of speech with conjugation mood and tense
+     *
+     * @return WordFilterOptionsDTO
+     */
+    @Override
+    public WordFilterOptionsDTO getAllWordFilterOptions() {
+        List<Type> types = typeService.getAllTypes();
+        List<Level> levels = levelService.getAllLevels();
+        List<Category> categories = categoryService.getAllCategories();
+        List<Person> persons = personService.getAllPersons();
+        List<Gender> genders = genderService.getAllGenders();
+        List<Number> numbers = numberService.getAllNumbers();
+        List<MoodWithTenseDTO> moodWithTenses = tenseService.getAllMoodWithTense();
+
+        return new WordFilterOptionsDTO(types, levels, categories, persons, genders, numbers, moodWithTenses);
+    }
+
+    @Override
+    public List<WordWithSenseDTO> getWordWithSensePaginatedAplyingWordSenseFilter(Integer pageNumber, Integer pageSize, WordFilterOptionsDTO wordFilterOptionsDTO) {
+        List<WordWithSenseDTO> wordWithSenseDTOS = new ArrayList<>();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+
+        return getWordWithSensePaginated(pageNumber, pageSize);
     }
 }

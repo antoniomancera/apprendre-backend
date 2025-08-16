@@ -1,8 +1,7 @@
 package com.antonio.apprendrebackend.service.service;
 
 import com.antonio.apprendrebackend.service.exception.WordSenseNotFoundException;
-import com.antonio.apprendrebackend.service.model.Word;
-import com.antonio.apprendrebackend.service.model.WordSense;
+import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.WordSenseRepository;
 import com.antonio.apprendrebackend.service.service.impl.WordSenseServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,5 +107,42 @@ public class WordSenseServiceImplTest {
 
         assertEquals("Not found WordSense with id 999", exception.getMessage());
         verify(wordSenseRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void testGetWordSensesByWordIdSuccess() {
+        // Given
+        int wordId = 1;
+        Word word = new Word();
+        word.setId(wordId);
+        WordSense wordSense = new WordSense();
+        wordSense.setWord(word);
+        List<WordSense> wordSenses = Arrays.asList(wordSense);
+
+        // When
+        when(wordSenseRepository.findByWordId(wordId)).thenReturn(wordSenses);
+        List<WordSense> result = wordSenseService.getWordSensesByWordId(wordId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(wordId, result.get(0).getWord().getId());
+        verify(wordSenseRepository, times(1)).findByWordId(wordId);
+    }
+
+    @Test
+    void testGetWordSensesByWordIdEmpty() {
+        // Given
+        int wordId = 999;
+        List<WordSense> emptyWordSenses = new ArrayList<>();
+
+        // When
+        when(wordSenseRepository.findByWordId(wordId)).thenReturn(emptyWordSenses);
+        List<WordSense> result = wordSenseService.getWordSensesByWordId(wordId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(wordSenseRepository, times(1)).findByWordId(wordId);
     }
 }
