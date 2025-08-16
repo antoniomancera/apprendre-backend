@@ -32,6 +32,8 @@ public class WordTranslation {
 
     private Integer importanceIndex;
 
+    private Integer baseWeight;
+
     public WordTranslation(WordSense wordSenseFr, WordSense wordSenseSp) {
         this.wordSenseFr = wordSenseFr;
         this.wordSenseSp = wordSenseSp;

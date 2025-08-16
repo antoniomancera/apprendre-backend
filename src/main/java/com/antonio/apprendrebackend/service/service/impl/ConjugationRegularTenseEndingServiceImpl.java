@@ -27,7 +27,7 @@ public class ConjugationRegularTenseEndingServiceImpl implements ConjugationRegu
      */
     @Override
     public List<ConjugationRegularTenseEnding> getByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(Tense.TenseEnum tenseEnum, VerbGroup.VerbGroupEnum verbGroupEnum, List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums) {
-        return conjugationRegularTenseEndingRepository.findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(tenseEnum, verbGroupEnum, personGenderNumberEnums);
+        return conjugationRegularTenseEndingRepository.findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(tenseEnum, verbGroupEnum, personGenderNumberEnums);
     }
 
     /**

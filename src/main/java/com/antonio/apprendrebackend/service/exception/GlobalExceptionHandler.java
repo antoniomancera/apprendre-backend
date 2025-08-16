@@ -362,4 +362,39 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(WordPhraseTranslationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWordPhraseTranslationNotFoundException(WordPhraseTranslationNotFoundException ex, WebRequest request) {
+        logger.warn("WordPhraseTranslationNotFoundException: {} - Path: {}", ex.getMessage(), request.getDescription(false));
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.WORD_PHRASE_TRANSLATION_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+    @ExceptionHandler(DeckAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleDeckAlreadyExistsException(DeckAlreadyExistsException ex, WebRequest request) {
+        logger.warn("DeckAlreadyExistsException: {} - Path: {}", ex.getMessage(), request.getDescription(false));
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.DECK_ALREADY_EXISTS,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
+
 }

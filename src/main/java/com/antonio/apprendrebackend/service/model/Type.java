@@ -1,15 +1,19 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Type {
     public enum TypeEnum {
-        SUSTANTIVE, VERB, ADJECTIVE, ADVERB, PRONOUN, PREPOSITION, CONJUNCTION, INTERJECTION
+        SUSTANTIVE, VERB, ADJECTIVE, ADVERB, PRONOUN, PREPOSITION, CONJUNCTION, INTERJECTION, PARTICLE
     }
 
     @Id
@@ -18,12 +22,10 @@ public class Type {
 
 
     @Enumerated(EnumType.STRING)
-    private TypeEnum type;
+    private TypeEnum code;
 
-    public Type() {
-    }
 
-    public Type(TypeEnum type) {
-        this.type = type;
+    public Type(TypeEnum code) {
+        this.code = code;
     }
 }

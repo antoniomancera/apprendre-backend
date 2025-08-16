@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,4 +45,18 @@ public interface WordPhraseTranslationRepository extends CrudRepository<WordPhra
                   AND wpt.phraseTranslation.id = :phraseTranslationId
             """)
     List<WordTranslation> findWordTranslationsByDeckIdPhraseTranslationId(@Param("deckId") Integer deckId, @Param("phraseTranslationId") Integer phraseTranslationId);
+
+
+    /**
+     * Get all WordPhraseTranslation associated to a list of senses
+     *
+     * @param senseIds
+     * @return List<WordTranslation>
+     */
+    @Query("""
+                SELECT wpt
+                FROM WordPhraseTranslation wpt
+                WHERE wpt.wordTranslation.wordSenseFr.id IN (:senseIds)
+            """)
+    List<WordPhraseTranslation> findByWordSenseIds(@Param("senseIds") List<Integer> senseIds);
 }

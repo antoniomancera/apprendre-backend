@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.exception.DeckAlreadyExistsException;
 import com.antonio.apprendrebackend.service.exception.DeckNotFoundException;
 import com.antonio.apprendrebackend.service.model.Deck;
 import com.antonio.apprendrebackend.service.model.UserInfo;
@@ -22,4 +23,13 @@ public interface DeckService {
      * @throws DeckNotFoundException if not found anyone with their id
      */
     Deck getDeckbyId(Integer deckId);
+
+    /**
+     * Create a new Deck
+     *
+     * @param deck
+     * @return Deck
+     * @throws DeckAlreadyExistsException if exists a Deck with the same name
+     */
+    Deck createDeck(Deck deck);
 }

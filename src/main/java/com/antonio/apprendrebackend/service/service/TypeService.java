@@ -15,4 +15,11 @@ public interface TypeService {
      * @return
      */
     Type getByType(Type.TypeEnum typeEnum);
+
+    /**
+     * Returns all the types available in the database
+     *
+     * @return List<Type>
+     */
+    List<Type> getAllTypes();
 }

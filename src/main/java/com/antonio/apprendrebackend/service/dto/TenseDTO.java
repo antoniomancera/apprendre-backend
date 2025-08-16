@@ -9,6 +9,6 @@ import lombok.Setter;
 public class TenseDTO {
     private MoodDTO mood;
     private LanguageDTO language;
-    private Tense.TenseEnum tenseEnum;
+    private Tense.TenseEnum code;
     private String name;
 }
