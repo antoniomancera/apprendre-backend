@@ -1,7 +1,7 @@
 package com.antonio.apprendrebackend.service.exception;
 
 public enum ErrorCode {
-    TYPE_NOT_FOUND,
+    PART_SPEECH_NOT_FOUND,
     WORD_TRANSLATION_NOT_FOUND,
     PHRASE_NOT_FOUND,
     HOME_NOT_FOUND,

@@ -9,18 +9,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Word {
+public class PartSpeechSubType {
+    public enum SubTypeEnum {
+        PERSONAL_PRONOUN,
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "language_id")
-    private Language language;
-
-    @ManyToOne
     @JoinColumn(name = "part_speech_id")
     private PartSpeech partSpeech;
 
-    private String name;
+
+    @Enumerated(EnumType.STRING)
+    private SubTypeEnum name;
 }

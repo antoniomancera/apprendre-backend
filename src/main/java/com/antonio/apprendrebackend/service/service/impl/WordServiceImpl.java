@@ -4,7 +4,7 @@ import com.antonio.apprendrebackend.service.dto.MoodWithTenseDTO;
 import com.antonio.apprendrebackend.service.dto.WordDTO;
 import com.antonio.apprendrebackend.service.dto.WordFilterOptionsDTO;
 import com.antonio.apprendrebackend.service.dto.WordWithSenseDTO;
-import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
+import com.antonio.apprendrebackend.service.exception.PartSpeechFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.WordMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseWithoutWordMapper;
@@ -30,7 +30,7 @@ public class WordServiceImpl implements WordService {
     @Autowired
     private WordRepository wordRepository;
     @Autowired
-    private TypeService typeService;
+    private PartSpeechService partSpeechService;
     @Autowired
     private WordSenseService wordSenseService;
 
@@ -73,15 +73,15 @@ public class WordServiceImpl implements WordService {
      * Get all the words that are verbs
      *
      * @return List<WordDTO>
-     * @throws TypeNotFoundException if not exist Verb as a type
-     * @throws WordNotFoundException if not exist any Verb
+     * @throws PartSpeechFoundException if not exist Verb as a part of speech
+     * @throws WordNotFoundException    if not exist any Verb
      */
     @Override
     public List<WordDTO> getAllVerbs() {
         logger.debug("Get a list with all the verbs");
 
-        Type type = typeService.getByType(Type.TypeEnum.VERB);
-        List<Word> verbs = wordRepository.findByType(type);
+        PartSpeech partSpeech = partSpeechService.getByPartSpeech(PartSpeech.PartSpeechEnum.VERB);
+        List<Word> verbs = wordRepository.findByPartSpeech(partSpeech);
         if (verbs.isEmpty()) {
             throw new WordNotFoundException("Not found any verb");
         }
@@ -122,7 +122,7 @@ public class WordServiceImpl implements WordService {
      */
     @Override
     public WordFilterOptionsDTO getAllWordFilterOptions() {
-        List<Type> types = typeService.getAllTypes();
+        List<PartSpeech> partSpeeches = partSpeechService.getAllPartSpeechs();
         List<Level> levels = levelService.getAllLevels();
         List<Category> categories = categoryService.getAllCategories();
         List<Person> persons = personService.getAllPersons();
@@ -130,7 +130,7 @@ public class WordServiceImpl implements WordService {
         List<Number> numbers = numberService.getAllNumbers();
         List<MoodWithTenseDTO> moodWithTenses = tenseService.getAllMoodWithTense();
 
-        return new WordFilterOptionsDTO(types, levels, categories, persons, genders, numbers, moodWithTenses);
+        return new WordFilterOptionsDTO(partSpeeches, levels, categories, persons, genders, numbers, moodWithTenses);
     }
 
     @Override

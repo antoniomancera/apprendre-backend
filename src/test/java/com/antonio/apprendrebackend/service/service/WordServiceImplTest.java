@@ -2,7 +2,7 @@ package com.antonio.apprendrebackend.service.service;
 
 
 import com.antonio.apprendrebackend.service.dto.*;
-import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
+import com.antonio.apprendrebackend.service.exception.PartSpeechFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.WordMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseWithoutWordMapper;
@@ -33,7 +33,7 @@ public class WordServiceImplTest {
     private WordRepository wordRepository;
 
     @Mock
-    private TypeService typeService;
+    private PartSpeechService partSpeechService;
 
     @Mock
     private LevelService levelService;
@@ -68,7 +68,7 @@ public class WordServiceImplTest {
     private WordSenseWithoutWordMapper wordSenseWithoutWordMapper;
 
 
-    private Type verbType;
+    private PartSpeech verbPartSpeech;
     private Word verb1;
     private Word verb2;
     private WordDTO verbDTO1;
@@ -82,19 +82,19 @@ public class WordServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        verbType = new Type();
-        verbType.setId(1);
-        verbType.setCode(Type.TypeEnum.VERB);
+        verbPartSpeech = new PartSpeech();
+        verbPartSpeech.setId(1);
+        verbPartSpeech.setCode(PartSpeech.PartSpeechEnum.VERB);
 
         verb1 = new Word();
         verb1.setId(1);
         verb1.setName("run");
-        verb1.setType(verbType);
+        verb1.setPartSpeech(verbPartSpeech);
 
         verb2 = new Word();
         verb2.setId(2);
         verb2.setName("jump");
-        verb2.setType(verbType);
+        verb2.setPartSpeech(verbPartSpeech);
 
         verbDTO1 = new WordDTO();
         verbDTO1.setName("run");
@@ -121,8 +121,8 @@ public class WordServiceImplTest {
         List<Word> verbList = Arrays.asList(verb1, verb2);
 
         // When
-        when(typeService.getByType(Type.TypeEnum.VERB)).thenReturn(verbType);
-        when(wordRepository.findByType(verbType)).thenReturn(verbList);
+        when(partSpeechService.getByPartSpeech(PartSpeech.PartSpeechEnum.VERB)).thenReturn(verbPartSpeech);
+        when(wordRepository.findByPartSpeech(verbPartSpeech)).thenReturn(verbList);
         when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
         when(wordMapper.toDTO(verb2)).thenReturn(verbDTO2);
 
@@ -133,8 +133,8 @@ public class WordServiceImplTest {
         assertEquals(2, result.size());
         assertEquals("run", result.get(0).getName());
         assertEquals("jump", result.get(1).getName());
-        verify(typeService, times(1)).getByType(Type.TypeEnum.VERB);
-        verify(wordRepository, times(1)).findByType(verbType);
+        verify(partSpeechService, times(1)).getByPartSpeech(PartSpeech.PartSpeechEnum.VERB);
+        verify(wordRepository, times(1)).findByPartSpeech(verbPartSpeech);
         verify(wordMapper, times(2)).toDTO(any(Word.class));
     }
 
@@ -144,8 +144,8 @@ public class WordServiceImplTest {
         List<Word> emptyVerbList = new ArrayList<>();
 
         // When
-        when(typeService.getByType(Type.TypeEnum.VERB)).thenReturn(verbType);
-        when(wordRepository.findByType(verbType)).thenReturn(emptyVerbList);
+        when(partSpeechService.getByPartSpeech(PartSpeech.PartSpeechEnum.VERB)).thenReturn(verbPartSpeech);
+        when(wordRepository.findByPartSpeech(verbPartSpeech)).thenReturn(emptyVerbList);
 
         // Then
         WordNotFoundException exception = assertThrows(WordNotFoundException.class, () -> {
@@ -153,27 +153,27 @@ public class WordServiceImplTest {
         });
 
         assertEquals("Not found any verb", exception.getMessage());
-        verify(typeService, times(1)).getByType(Type.TypeEnum.VERB);
-        verify(wordRepository, times(1)).findByType(verbType);
+        verify(partSpeechService, times(1)).getByPartSpeech(PartSpeech.PartSpeechEnum.VERB);
+        verify(wordRepository, times(1)).findByPartSpeech(verbPartSpeech);
         verify(wordMapper, never()).toDTO(any(Word.class));
     }
 
     @Test
-    void testGetAllVerbsTypeNotFound() {
+    void testGetAllVerbsPartSpeechNotFound() {
         // Given
-        TypeNotFoundException typeNotFoundException = new TypeNotFoundException("Not found any type VERB");
+        PartSpeechFoundException partSpeechFoundException = new PartSpeechFoundException("Not found any PartSpeech VERB");
 
         // When
-        when(typeService.getByType(Type.TypeEnum.VERB)).thenThrow(typeNotFoundException);
+        when(partSpeechService.getByPartSpeech(PartSpeech.PartSpeechEnum.VERB)).thenThrow(partSpeechFoundException);
 
         // Then
-        TypeNotFoundException exception = assertThrows(TypeNotFoundException.class, () -> {
+        PartSpeechFoundException exception = assertThrows(PartSpeechFoundException.class, () -> {
             wordService.getAllVerbs();
         });
 
-        assertEquals("Not found any type VERB", exception.getMessage());
-        verify(typeService, times(1)).getByType(Type.TypeEnum.VERB);
-        verify(wordRepository, never()).findByType(any(Type.class));
+        assertEquals("Not found any part speech VERB", exception.getMessage());
+        verify(partSpeechService, times(1)).getByPartSpeech(PartSpeech.PartSpeechEnum.VERB);
+        verify(wordRepository, never()).findByPartSpeech(any(PartSpeech.class));
         verify(wordMapper, never()).toDTO(any(Word.class));
     }
 
@@ -183,8 +183,8 @@ public class WordServiceImplTest {
         List<Word> singleVerbList = Arrays.asList(verb1);
 
         // When
-        when(typeService.getByType(Type.TypeEnum.VERB)).thenReturn(verbType);
-        when(wordRepository.findByType(verbType)).thenReturn(singleVerbList);
+        when(partSpeechService.getByPartSpeech(PartSpeech.PartSpeechEnum.VERB)).thenReturn(verbPartSpeech);
+        when(wordRepository.findByPartSpeech(verbPartSpeech)).thenReturn(singleVerbList);
         when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
 
         List<WordDTO> result = wordService.getAllVerbs();
@@ -193,8 +193,8 @@ public class WordServiceImplTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("run", result.get(0).getName());
-        verify(typeService, times(1)).getByType(Type.TypeEnum.VERB);
-        verify(wordRepository, times(1)).findByType(verbType);
+        verify(partSpeechService, times(1)).getByPartSpeech(PartSpeech.PartSpeechEnum.VERB);
+        verify(wordRepository, times(1)).findByPartSpeech(verbPartSpeech);
         verify(wordMapper, times(1)).toDTO(verb1);
     }
 
@@ -204,8 +204,8 @@ public class WordServiceImplTest {
         List<Word> verbList = Arrays.asList(verb1);
 
         // When
-        when(typeService.getByType(Type.TypeEnum.VERB)).thenReturn(verbType);
-        when(wordRepository.findByType(verbType)).thenReturn(verbList);
+        when(partSpeechService.getByPartSpeech(PartSpeech.PartSpeechEnum.VERB)).thenReturn(verbPartSpeech);
+        when(wordRepository.findByPartSpeech(verbPartSpeech)).thenReturn(verbList);
         when(wordMapper.toDTO(verb1)).thenReturn(null);
 
         List<WordDTO> result = wordService.getAllVerbs();
@@ -214,8 +214,8 @@ public class WordServiceImplTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertNull(result.get(0));
-        verify(typeService, times(1)).getByType(Type.TypeEnum.VERB);
-        verify(wordRepository, times(1)).findByType(verbType);
+        verify(partSpeechService, times(1)).getByPartSpeech(PartSpeech.PartSpeechEnum.VERB);
+        verify(wordRepository, times(1)).findByPartSpeech(verbPartSpeech);
         verify(wordMapper, times(1)).toDTO(verb1);
     }
 
@@ -233,7 +233,7 @@ public class WordServiceImplTest {
         assertNotNull(result);
         assertEquals(verb1.getId(), result.getId());
         assertEquals(verb1.getName(), result.getName());
-        assertEquals(verb1.getType(), result.getType());
+        assertEquals(verb1.getPartSpeech(), result.getPartSpeech());
         verify(wordRepository, times(1)).findById(wordId);
     }
 
@@ -441,10 +441,10 @@ public class WordServiceImplTest {
     @Test
     void testGetAllWordFilterSuccess() {
         // Given
-        Type type1 = new Type();
-        type1.setId(1);
-        type1.setCode(Type.TypeEnum.SUSTANTIVE);
-        List<Type> types = Arrays.asList(type1);
+        PartSpeech partSpeech1 = new PartSpeech();
+        partSpeech1.setId(1);
+        partSpeech1.setCode(PartSpeech.PartSpeechEnum.SUSTANTIVE);
+        List<PartSpeech> partSpeeches = Arrays.asList(partSpeech1);
 
         Level level1 = new Level();
         level1.setId(1);
@@ -475,7 +475,7 @@ public class WordServiceImplTest {
         List<MoodWithTenseDTO> moodWithTenses = Arrays.asList(moodWithTense1);
 
         // When
-        when(typeService.getAllTypes()).thenReturn(types);
+        when(partSpeechService.getAllPartSpeechs()).thenReturn(partSpeeches);
         when(levelService.getAllLevels()).thenReturn(levels);
         when(categoryService.getAllCategories()).thenReturn(categories);
         when(personService.getAllPersons()).thenReturn(persons);
@@ -487,7 +487,7 @@ public class WordServiceImplTest {
 
         // Then
         assertNotNull(result);
-        assertNotNull(result.getTypes());
+        assertNotNull(result.getPartSpeeches());
         assertNotNull(result.getLevels());
         assertNotNull(result.getCategories());
         assertNotNull(result.getPersons());
@@ -495,7 +495,7 @@ public class WordServiceImplTest {
         assertNotNull(result.getNumbers());
         assertNotNull(result.getMoodWithTenses());
 
-        assertEquals(1, result.getTypes().size());
+        assertEquals(1, result.getPartSpeeches().size());
         assertEquals(1, result.getLevels().size());
         assertEquals(1, result.getCategories().size());
         assertEquals(1, result.getPersons().size());
@@ -503,14 +503,14 @@ public class WordServiceImplTest {
         assertEquals(1, result.getNumbers().size());
         assertEquals(1, result.getMoodWithTenses().size());
 
-        assertEquals(Type.TypeEnum.SUSTANTIVE, result.getTypes().get(0).getCode());
+        assertEquals(PartSpeech.PartSpeechEnum.SUSTANTIVE, result.getPartSpeeches().get(0).getCode());
         assertEquals(Level.LevelEnum.A1, result.getLevels().get(0).getCode());
         assertEquals("Animals", result.getCategories().get(0).getName());
         assertEquals("First Person", result.getPersons().get(0).getCode());
         assertEquals("Masculine", result.getGenders().get(0).getCode());
         assertEquals("Singular", result.getNumbers().get(0).getCode());
 
-        verify(typeService, times(1)).getAllTypes();
+        verify(partSpeechService, times(1)).getAllPartSpeechs();
         verify(levelService, times(1)).getAllLevels();
         verify(categoryService, times(1)).getAllCategories();
         verify(personService, times(1)).getAllPersons();
@@ -522,7 +522,7 @@ public class WordServiceImplTest {
     @Test
     void testGetAllWordSenseFilterWithEmptyLists() {
         // Given
-        List<Type> emptyTypes = new ArrayList<>();
+        List<PartSpeech> emptyPartSpeeches = new ArrayList<>();
         List<Level> emptyLevels = new ArrayList<>();
         List<Category> emptyCategories = new ArrayList<>();
         List<Person> emptyPersons = new ArrayList<>();
@@ -531,7 +531,7 @@ public class WordServiceImplTest {
         List<MoodWithTenseDTO> emptyMoodWithTenses = new ArrayList<>();
 
         // When
-        when(typeService.getAllTypes()).thenReturn(emptyTypes);
+        when(partSpeechService.getAllPartSpeechs()).thenReturn(emptyPartSpeeches);
         when(levelService.getAllLevels()).thenReturn(emptyLevels);
         when(categoryService.getAllCategories()).thenReturn(emptyCategories);
         when(personService.getAllPersons()).thenReturn(emptyPersons);
@@ -543,7 +543,7 @@ public class WordServiceImplTest {
 
         // Then
         assertNotNull(result);
-        assertTrue(result.getTypes().isEmpty());
+        assertTrue(result.getPartSpeeches().isEmpty());
         assertTrue(result.getLevels().isEmpty());
         assertTrue(result.getCategories().isEmpty());
         assertTrue(result.getPersons().isEmpty());
@@ -551,7 +551,7 @@ public class WordServiceImplTest {
         assertTrue(result.getNumbers().isEmpty());
         assertTrue(result.getMoodWithTenses().isEmpty());
 
-        verify(typeService, times(1)).getAllTypes();
+        verify(partSpeechService, times(1)).getAllPartSpeechs();
         verify(levelService, times(1)).getAllLevels();
         verify(categoryService, times(1)).getAllCategories();
         verify(personService, times(1)).getAllPersons();
@@ -563,7 +563,7 @@ public class WordServiceImplTest {
     @Test
     void testGetAllWordSenseFilterServicesCalledOnce() {
         // Given
-        when(typeService.getAllTypes()).thenReturn(new ArrayList<>());
+        when(partSpeechService.getAllPartSpeechs()).thenReturn(new ArrayList<>());
         when(levelService.getAllLevels()).thenReturn(new ArrayList<>());
         when(categoryService.getAllCategories()).thenReturn(new ArrayList<>());
         when(personService.getAllPersons()).thenReturn(new ArrayList<>());
@@ -575,7 +575,7 @@ public class WordServiceImplTest {
         wordService.getAllWordFilterOptions();
 
         // Then
-        verify(typeService, times(1)).getAllTypes();
+        verify(partSpeechService, times(1)).getAllPartSpeechs();
         verify(levelService, times(1)).getAllLevels();
         verify(categoryService, times(1)).getAllCategories();
         verify(personService, times(1)).getAllPersons();
@@ -583,7 +583,7 @@ public class WordServiceImplTest {
         verify(numberService, times(1)).getAllNumbers();
         verify(tenseService, times(1)).getAllMoodWithTense();
 
-        verifyNoMoreInteractions(typeService, levelService, categoryService,
+        verifyNoMoreInteractions(partSpeechService, levelService, categoryService,
                 personService, genderService, numberService, tenseService);
     }
 }

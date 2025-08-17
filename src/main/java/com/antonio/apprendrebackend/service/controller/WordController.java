@@ -1,7 +1,7 @@
 package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.dto.*;
-import com.antonio.apprendrebackend.service.exception.TypeNotFoundException;
+import com.antonio.apprendrebackend.service.exception.PartSpeechFoundException;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.WordService;
 import org.slf4j.Logger;
@@ -25,8 +25,8 @@ public class WordController {
      * Get all the words that are verbs
      *
      * @return HTTP respond with a List<WordDTO>
-     * @throws TypeNotFoundException if not exist Verb as a type
-     * @throws WordNotFoundException if not exist any Verb
+     * @throws PartSpeechFoundException if not exist Verb as a type
+     * @throws WordNotFoundException    if not exist any Verb
      */
     @GetMapping(path = "/allVerbs")
     public @ResponseBody ResponseEntity<List<WordDTO>> getAllVerbs() {
@@ -69,7 +69,7 @@ public class WordController {
         return ResponseEntity.ok(wordSenseFilters);
     }
 
-    @GetMapping(path = "appplyFilters/paginated/{pageNumber}/{pageSize}")
+    @GetMapping(path = "applyFilters/paginated/{pageNumber}/{pageSize}")
     public @ResponseBody ResponseEntity<List<WordWithSenseDTO>> getWordWithSensePaginatedAplyingWordSenseFilter(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize, @RequestBody WordFilterOptionsDTO wordSenseFilter

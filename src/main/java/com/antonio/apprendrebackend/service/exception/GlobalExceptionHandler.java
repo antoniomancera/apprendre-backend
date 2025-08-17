@@ -191,13 +191,13 @@ public class GlobalExceptionHandler {
 
     }
 
-    @ExceptionHandler(TypeNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleTypeNotFoundException(TypeNotFoundException ex, WebRequest request) {
-        logger.warn("TypeNotFoundException: {} - Path: {}", ex.getMessage(), request.getDescription(false));
+    @ExceptionHandler(PartSpeechFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePartSpeechNotFoundException(PartSpeechFoundException ex, WebRequest request) {
+        logger.warn("PartSpeechNotFoundException: {} - Path: {}", ex.getMessage(), request.getDescription(false));
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                ErrorCode.TYPE_NOT_FOUND,
+                ErrorCode.PART_SPEECH_NOT_FOUND,
                 ex.getMessage()
         );
 

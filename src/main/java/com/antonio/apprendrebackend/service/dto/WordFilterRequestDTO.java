@@ -17,7 +17,7 @@ public class WordFilterRequestDTO {
     private List<String> textFiltered;
     private int minAccuracy;
     private int maxAccuracy;
-    private List<Type> types;
+    private List<PartSpeech> partSpeeches;
     private List<Level> levels;
     private List<Category> categories;
     private List<Person> persons;

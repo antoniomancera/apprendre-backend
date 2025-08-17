@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WordFilterOptionsDTO {
-    private List<Type> types;
+    private List<PartSpeech> partSpeeches;
     private List<Level> levels;
     private List<Category> categories;
     private List<Person> persons;
