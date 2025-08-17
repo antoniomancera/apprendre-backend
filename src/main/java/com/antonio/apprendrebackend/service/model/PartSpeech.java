@@ -1,6 +1,7 @@
 package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,20 +10,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SubType {
-    public enum SubTypeEnum {
-        PERSONAL_PRONOUN,
+@AllArgsConstructor
+public class PartSpeech {
+    public enum PartSpeechEnum {
+        SUSTANTIVE, VERB, ADJECTIVE, ADVERB, PRONOUN, PREPOSITION, CONJUNCTION, INTERJECTION, PARTICLE
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
-
 
     @Enumerated(EnumType.STRING)
-    private SubTypeEnum name;
+    private PartSpeechEnum code;
+
+
+    public PartSpeech(PartSpeechEnum code) {
+        this.code = code;
+    }
 }
