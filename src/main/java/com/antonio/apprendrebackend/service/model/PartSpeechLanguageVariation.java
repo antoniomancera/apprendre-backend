@@ -9,14 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Word {
+public class PartSpeechLanguageVariation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "language_id")
-    private Language language;
 
     @ManyToOne
     @JoinColumn(name = "part_speech_id")
@@ -27,8 +23,9 @@ public class Word {
     private PartSpeechSubType partSpeechSubType;
 
     @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
+    @JoinColumn(name = "language_id")
+    private Language language;
 
-    private String name;
+    private boolean hasConjugation;
+    private boolean hasInflection;
 }
