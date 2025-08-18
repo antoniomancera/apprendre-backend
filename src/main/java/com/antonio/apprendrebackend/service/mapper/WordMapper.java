@@ -16,6 +16,7 @@ public interface WordMapper {
     @Mapping(target = "language", source = "language")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "partSpeech", source = "partSpeech")
+    @Mapping(target = "level", source = "level")
     WordDTO toDTO(Word word);
 }
 

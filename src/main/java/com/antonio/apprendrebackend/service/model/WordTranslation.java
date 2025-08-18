@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//TODO refactor Wordtranslation to WordSenseTransation
 @Entity
 @Getter
 @Setter
@@ -23,12 +24,8 @@ public class WordTranslation {
     private WordSense wordSenseSp;
 
     @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
-
-    @ManyToOne
-    @JoinColumn(name = "conjugation_verb_form_id")
-    private ConjugationVerbForm conjugationVerbForm;
+    @JoinColumn(name = "word_inflection_id")
+    private WordInflection wordInflection;
 
     private Integer importanceIndex;
 
