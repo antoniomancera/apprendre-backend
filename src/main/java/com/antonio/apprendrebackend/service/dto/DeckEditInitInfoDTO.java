@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WordWithSenseDTO {
-    private WordDTO word;
-    private List<WordSenseWithoutWordDTO> wordSenses;
+public class DeckEditInitInfoDTO {
+    private Map<Integer, List<Integer>> wordToWordSensesIdMap;
+    private List<WordWithAttemptsAndSuccessDTO> wordWithAttemptsAndSuccesses;
 }

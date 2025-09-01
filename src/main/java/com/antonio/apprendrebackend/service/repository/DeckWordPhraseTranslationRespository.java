@@ -1,6 +1,8 @@
 package com.antonio.apprendrebackend.service.repository;
 
 import com.antonio.apprendrebackend.service.model.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -39,7 +41,6 @@ public interface DeckWordPhraseTranslationRespository extends CrudRepository<Dec
             """, nativeQuery = true)
     Optional<DeckWordPhraseTranslation> findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(Integer deckId);
 
-    Optional<DeckWordPhraseTranslation> findByDeckIdAndWordPhraseTranslationId(Integer deckId, Integer wordPhraseTranslationId);
 
     /**
      * Return all WordTranslation of a deck
@@ -58,5 +59,9 @@ public interface DeckWordPhraseTranslationRespository extends CrudRepository<Dec
      */
     @Query("SELECT wpt.phraseTranslation FROM DeckWordPhraseTranslation duwpt JOIN duwpt.wordPhraseTranslation wpt WHERE duwpt.deck.id = :deckId")
     List<PhraseTranslation> findPhraseTranslationsByDeckId(@Param("deckId") Integer deckId);
+
+    Optional<DeckWordPhraseTranslation> findByDeckIdAndWordPhraseTranslationId(Integer deckId, Integer wordPhraseTranslationId);
+
+    List<DeckWordPhraseTranslation> findByDeckId(Pageable pageable, Integer deckId);
 }
 

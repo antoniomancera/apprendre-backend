@@ -23,5 +23,12 @@ public interface UserHistorialRespository extends CrudRepository<UserHistorial, 
      * @return DeckWordTranslationHistorial
      */
     Optional<UserHistorial> findFirstByUserInfoOrderByDateDesc(UserInfo userInfo);
+
+    List<UserHistorial> findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(Integer userId, Integer wordId);
+
+    List<UserHistorial> findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(Integer deckId, Integer wordId);
+
+    List<UserHistorial> findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(Integer deckId, Integer wordSensId);
+
 }
 

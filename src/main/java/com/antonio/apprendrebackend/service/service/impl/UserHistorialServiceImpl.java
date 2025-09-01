@@ -109,4 +109,46 @@ public class UserHistorialServiceImpl implements UserHistorialService {
 
         return userHistorialRespository.save(userHistorial);
     }
+
+    /**
+     * Get the UserHistorials of a word for a user
+     *
+     * @param userId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    @Override
+    public List<UserHistorial> getUserHistorialsByUserIdAndWordId(Integer userId, Integer wordId) {
+        logger.debug("Called postUserHistorial() in UserHistorailService for userHistorial-{} and word-{}", userId, wordId);
+
+        return userHistorialRespository.findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+    }
+
+    /**
+     * Get all the UserHistorials of a word in a deck
+     *
+     * @param deckId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    @Override
+    public List<UserHistorial> getUserHistorialsByDeckIdAndWordId(Integer deckId, Integer wordId) {
+        logger.debug("Called postUserHistorial() in UserHistorailService for deck-{} and word-{}", deckId, wordId);
+
+        return userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+    }
+
+    /**
+     * Get all the UserHistorials of a wordSense in a deck
+     *
+     * @param deckId
+     * @param wordSenseId
+     * @return List<UserHistorial>
+     */
+    @Override
+    public List<UserHistorial> getUserHistorialsByDeckIdAndWordSenseId(Integer deckId, Integer wordSenseId) {
+        logger.debug("Called postUserHistorial() in UserHistorailService for deck-{} and wordSense-{}", deckId, wordSenseId);
+
+        return userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
+    }
 }

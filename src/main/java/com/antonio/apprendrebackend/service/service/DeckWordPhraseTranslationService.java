@@ -1,8 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
-import com.antonio.apprendrebackend.service.dto.DeckDTO;
-import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
+import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.DeckWordPhraseTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.model.*;
 
@@ -10,7 +8,7 @@ import java.util.List;
 
 public interface DeckWordPhraseTranslationService {
     /**
-     * Return a DeckWordPhraseTranslation
+     * Return a random DeckWordPhraseTranslation of an user
      *
      * @param userId
      * @return DeckWordPhraseTranslation
@@ -19,7 +17,7 @@ public interface DeckWordPhraseTranslationService {
 
 
     /**
-     * Return a WordTranslation of a deck
+     * Return a random DeckWordPhraseTranslation from a deck
      *
      * @param deckId
      * @return DeckWordPhraseTranslation
@@ -84,6 +82,35 @@ public interface DeckWordPhraseTranslationService {
      * @throws WordPhraseTranslationNotFoundException if any wordPhraseTranslation is not found
      */
     DeckDTO createDeckWithWordPhraseTranslation(UserInfo userInfo, String name, String description, List<Integer> wordPhraseTranslationIds);
+
+    /**
+     * Returns a page of WordWithAttemptsAndSuccess of a deck, that is a list of Words with their number of ssucces
+     * and accuracy in a deck
+     *
+     * @param deckId
+     * @param pageNumber
+     * @param pageSize
+     * @return List<WordWithAttemptsAndSuccessDTO>
+     */
+    List<WordWithAttemptsAndSuccessDTO> getWordWithAttemptsAndSuccessPaginatedByDeckId(Integer deckId, Integer pageNumber, Integer pageSize, Integer userId);
+
+    /**
+     * Returns the senses of a Word alongside all their categories number of attempts(in  general) and accuracy
+     *
+     * @param deckId
+     * @param wordId
+     * @return List<WordSenseInfoWithoutWordDTO>
+     */
+    List<WordSenseInfoWithoutWordDTO> getWordSenseInfosWithoutWordByWordIdAndDeckId(Integer deckId, Integer wordId);
+
+    /**
+     * Return a map with the words and wordSenses already in the deck, alongside the first page of a WordWithAttemptsAndSuccesses
+     *
+     * @param deckId
+     * @param pageSize
+     * @return DeckEditInitInfoDTO
+     */
+    DeckEditInitInfoDTO getDeckEditInitInfo(Integer deckId, Integer pageSize, Integer userId);
 }
 
 
