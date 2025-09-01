@@ -13,15 +13,19 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WordFilterRequestDTO {
+public class WordFilterRequestDTO extends WordSenseFilterRequestDTO {
     private List<String> textFiltered;
-    private int minAccuracy;
-    private int maxAccuracy;
     private List<PartSpeech> partSpeeches;
     private List<Level> levels;
-    private List<Category> categories;
-    private List<Person> persons;
-    private List<Gender> genders;
-    private List<Number> numbers;
-    private List<Tense> tenses;
+
+    @Override
+    public boolean hasAnyFilter() {
+        if (super.hasAnyFilter()) {
+            return true;
+        }
+
+        return this.getTextFiltered() != null && this.getTextFiltered().size() > 0
+                || this.getPartSpeeches() != null && this.getPartSpeeches().size() > 0
+                || this.getLevels() != null && this.getLevels().size() > 0;
+    }
 }

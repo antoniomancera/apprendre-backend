@@ -1,8 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.dto.WordDTO;
-import com.antonio.apprendrebackend.service.dto.WordFilterOptionsDTO;
-import com.antonio.apprendrebackend.service.dto.WordWithSenseDTO;
+import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.PartSpeechFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
 import com.antonio.apprendrebackend.service.model.Word;
@@ -35,7 +33,7 @@ public interface WordService {
      * @param pageSize
      * @return a List<WordWithSenseDTO>
      */
-    List<WordWithSenseDTO> getWordWithSensePaginated(Integer pageNumber, Integer pageSize);
+    // List<WordWithSenseDTO> getWordWithSensePaginated(Integer pageNumber, Integer pageSize);
 
     /**
      * Get a list with all the parameters availables to filter for word and wordSense, that are;
@@ -46,5 +44,41 @@ public interface WordService {
      */
     WordFilterOptionsDTO getAllWordFilterOptions();
 
-    List<WordWithSenseDTO> getWordWithSensePaginatedAplyingWordSenseFilter(Integer pageNumber, Integer pageSize, WordFilterOptionsDTO wordFilterOptionsDTO);
+    /**
+     * Returns a page of WordWithAttemptsAndSuccess applying filter if exists, that is a list of Words with their number
+     * of attempts and accuracy
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param wordFilterRequest
+     * @return List<WordWithAttemptsAndSuccessDTO>
+     */
+    List<WordWithAttemptsAndSuccessDTO> getWordWithSensePaginatedAplyingWordFilter(Integer pageNumber, Integer pageSize, WordFilterRequestDTO wordFilterRequest, Integer userId);
+
+    /**
+     * Returns a page of WordWithAttemptsAndSuccess, that is a list of Words with their number
+     * of attempts and accuracy
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return List<WordWithAttemptsAndSuccessDTO>
+     */
+    List<WordWithAttemptsAndSuccessDTO> getWordWithAttemptsAndSuccessPaginated(Integer pageNumber, Integer pageSize, Integer userId);
+
+    /**
+     * Get the senses with Info of a word
+     *
+     * @param wordId
+     * @return List<WordSenseInfoWithoutWordDTO>
+     */
+    List<WordSenseInfoWithoutWordDTO> getWordSenseInfosWithoutWordByWordId(Integer wordId, Integer userId);
+
+    /**
+     * Get the senses with Info of a word on applying filters if exists
+     *
+     * @param wordId
+     * @param wordSenseFilterRequest
+     * @return List<WordSenseInfoWithoutWordDTO>
+     */
+    List<WordSenseInfoWithoutWordDTO> getWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters(Integer wordId, WordSenseFilterRequestDTO wordSenseFilterRequest, Integer userId);
 }

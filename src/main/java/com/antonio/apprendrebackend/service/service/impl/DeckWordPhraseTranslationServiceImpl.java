@@ -1,20 +1,20 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
-import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
-import com.antonio.apprendrebackend.service.dto.DeckDTO;
-import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
+import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.DeckWordPhraseTranslationNotFoundException;
-import com.antonio.apprendrebackend.service.mapper.DeckMapper;
-import com.antonio.apprendrebackend.service.mapper.WordPhraseTranslationMapper;
+import com.antonio.apprendrebackend.service.mapper.*;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.DeckWordPhraseTranslationRespository;
 import com.antonio.apprendrebackend.service.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTranslationService {
@@ -39,10 +39,29 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
     private DeckMapper deckMapper;
 
     @Autowired
+    private WordSenseCategoryService wordSenseCategoryService;
+
+    @Autowired
+    private WordService wordService;
+
+    @Autowired
+    private WordSenseService wordSenseService;
+
+    @Autowired
     private WordPhraseTranslationMapper wordPhraseTranslationMapper;
 
+    @Autowired
+    private WordMapper wordMapper;
+
+    @Autowired
+    private CategoryMapper categoryMapper;
+
+    @Autowired
+    private WordSenseWithoutWordMapper wordSenseWithoutWordMapper;
+
+
     /**
-     * Return a DeckWordPhraseTranslation
+     * Return a random DeckWordPhraseTranslation of an user
      *
      * @param userId
      * @return DeckWordPhraseTranslation
@@ -60,7 +79,7 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
     }
 
     /**
-     * Return a WordTranslation of a deck
+     * Return a random DeckWordPhraseTranslation from a deck
      *
      * @param deckId
      * @return DeckWordPhraseTranslation
@@ -125,10 +144,19 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
         return deckWordPhraseTranslationRespository.findPhraseTranslationsByDeckId(deckId);
     }
 
-
+    /**
+     * Attempt a WordPhraseTranslation, will add an userHistorial depending on the result of the attemps, besides returns a WordTranslation
+     * in case of success
+     *
+     * @param wordPhraseId
+     * @param deckId
+     * @param attempt
+     * @return AttemptResultDTO with result and new WordPhraseTranslation in case of success
+     * @throws DeckWordPhraseTranslationNotFoundException if not exist anyone
+     */
     @Override
     public AttemptResultDTO attemptsWordPhraseTranslation(UserInfo userInfo, Integer wordPhraseId, Integer deckId, String attempt) {
-        logger.debug(String.format("Attempt: %s of the wordPhrase: %d, for the deck: %d", attempt, wordPhraseId, deckId));
+        logger.debug("Called attemptsWordPhraseTranslation() in DeckWordPhraseTranslationService for deck-{}, attempt-{}, and wordPhrase", deckId, attempt, wordPhraseId);
 
         DeckWordPhraseTranslation deckWordPhraseTranslation = getByDeckIdAndWordPhraseTranslationId(deckId, wordPhraseId);
         Deck deck = deckService.getDeckbyId(deckId);
@@ -154,7 +182,7 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
      */
     @Override
     public DeckDTO createDeckWithWordPhraseTranslation(UserInfo userInfo, String name, String description, List<Integer> wordPhraseTranslationIds) {
-        logger.debug(String.format("Create a deck: %s with a list of WordPhraseTranslation", name));
+        logger.debug("Called createDeckWithWordPhraseTranslation() in DeckWordPhraseTranslationService for requestName-{}, with description-{}, and wordPhraseTranslationIds", name, description, wordPhraseTranslationIds);
 
         Deck deck = deckService.createDeck(new Deck(userInfo, name, description));
         for (Integer id : wordPhraseTranslationIds) {
@@ -165,6 +193,99 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
     }
 
     /**
+     * Returns a page of WordWithAttemptsAndSuccess of a deck, that is a list of Words with their number of ssucces
+     * and accuracy in a deck
+     *
+     * @param deckId
+     * @param pageNumber
+     * @param pageSize
+     * @return List<WordWithAttemptsAndSuccessDTO>
+     */
+    @Override
+    public List<WordWithAttemptsAndSuccessDTO> getWordWithAttemptsAndSuccessPaginatedByDeckId(Integer deckId, Integer pageNumber, Integer pageSize, Integer userId) {
+        logger.debug("Called getWordsWithAttemptsAndSuccessPaginatedByDeckId() in DeckWordPhraseTranslationService for deck-{}, pageNumber-{}, and pageSize-{}", deckId, pageNumber, pageSize);
+
+        List<WordWithAttemptsAndSuccessDTO> wordWithAttemptsAndSuccesses = new ArrayList<>();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        List<DeckWordPhraseTranslation> deckWordPhraseTranslations = deckWordPhraseTranslationRespository.findByDeckId(pageable, deckId);
+
+        List<Word> words = deckWordPhraseTranslations.stream()
+                .map(deckWordPhraseTranslation -> deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseFr().getWord())
+                .distinct()
+                .collect(Collectors.toList());
+
+        for (Word word : words) {
+            List<UserHistorial> userHistorials = userHistorialService.getUserHistorialsByDeckIdAndWordId(deckId, word.getId());
+
+            Double success = 0.0;
+            Integer attempts = 0;
+
+            for (UserHistorial userHistorial : userHistorials) {
+                attempts += 1;
+                success += userHistorial.getSuccess().getScore();
+            }
+
+            wordWithAttemptsAndSuccesses.add(new WordWithAttemptsAndSuccessDTO(wordMapper.toDTO(word), attempts, success));
+        }
+
+        return wordWithAttemptsAndSuccesses;
+    }
+
+    /**
+     * Returns the senses of a Word alongside all their categories number of attempts(in  general) and accuracy
+     *
+     * @param deckId
+     * @param wordId
+     * @return List<WordSenseInfoWithoutWordDTO>
+     */
+    @Override
+    public List<WordSenseInfoWithoutWordDTO> getWordSenseInfosWithoutWordByWordIdAndDeckId(Integer deckId, Integer wordId) {
+        logger.debug("Called getWordSenseInfosWithoutWordByWordIdAndDeckId() in DeckWordPhraseTranslationService for deck-{}, and word-{}", deckId, wordId);
+
+        List<WordSenseInfoWithoutWordDTO> wordSenseInfoWithoutWords = new ArrayList<>();
+
+        List<WordSense> wordSenses = wordSenseService.getWordSensesByWordIdAndDeckId(wordId, deckId);
+        for (WordSense wordSense : wordSenses) {
+            List<UserHistorial> userHistorials = userHistorialService.getUserHistorialsByDeckIdAndWordSenseId(deckId, wordSense.getId());
+
+            Double success = 0.0;
+            Integer attempts = 0;
+
+            for (UserHistorial userHistorial : userHistorials) {
+                attempts += 1;
+                success += userHistorial.getSuccess().getScore();
+            }
+
+            List<CategoryDTO> categories = wordSenseCategoryService.getCategoryByWordSenseId(wordSense.getId()).stream().map(category -> categoryMapper.toDTO(category)).collect(Collectors.toList());
+            wordSenseInfoWithoutWords.add(new WordSenseInfoWithoutWordDTO(wordSenseWithoutWordMapper.toDTO(wordSense), attempts, success, categories));
+        }
+        return wordSenseInfoWithoutWords;
+    }
+
+    /**
+     * Return a map with the words and wordSenses already in the deck, alongside the first page of a WordWithAttemptsAndSuccesses
+     *
+     * @param deckId
+     * @param pageSize
+     * @return DeckEditInitInfoDTO
+     */
+    @Override
+    public DeckEditInitInfoDTO getDeckEditInitInfo(Integer deckId, Integer pageSize, Integer userId) {
+        logger.debug("Called getDeckEditInit() in DeckWordPhraseTranslationService for deck-{}, and pageSize-{}", deckId, pageSize);
+
+        List<WordSense> wordSenses = wordSenseService.getWordSensesByDeckId(deckId);
+
+        Map<Integer, List<Integer>> wordToWordSensesIdMap = wordSenses.stream()
+                .collect(Collectors.groupingBy(
+                        wordSense -> wordSense.getWord().getId(),
+                        Collectors.mapping(WordSense::getId, Collectors.toList())
+                ));
+
+        return new DeckEditInitInfoDTO(wordToWordSensesIdMap, wordService.getWordWithAttemptsAndSuccessPaginated(0, pageSize, userId));
+    }
+
+    /**
      * Return a Random WordPhraseTranslationDTO depending on an optional deck
      *
      * @param deckId
@@ -172,7 +293,7 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
      */
     @Override
     public WordPhraseTranslationDTO getRandomWordPhraseTranslation(UserInfo userInfo, Integer deckId) {
-        logger.debug(String.format("Get a random WordPHraseTranslation of the deck: %d", deckId));
+        logger.debug("Called getRandomWordPhraseTranslation() in DeckWordPhraseTranslationService for deck-{}", deckId);
 
         DeckWordPhraseTranslation deckWordTranslation;
         if (deckId != null) {

@@ -26,8 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class UserHistorialServiceImplTest {
-
-
     @Mock
     private UserHistorialRespository userHistorialRespository;
 
@@ -53,7 +51,6 @@ public class UserHistorialServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Common test data
         userInfo = new UserInfo();
         userInfo.setId(1);
         userInfo.setUserName("testUser");
@@ -313,5 +310,176 @@ public class UserHistorialServiceImplTest {
         assertNotNull(result);
         assertEquals(3, result.getId());
         verify(userHistorialRespository, times(1)).save(newHistorial);
+    }
+
+    @Test
+    void testGetUserHistorialsByUserIdAndWordId() {
+        // Given
+        Integer userId = 1;
+        Integer wordId = 100;
+        List<UserHistorial> historialList = Arrays.asList(userHistorial1, userHistorial2);
+
+        // When
+        when(userHistorialRespository.findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+                userId, wordId)).thenReturn(historialList);
+
+        List<UserHistorial> result = userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getId());
+        assertEquals(2, result.get(1).getId());
+        verify(userHistorialRespository, times(1))
+                .findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+    }
+
+    @Test
+    void testGetUserHistorialsByUserIdAndWordIdEmpty() {
+        // Given
+        Integer userId = 1;
+        Integer wordId = 100;
+        List<UserHistorial> emptyList = new ArrayList<>();
+
+        // When
+        when(userHistorialRespository.findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+                userId, wordId)).thenReturn(emptyList);
+
+        List<UserHistorial> result = userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(userHistorialRespository, times(1))
+                .findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+    }
+
+    @Test
+    void testGetUserHistorialsByDeckIdAndWordId() {
+        // Given
+        Integer deckId = 1;
+        Integer wordId = 100;
+        List<UserHistorial> historialList = Arrays.asList(userHistorial1, userHistorial2);
+
+        // When
+        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+                deckId, wordId)).thenReturn(historialList);
+
+        List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordId(deckId, wordId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getId());
+        assertEquals(2, result.get(1).getId());
+        verify(userHistorialRespository, times(1))
+                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+    }
+
+    @Test
+    void testGetUserHistorialsByDeckIdAndWordIdEmpty() {
+        // Given
+        Integer deckId = 1;
+        Integer wordId = 100;
+        List<UserHistorial> emptyList = new ArrayList<>();
+
+        // When
+        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+                deckId, wordId)).thenReturn(emptyList);
+
+        List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordId(deckId, wordId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(userHistorialRespository, times(1))
+                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+    }
+
+    @Test
+    void testGetUserHistorialsByDeckIdAndWordSenseId() {
+        // Given
+        Integer deckId = 1;
+        Integer wordSenseId = 200;
+        List<UserHistorial> historialList = Arrays.asList(userHistorial1, userHistorial2);
+
+        // When
+        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(
+                deckId, wordSenseId)).thenReturn(historialList);
+
+        List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordSenseId(deckId, wordSenseId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getId());
+        assertEquals(2, result.get(1).getId());
+        verify(userHistorialRespository, times(1))
+                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
+    }
+
+    @Test
+    void testGetUserHistorialsByDeckIdAndWordSenseIdEmpty() {
+        // Given
+        Integer deckId = 1;
+        Integer wordSenseId = 200;
+        List<UserHistorial> emptyList = new ArrayList<>();
+
+        // When
+        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(
+                deckId, wordSenseId)).thenReturn(emptyList);
+
+        List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordSenseId(deckId, wordSenseId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(userHistorialRespository, times(1))
+                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
+    }
+
+    @Test
+    void testGetUserHistorialsByUserIdAndWordIdNullUserId() {
+        // Given
+        Integer userId = null;
+        Integer wordId = 100;
+
+        // When / Then
+        assertDoesNotThrow(() -> {
+            userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordId);
+        });
+
+        verify(userHistorialRespository, times(1))
+                .findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+    }
+
+    @Test
+    void testGetUserHistorialsByDeckIdAndWordIdNullDeckId() {
+        // Given
+        Integer deckId = null;
+        Integer wordId = 100;
+
+        // When / Then
+        assertDoesNotThrow(() -> {
+            userHistorialService.getUserHistorialsByDeckIdAndWordId(deckId, wordId);
+        });
+
+        verify(userHistorialRespository, times(1))
+                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+    }
+
+    @Test
+    void testGetUserHistorialsByDeckIdAndWordSenseIdNullDeckId() {
+        // Given
+        Integer deckId = null;
+        Integer wordSenseId = 200;
+
+        // When / Then
+        assertDoesNotThrow(() -> {
+            userHistorialService.getUserHistorialsByDeckIdAndWordSenseId(deckId, wordSenseId);
+        });
+
+        verify(userHistorialRespository, times(1))
+                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
     }
 }

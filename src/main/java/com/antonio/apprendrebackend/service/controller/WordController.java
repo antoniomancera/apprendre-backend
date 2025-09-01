@@ -30,54 +30,107 @@ public class WordController {
      */
     @GetMapping(path = "/allVerbs")
     public @ResponseBody ResponseEntity<List<WordDTO>> getAllVerbs() {
-        logger.info("Get a list with all the verbs");
+        logger.info("Called getAllVerbs() in WordController");
 
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         List<WordDTO> verbs = wordService.getAllVerbs();
         return ResponseEntity.ok(verbs);
     }
 
-
     /**
-     * Return a page with wordWitSenses, that is a collection of word with their respective wordSense
+     * Get a list with all the parameters availables to filter for word and wordSense, that are;
+     * for all level, category, part of speech; for part of speech variables  person, gender, number;
+     * and finally for part of speech with conjugation mood and tense
      *
-     * @param pageNumber
-     * @param pageSize
-     * @return HTTP respond with a List<WordWithSenseDTO>
+     * @return HTTP respond with WordFilterOptionsDTO
      */
-    @GetMapping(path = "/paginated/{pageNumber}/{pageSize}")
-    public @ResponseBody ResponseEntity<List<WordWithSenseDTO>> getWordWithSensePaginated(
-            @PathVariable int pageNumber,
-            @PathVariable int pageSize
-    ) {
-        logger.info(String.format("Get the page: %d with: %d elements of words with theirs wordSenses", pageNumber, pageSize));
-
-        SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        List<WordWithSenseDTO> words = wordService.getWordWithSensePaginated(pageNumber, pageSize);
-        return ResponseEntity.ok(words);
-    }
-
-
     @GetMapping(path = "/allFilters/")
     public @ResponseBody ResponseEntity<WordFilterOptionsDTO> getAllWordFilterOptions(
 
     ) {
-        logger.info(String.format("Get the page1: elements of words with theirs wordSenses"));
+        logger.info("Called getAllWordFilterOptions() in WordController");
 
         SecurityContextHolder.getContext().getAuthentication().getCredentials();
         WordFilterOptionsDTO wordSenseFilters = wordService.getAllWordFilterOptions();
         return ResponseEntity.ok(wordSenseFilters);
     }
 
-    @GetMapping(path = "applyFilters/paginated/{pageNumber}/{pageSize}")
-    public @ResponseBody ResponseEntity<List<WordWithSenseDTO>> getWordWithSensePaginatedAplyingWordSenseFilter(
-            @RequestParam(defaultValue = "0") int pageNumber,
-            @RequestParam(defaultValue = "10") int pageSize, @RequestBody WordFilterOptionsDTO wordSenseFilter
+    /**
+     * Returns a page of WordWithAttemptsAndSuccess applying filter if exists, that is a list of Words with their number
+     * of attempts and accuracy
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param wordFilterRequest
+     * @return HTTP respond with a List<WordWithAttemptsAndSuccessDTO>
+     */
+    @PostMapping(path = "applyFilters/paginated/{pageNumber}/{pageSize}")
+    public @ResponseBody ResponseEntity<List<WordWithAttemptsAndSuccessDTO>> getWordWithAttemptsAndSuccessesPaginatedAplyingWordFilter(
+            @PathVariable int pageNumber,
+            @PathVariable int pageSize,
+            @RequestBody WordFilterRequestDTO wordFilterRequest
     ) {
+        logger.info("Called getWordWithAttemptsAndSuccessesPaginatedAplyingWordFilter() in WordController for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
 
-        SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        List<WordWithSenseDTO> words = wordService.getWordWithSensePaginatedAplyingWordSenseFilter(pageNumber, pageSize, wordSenseFilter);
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        List<WordWithAttemptsAndSuccessDTO> words = wordService.getWordWithSensePaginatedAplyingWordFilter(pageNumber, pageSize, wordFilterRequest, userInfo.getId());
         return ResponseEntity.ok(words);
+    }
+
+    /**
+     * Returns a page of WordWithAttemptsAndSuccess, that is a list of Words with their number
+     * of attempts and accuracy
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return HTTP respond with a List<WordWithAttemptsAndSuccessDTO>
+     */
+    @GetMapping(path = "withAttemptsAndSuccesses/paginated/{pageNumber}/{pageSize}")
+    public @ResponseBody ResponseEntity<List<WordWithAttemptsAndSuccessDTO>> getWordWithAttemptsAndSuccessPaginated(
+            @PathVariable int pageNumber,
+            @PathVariable int pageSize
+    ) {
+        logger.info("Called getWordWithAttemptsAndSuccessPaginated() in WordController for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
+
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        List<WordWithAttemptsAndSuccessDTO> wordWithAttemptsAndSuccesses = wordService.getWordWithAttemptsAndSuccessPaginated(pageNumber, pageSize, userInfo.getId());
+        return ResponseEntity.ok(wordWithAttemptsAndSuccesses);
+    }
+
+    /**
+     * Get the senses with Info of a word
+     *
+     * @param wordId
+     * @return HTTP respond with a List<WordSenseInfoWithoutWordDTO>
+     */
+    @GetMapping(path = "wordSenseInfo/{wordId}")
+    public @ResponseBody ResponseEntity<List<WordSenseInfoWithoutWordDTO>> getWordSenseInfosWithoutWordByWordId(
+            @PathVariable int wordId
+    ) {
+        logger.info("Called getWordSenseInfosWithoutWordByWordId() in WordController for wordId-{}, and pageNumber-{}", wordId);
+
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        List<WordSenseInfoWithoutWordDTO> wordWithAttemptsAndSuccesses = wordService.getWordSenseInfosWithoutWordByWordId(wordId, userInfo.getId());
+        return ResponseEntity.ok(wordWithAttemptsAndSuccesses);
+    }
+
+    /**
+     * Get the senses with Info of a word on applying filters if exists
+     *
+     * @param wordId
+     * @param wordSenseFilterRequest
+     * @return HTTP respond with a List<WordSenseInfoWithoutWordDTO>
+     */
+    @PostMapping(path = "wordSenseInfo/applyFilters/{wordId}")
+    public @ResponseBody ResponseEntity<List<WordSenseInfoWithoutWordDTO>> getWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters(
+            @PathVariable int wordId,
+            @RequestBody WordSenseFilterRequestDTO wordSenseFilterRequest
+    ) {
+        logger.info("Called getWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters() in WordController for wordId-{}, and pageNumber-{}", wordId);
+
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        List<WordSenseInfoWithoutWordDTO> wordWithAttemptsAndSuccesses = wordService.getWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters(wordId, wordSenseFilterRequest, userInfo.getId());
+        return ResponseEntity.ok(wordWithAttemptsAndSuccesses);
     }
 
 }
