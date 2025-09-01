@@ -23,8 +23,8 @@ public class WordCollectionItem {
     private WordSense wordSense;
 
     @ManyToOne
-    @JoinColumn(name = "sub_type_id")
-    private SubType subType;
+    @JoinColumn(name = "part_speech_sub_type_id")
+    private PartSpeechSubType partSpeechSubType;
 
     @ManyToOne
     @JoinColumn(name = "person_gender_number_id")

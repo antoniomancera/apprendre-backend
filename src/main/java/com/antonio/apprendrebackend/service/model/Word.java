@@ -19,8 +19,16 @@ public class Word {
     private Language language;
 
     @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
+    @JoinColumn(name = "part_speech_id")
+    private PartSpeech partSpeech;
+
+    @ManyToOne
+    @JoinColumn(name = "part_speech_sub_type_id")
+    private PartSpeechSubType partSpeechSubType;
+
+    @ManyToOne
+    @JoinColumn(name = "level_id")
+    private Level level;
 
     private String name;
 }

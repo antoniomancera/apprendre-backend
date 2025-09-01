@@ -17,7 +17,7 @@ public interface ConjugationRegularTenseEndingRepository extends CrudRepository<
      * @param personGenderNumberEnums
      * @return List<ConjugationRegularTenseEnding>
      */
-    List<ConjugationRegularTenseEnding> findByTenseTenseEnumAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
+    List<ConjugationRegularTenseEnding> findByTenseCodeAndVerbGroupVerbGroupEnumAndPersonGenderNumberPersonGenderNumberEnumIn(
             Tense.TenseEnum tenseEnum,
             VerbGroup.VerbGroupEnum verbGroupEnum,
             List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums

@@ -7,6 +7,8 @@ import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.repository.UserHistorialRespository;
 import com.antonio.apprendrebackend.service.service.UserHistorialService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ import static com.antonio.apprendrebackend.service.util.GeneralConstants.ONE_DAY
 
 @Service
 public class UserHistorialServiceImpl implements UserHistorialService {
+    private static final Logger logger = LoggerFactory.getLogger(UserHistorialServiceImpl.class);
+
     @Autowired
     UserHistorialRespository userHistorialRespository;
 
@@ -33,6 +37,8 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public List<UserHistorial> getUserHistorialLastWeek(UserInfo userInfo) {
+        logger.debug("Called getUserHistorialLastWeek() in UserHistorailService for userId-{}", userInfo.getId());
+
         LocalDate today = LocalDate.now();
         long endMillis = System.currentTimeMillis();
         long startMillis = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
@@ -47,11 +53,15 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public Optional<UserHistorial> getLastUserHistorial(UserInfo userInfo) {
+        logger.debug("Called getLastUserHistorial() in UserHistorailService for userId-{}", userInfo.getId());
+
         return userHistorialRespository.findFirstByUserInfoOrderByDateDesc(userInfo);
     }
 
     @Override
     public List<UserHistorialDTO> getDeckWordTranslationHistorialByDayMillis(UserInfo userInfo, Long dayMillis) {
+        logger.debug("Called getDeckWordTranslationHistorialByDayMillis() in UserHistorailService for userId-{}, of the day-{}", userInfo.getId(), dayMillis);
+
         if (dayMillis == null) {
             throw new IllegalArgumentException("The argument is null");
         }
@@ -67,7 +77,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
 
         Map<String, UserHistorialDTO> groupedHistorialMap = new HashMap<>();
         for (UserHistorial historial : userHistorialList) {
-            Integer deckId = historial.getDeckId();
+            Integer deckId = historial.getDeck().getId();
             Integer wordTranslationId = historial.getDeckWordPhraseTranslation().getId();
 
             String key = deckId + "-" + wordTranslationId;
@@ -78,7 +88,9 @@ public class UserHistorialServiceImpl implements UserHistorialService {
                 newHistorialDTO.setAttempts(1);
                 groupedHistorialMap.put(key, newHistorialDTO);
             } else {
-                existingHistorialDTO.setSuccess(existingHistorialDTO.getSuccess() + historial.getSuccess());
+                existingHistorialDTO.getSuccess().setScore(
+                        existingHistorialDTO.getSuccess().getScore() + historial.getSuccess().getScore()
+                );
                 existingHistorialDTO.setAttempts(existingHistorialDTO.getAttempts() + 1);
             }
         }
@@ -93,6 +105,50 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public UserHistorial postUserHistorial(UserHistorial userHistorial) {
+        logger.debug("Called postUserHistorial() in UserHistorailService for userHistorial-{}", userHistorial);
+
         return userHistorialRespository.save(userHistorial);
+    }
+
+    /**
+     * Get the UserHistorials of a word for a user
+     *
+     * @param userId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    @Override
+    public List<UserHistorial> getUserHistorialsByUserIdAndWordId(Integer userId, Integer wordId) {
+        logger.debug("Called postUserHistorial() in UserHistorailService for userHistorial-{} and word-{}", userId, wordId);
+
+        return userHistorialRespository.findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+    }
+
+    /**
+     * Get all the UserHistorials of a word in a deck
+     *
+     * @param deckId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    @Override
+    public List<UserHistorial> getUserHistorialsByDeckIdAndWordId(Integer deckId, Integer wordId) {
+        logger.debug("Called postUserHistorial() in UserHistorailService for deck-{} and word-{}", deckId, wordId);
+
+        return userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+    }
+
+    /**
+     * Get all the UserHistorials of a wordSense in a deck
+     *
+     * @param deckId
+     * @param wordSenseId
+     * @return List<UserHistorial>
+     */
+    @Override
+    public List<UserHistorial> getUserHistorialsByDeckIdAndWordSenseId(Integer deckId, Integer wordSenseId) {
+        logger.debug("Called postUserHistorial() in UserHistorailService for deck-{} and wordSense-{}", deckId, wordSenseId);
+
+        return userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
     }
 }

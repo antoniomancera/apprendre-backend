@@ -1,15 +1,22 @@
 package com.antonio.apprendrebackend.service.repository;
 
-import com.antonio.apprendrebackend.service.model.Type;
+import com.antonio.apprendrebackend.service.model.PartSpeech;
 import com.antonio.apprendrebackend.service.model.Word;
-import com.antonio.apprendrebackend.service.model.WordTranslation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface WordRepository extends CrudRepository<Word, Integer> {
+public interface WordRepository extends CrudRepository<Word, Integer>, JpaSpecificationExecutor<Word> {
 
-    List<Word> findByType(Type type);
+    List<Word> findByPartSpeech(PartSpeech partSpeech);
+
+    Page<Word> findAll(Pageable pageable);
+
+    Page<Word> findAll(Specification spec, Pageable pageable);
 }

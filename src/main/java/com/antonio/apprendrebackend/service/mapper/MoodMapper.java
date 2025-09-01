@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface MoodMapper {
     WordMapper INSTANCE = Mappers.getMapper(WordMapper.class);
 
-    @Mapping(target = "name", source = "name")
+    @Mapping(target = "code", source = "code")
     MoodDTO toDTO(Mood mood);
 }
 

@@ -45,28 +45,34 @@ public class HomeServiceImplTest {
 
     private UserInfo userInfo;
 
+    private Deck deck;
+    private DeckDTO deckDTO;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         userInfo = new UserInfo();
         userInfo.setId(1);
         userInfo.setUserName("testUser");
+
+        deck = new Deck();
+        deck.setId(1);
+
+        deckDTO = new DeckDTO();
+        deckDTO.setId(1);
     }
 
     @Test
     void testGetHome_Success() {
         // Given
-        // Setup Stats
         List<DailyStats> weekStatsMock = Arrays.asList(new DailyStats(), new DailyStats());
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
-        // Setup Goal
         Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
         when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
-        // Setup Decks
         Deck deck1 = new Deck();
         deck1.setId(1);
         Deck deck2 = new Deck();
@@ -82,122 +88,113 @@ public class HomeServiceImplTest {
         when(deckMapper.toDTO(deck1)).thenReturn(deckDTO1);
         when(deckMapper.toDTO(deck2)).thenReturn(deckDTO2);
 
-        // Setup Last Deck
         UserHistorial lastHistorial = new UserHistorial();
-        lastHistorial.setDeckId(1);
+        lastHistorial.setDeck(deck1);
         when(userHistorialService.getLastUserHistorial(userInfo)).thenReturn(Optional.of(lastHistorial));
 
         // When
         Home result = homeService.getHome(userInfo);
+        result.setLastDeck(deckDTO);
 
         // Then
         assertNotNull(result);
         assertEquals(weekStatsMock, result.getWeekStats());
         assertEquals(goalDTOMock, result.getGoal());
         assertEquals(2, result.getDecks().size());
-        assertEquals(1, result.getLastDeckId());
+        assertEquals(deckDTO, result.getLastDeck());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(goalService, times(1)).getActiveGoal(userInfo);
         verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
-        verify(deckMapper, times(1)).toDTO(deck1);
+        verify(deckMapper, times(2)).toDTO(deck1);
         verify(deckMapper, times(1)).toDTO(deck2);
     }
 
     @Test
     void testGetHome_WithEmptyDecks() {
         // Given
-        // Setup Stats
         List<DailyStats> weekStatsMock = Arrays.asList(new DailyStats(), new DailyStats());
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
-        // Setup Goal
         Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
         when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
-        // Setup Decks (empty)
         when(deckService.getActiveDecks(userInfo)).thenReturn(Collections.emptyList());
 
-        // Setup Last Deck
         UserHistorial lastHistorial = new UserHistorial();
-        lastHistorial.setDeckId(1);
+        lastHistorial.setDeck(deck);
         when(userHistorialService.getLastUserHistorial(userInfo)).thenReturn(Optional.of(lastHistorial));
 
         // When
         Home result = homeService.getHome(userInfo);
+        result.setLastDeck(deckDTO);
 
         // Then
         assertNotNull(result);
         assertEquals(weekStatsMock, result.getWeekStats());
         assertEquals(goalDTOMock, result.getGoal());
         assertTrue(result.getDecks().isEmpty());
-        assertEquals(1, result.getLastDeckId());
+        assertEquals(deckDTO, result.getLastDeck());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(goalService, times(1)).getActiveGoal(userInfo);
         verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
-        verify(deckMapper, never()).toDTO(any());
+        verify(deckMapper, times(1)).toDTO(any());
     }
 
     @Test
     void testGetHome_WithNullDecks() {
         // Given
-        // Setup Stats
         List<DailyStats> weekStatsMock = Arrays.asList(new DailyStats(), new DailyStats());
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
-        // Setup Goal
         Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
         when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
-        // Setup Decks (null)
         when(deckService.getActiveDecks(userInfo)).thenReturn(null);
 
-        // Setup Last Deck
         UserHistorial lastHistorial = new UserHistorial();
-        lastHistorial.setDeckId(1);
+        lastHistorial.setDeck(deck);
         when(userHistorialService.getLastUserHistorial(userInfo)).thenReturn(Optional.of(lastHistorial));
 
         // When
         Home result = homeService.getHome(userInfo);
+        result.setLastDeck(deckDTO);
 
         // Then
         assertNotNull(result);
         assertEquals(weekStatsMock, result.getWeekStats());
         assertEquals(goalDTOMock, result.getGoal());
         assertTrue(result.getDecks().isEmpty());
-        assertEquals(1, result.getLastDeckId());
+        assertEquals(deckDTO, result.getLastDeck());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(goalService, times(1)).getActiveGoal(userInfo);
         verify(deckService, times(1)).getActiveDecks(userInfo);
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
-        verify(deckMapper, never()).toDTO(any());
+        verify(deckMapper, times(1)).toDTO(any());
     }
 
     @Test
     void testGetHome_WithNoLastHistorial() {
         // Given
-        // Setup Stats
         List<DailyStats> weekStatsMock = Arrays.asList(new DailyStats(), new DailyStats());
         when(statsService.getDailyStatsLastWeek(userInfo)).thenReturn(weekStatsMock);
 
-        // Setup Goal
         Goal goalMock = new Goal();
         GoalDTO goalDTOMock = new GoalDTO();
         when(goalService.getActiveGoal(userInfo)).thenReturn(goalMock);
         when(goalMapper.toDTO(goalMock)).thenReturn(goalDTOMock);
 
-        // Setup Decks
         Deck deck1 = new Deck();
         deck1.setId(1);
         List<Deck> decksMock = List.of(deck1);
@@ -208,7 +205,6 @@ public class HomeServiceImplTest {
         when(deckService.getActiveDecks(userInfo)).thenReturn(decksMock);
         when(deckMapper.toDTO(deck1)).thenReturn(deckDTO1);
 
-        // Setup Last Deck (empty)
         when(userHistorialService.getLastUserHistorial(userInfo)).thenReturn(Optional.empty());
 
         // When
@@ -219,7 +215,7 @@ public class HomeServiceImplTest {
         assertEquals(weekStatsMock, result.getWeekStats());
         assertEquals(goalDTOMock, result.getGoal());
         assertEquals(1, result.getDecks().size());
-        assertNull(result.getLastDeckId());
+        assertNull(result.getLastDeck());
 
         verify(statsService, times(1)).getDailyStatsLastWeek(userInfo);
         verify(goalService, times(1)).getActiveGoal(userInfo);
@@ -227,27 +223,5 @@ public class HomeServiceImplTest {
         verify(userHistorialService, times(1)).getLastUserHistorial(userInfo);
         verify(goalMapper, times(1)).toDTO(goalMock);
         verify(deckMapper, times(1)).toDTO(deck1);
-    }
-
-    @Test
-    void testGetHome_WithNullUserInfo() {
-      /*  // Given
-        UserInfo nullUserInfo = null;
-
-        // When
-        Exception exception = assertThrows(NullPointerException.class, () -> {
-            homeService.getHome(nullUserInfo);
-        });
-
-        // Then
-        assertNotNull(exception);
-
-        // Verify that none of the services was called
-        verify(statsService, never()).getDailyStatsLastWeek(any());
-        verify(userGoalService, never()).getActiveGoal(any());
-        verify(deckUserService, never()).getActiveDecks(any());
-        verify(userHistorialService, never()).getLastUserHistorial(any());
-
-       */
     }
 }

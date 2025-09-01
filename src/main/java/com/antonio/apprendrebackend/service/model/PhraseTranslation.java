@@ -21,6 +21,6 @@ public class PhraseTranslation {
     private Phrase phraseSp;
 
     private String description;
-    private Integer attempts;
-    private Integer successes;
+
+    private Integer baseWeight;
 }

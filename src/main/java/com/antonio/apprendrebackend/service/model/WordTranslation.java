@@ -2,11 +2,14 @@ package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//TODO refactor Wordtranslation to WordSenseTransation
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class WordTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,27 +24,15 @@ public class WordTranslation {
     private WordSense wordSenseSp;
 
     @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
+    @JoinColumn(name = "word_inflection_id")
+    private WordInflection wordInflection;
 
-    @ManyToOne
-    @JoinColumn(name = "conjugation_verb_form_id")
-    private ConjugationVerbForm conjugationVerbForm;
-
-    private Integer attempts;
-    private Integer successes;
     private Integer importanceIndex;
 
-
-    public WordTranslation() {
-        this.attempts = 0;
-        this.successes = 0;
-    }
+    private Integer baseWeight;
 
     public WordTranslation(WordSense wordSenseFr, WordSense wordSenseSp) {
         this.wordSenseFr = wordSenseFr;
         this.wordSenseSp = wordSenseSp;
-        this.attempts = 0;
-        this.successes = 0;
     }
 }

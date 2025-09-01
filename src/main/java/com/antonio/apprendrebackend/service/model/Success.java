@@ -9,20 +9,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SubType {
-    public enum SubTypeEnum {
-        PERSONAL_PRONOUN,
+public class Success {
+    public enum SuccessEnum {
+        INCORRECT,
+        CORRECT,
+        ACCENT_MARK_INCORRECT
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private Type type;
-
-
     @Enumerated(EnumType.STRING)
-    private SubTypeEnum name;
+    private SuccessEnum successEnum;
+
+    private String name;
+    private Double score;
 }

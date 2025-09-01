@@ -18,5 +18,5 @@ public class Home {
     GoalDTO goal;
     UserInfoDTO userInfo;
     List<DeckDTO> decks;
-    Integer lastDeckId;
+    DeckDTO lastDeck;
 }

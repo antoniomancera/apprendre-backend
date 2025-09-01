@@ -8,6 +8,8 @@ import com.antonio.apprendrebackend.service.mapper.TenseMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseMapper;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ConjugationVerbServiceImpl implements ConjugationVerbService {
+    private static final Logger logger = LoggerFactory.getLogger(ConjugationVerbServiceImpl.class);
+
     @Autowired
     private WordSenseService wordSenseService;
     @Autowired
@@ -51,6 +55,8 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
      */
     @Override
     public List<ConjugationTenseDTO> getConjugationComplete(int wordSenseId) {
+        logger.debug("Getting all the conjugation for wordSenseId: %s", wordSenseId);
+
         WordSense verb = wordSenseService.getById(wordSenseId);
         ConjugationVerb conjugationVerb = getConjugationVerbByWordSenseId(wordSenseId);
         ConjugationVariation conjugationVariation = conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb);
@@ -87,7 +93,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                 ConjugationVerbFormIrregular conjugationVerbFormIrregular =
                         getConjugationVerbFormIrregularOtherwiseNull(conjugationVerbFormIrregulars, tense, personGenderNumberEnum);
 
-                String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, tense.getTenseEnum(), personGenderNumberEnum);
+                String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, tense.getCode(), personGenderNumberEnum);
 
                 ConjugationRegularIrregularDTO conjugationRegularIrregular =
                         createConjugationRegularIrregular(conjugationBase, ending, conjugationVerbFormIrregular);
@@ -138,7 +144,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
                         ConjugationVerbFormIrregular conjugationVerbFormIrregular =
                                 getConjugationVerbFormIrregularOtherwiseNull(conjugationVerbFormIrregulars, item.getTense(), personGenderNumberEnum);
 
-                        String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, item.getTense().getTenseEnum(), personGenderNumberEnum);
+                        String ending = getEndingForTenseAndPerson(conjugationRegularTenseEndings, item.getTense().getCode(), personGenderNumberEnum);
 
                         ConjugationRegularIrregularDTO conjugationRegularIrregular =
                                 createConjugationRegularIrregular(conjugationBase, ending, conjugationVerbFormIrregular);
@@ -185,6 +191,8 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
 
     @Override
     public ConjugationVerb getConjugationVerbByWordId(Integer wordId) {
+        logger.debug("Getting the conjugationVerb for wordId: %s", wordId);
+
         Optional<ConjugationVerbWordWordSense> conjugationVerbWordWordSenseOptional = conjugationVerbWordWordSenseService.getConjugationVerbWordWordSenseByWordId(wordId);
         if (!conjugationVerbWordWordSenseOptional.isPresent()) {
             throw new ConjugationVerbNotFoundException(String.format("Not found conjugation for verb %s", wordId));
@@ -194,6 +202,8 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
 
     @Override
     public ConjugationVerb getConjugationVerbByWordSenseId(Integer wordSenseId) {
+        logger.debug("Getting the conjugationVerb for wordSenseId: %s", wordSenseId);
+
         Optional<ConjugationVerbWordWordSense> conjugationVerbWordWordSenseOptional = conjugationVerbWordWordSenseService.getConjugationVerbWordWordSenseByWordSenseId(wordSenseId);
         if (conjugationVerbWordWordSenseOptional.isPresent()) {
             return conjugationVerbWordWordSenseOptional.get().getConjugationVerb();
@@ -255,7 +265,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
 
         return conjugationVerbFormIrregulars.stream()
                 .filter(irregular ->
-                        irregular.getConjugationVerbForm().getTense().getTenseEnum().equals(tense.getTenseEnum()) &&
+                        irregular.getConjugationVerbForm().getTense().getCode().equals(tense.getCode()) &&
                                 irregular.getConjugationVerbForm().getPersonGenderNumber().getPersonGenderNumberEnum().equals(personGenderNumberEnum))
                 .findFirst()
                 .orElse(null);
@@ -264,7 +274,7 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
     private ConjugationRegularTenseEnding getConjugationRegularTenseEndingByTenseEnumAndPersonGenderNumberEnum(List<ConjugationRegularTenseEnding> conjugationRegularTenseEndings, Tense.TenseEnum tenseEnum, PersonGenderNumber.PersonGenderNumberEnum personGenderNumberEnum) {
         if (conjugationRegularTenseEndings == null) return null;
         return conjugationRegularTenseEndings.stream()
-                .filter(ending -> ending.getTense().getTenseEnum().equals(tenseEnum) &&
+                .filter(ending -> ending.getTense().getCode().equals(tenseEnum) &&
                         ending.getPersonGenderNumber().getPersonGenderNumberEnum().equals(personGenderNumberEnum))
                 .findFirst()
                 .orElse(null);
