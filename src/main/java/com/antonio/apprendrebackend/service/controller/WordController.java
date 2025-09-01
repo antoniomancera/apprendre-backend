@@ -30,7 +30,7 @@ public class WordController {
      */
     @GetMapping(path = "/allVerbs")
     public @ResponseBody ResponseEntity<List<WordDTO>> getAllVerbs() {
-        logger.info("Get a list with all the verbs");
+        logger.info("Called getAllVerbs() in WordController");
 
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         List<WordDTO> verbs = wordService.getAllVerbs();
@@ -48,7 +48,7 @@ public class WordController {
     public @ResponseBody ResponseEntity<WordFilterOptionsDTO> getAllWordFilterOptions(
 
     ) {
-        logger.info(String.format("Get the page1: elements of words with theirs wordSenses"));
+        logger.info("Called getAllWordFilterOptions() in WordController");
 
         SecurityContextHolder.getContext().getAuthentication().getCredentials();
         WordFilterOptionsDTO wordSenseFilters = wordService.getAllWordFilterOptions();

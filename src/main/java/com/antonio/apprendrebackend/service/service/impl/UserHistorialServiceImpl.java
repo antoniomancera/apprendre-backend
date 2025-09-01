@@ -37,7 +37,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public List<UserHistorial> getUserHistorialLastWeek(UserInfo userInfo) {
-        logger.debug("Getting userHistorial of the last week");
+        logger.debug("Called getUserHistorialLastWeek() in UserHistorailService for userId-{}", userInfo.getId());
 
         LocalDate today = LocalDate.now();
         long endMillis = System.currentTimeMillis();
@@ -53,14 +53,14 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public Optional<UserHistorial> getLastUserHistorial(UserInfo userInfo) {
-        logger.debug("Getting last userHistorial");
+        logger.debug("Called getLastUserHistorial() in UserHistorailService for userId-{}", userInfo.getId());
 
         return userHistorialRespository.findFirstByUserInfoOrderByDateDesc(userInfo);
     }
 
     @Override
     public List<UserHistorialDTO> getDeckWordTranslationHistorialByDayMillis(UserInfo userInfo, Long dayMillis) {
-        logger.debug("Getting the userHistorial of the day: %d", dayMillis);
+        logger.debug("Called getDeckWordTranslationHistorialByDayMillis() in UserHistorailService for userId-{}, of the day-{}", userInfo.getId(), dayMillis);
 
         if (dayMillis == null) {
             throw new IllegalArgumentException("The argument is null");
@@ -105,7 +105,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
      */
     @Override
     public UserHistorial postUserHistorial(UserHistorial userHistorial) {
-        logger.debug("Saving a new UserHistorial");
+        logger.debug("Called postUserHistorial() in UserHistorailService for userHistorial-{}", userHistorial);
 
         return userHistorialRespository.save(userHistorial);
     }
