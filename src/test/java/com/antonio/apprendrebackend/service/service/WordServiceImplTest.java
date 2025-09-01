@@ -4,6 +4,7 @@ package com.antonio.apprendrebackend.service.service;
 import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.PartSpeechFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
+import com.antonio.apprendrebackend.service.mapper.CategoryMapper;
 import com.antonio.apprendrebackend.service.mapper.WordMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseWithoutWordMapper;
 import com.antonio.apprendrebackend.service.model.*;
@@ -49,24 +50,23 @@ public class WordServiceImplTest {
 
     @Mock
     private NumberService numberService;
-
-    @Mock
-    private MoodService moodService;
-
     @Mock
     private TenseService tenseService;
-
-    @Mock
-    private WordMapper wordMapper;
 
     @InjectMocks
     private WordServiceImpl wordService;
     @Mock
     private WordSenseService wordSenseService;
-
+    @Mock
+    private UserHistorialService userHistorialService;
+    @Mock
+    private WordSenseCategoryService wordSenseCategoryService;
     @Mock
     private WordSenseWithoutWordMapper wordSenseWithoutWordMapper;
-
+    @Mock
+    private WordMapper wordMapper;
+    @Mock
+    private CategoryMapper categoryMapper;
 
     private PartSpeech verbPartSpeech;
     private Word verb1;
@@ -77,6 +77,16 @@ public class WordServiceImplTest {
     private WordSense wordSense2;
     private WordSenseWithoutWordDTO wordSenseDTO1;
     private WordSenseWithoutWordDTO wordSenseDTO2;
+    private UserHistorial userHistorial1;
+    private UserHistorial userHistorial2;
+    private Success success1;
+    private Success success2;
+    private Category category1;
+    private CategoryDTO categoryDTO1;
+    private WordFilterRequestDTO wordFilterRequest;
+    private WordSenseFilterRequestDTO wordSenseFilterRequest;
+    private Pageable pageable;
+    private Page<Word> wordPage;
 
     @BeforeEach
     void setUp() {
@@ -113,6 +123,35 @@ public class WordServiceImplTest {
 
         wordSenseDTO2 = new WordSenseWithoutWordDTO();
         wordSenseDTO2.setId(2);
+
+        success1 = new Success();
+        success1.setId(1);
+        success1.setScore(1.0);
+
+        success2 = new Success();
+        success2.setId(2);
+        success2.setScore(0.5);
+
+        userHistorial1 = new UserHistorial();
+        userHistorial1.setId(1);
+        userHistorial1.setSuccess(success1);
+
+        userHistorial2 = new UserHistorial();
+        userHistorial2.setId(2);
+        userHistorial2.setSuccess(success2);
+
+        category1 = new Category();
+        category1.setId(1);
+        category1.setName("Animals");
+
+        categoryDTO1 = new CategoryDTO();
+        categoryDTO1.setName("Animals");
+
+        wordFilterRequest = new WordFilterRequestDTO();
+        wordSenseFilterRequest = new WordSenseFilterRequestDTO();
+
+        pageable = PageRequest.of(0, 10);
+        wordPage = new PageImpl<>(Arrays.asList(verb1, verb2));
     }
 
     @Test
@@ -171,7 +210,7 @@ public class WordServiceImplTest {
             wordService.getAllVerbs();
         });
 
-        assertEquals("Not found any part speech VERB", exception.getMessage());
+        assertEquals("Not found any PartSpeech VERB", exception.getMessage());
         verify(partSpeechService, times(1)).getByPartSpeech(PartSpeech.PartSpeechEnum.VERB);
         verify(wordRepository, never()).findByPartSpeech(any(PartSpeech.class));
         verify(wordMapper, never()).toDTO(any(Word.class));
@@ -270,173 +309,6 @@ public class WordServiceImplTest {
         assertEquals("Not found any word with id null", exception.getMessage());
         verify(wordRepository, times(1)).findById(null);
     }
-
-    @Test
-    void testGetWordWithSensePaginated_ReturnsWordsWithSenses() {
-        // Given
-        Integer pageNumber = 0;
-        Integer pageSize = 2;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        List<Word> words = Arrays.asList(verb1, verb2);
-        Page<Word> wordPage = new PageImpl<>(words, pageable, words.size());
-
-        List<WordSense> wordSenses1 = Arrays.asList(wordSense1);
-        List<WordSense> wordSenses2 = Arrays.asList(wordSense2);
-
-        when(wordRepository.findAll(pageable)).thenReturn(wordPage);
-        when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
-        when(wordMapper.toDTO(verb2)).thenReturn(verbDTO2);
-        when(wordSenseService.getWordSensesByWordId(verbDTO1.getId())).thenReturn(wordSenses1);
-        when(wordSenseService.getWordSensesByWordId(verbDTO2.getId())).thenReturn(wordSenses2);
-        when(wordSenseWithoutWordMapper.toDTO(wordSense1)).thenReturn(wordSenseDTO1);
-        when(wordSenseWithoutWordMapper.toDTO(wordSense2)).thenReturn(wordSenseDTO2);
-
-        // When
-        List<WordWithSenseDTO> result = wordService.getWordWithSensePaginated(pageNumber, pageSize);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(2, result.size());
-
-        WordWithSenseDTO firstWordWithSense = result.get(0);
-        assertEquals("run", firstWordWithSense.getWord().getName());
-        assertEquals(1, firstWordWithSense.getWordSenses().size());
-        assertEquals(wordSenseDTO2.getId(), firstWordWithSense.getWordSenses().get(0).getId());
-
-        WordWithSenseDTO secondWordWithSense = result.get(1);
-        assertEquals("jump", secondWordWithSense.getWord().getName());
-        assertEquals(1, secondWordWithSense.getWordSenses().size());
-
-        verify(wordRepository, times(1)).findAll(pageable);
-        verify(wordMapper, times(2)).toDTO(any(Word.class));
-        verify(wordSenseService, times(2)).getWordSensesByWordId(any());
-        verify(wordSenseWithoutWordMapper, times(2)).toDTO(any(WordSense.class));
-    }
-
-    @Test
-    void testGetWordWithSensePaginated_EmptyPage() {
-        // Given
-        Integer pageNumber = 0;
-        Integer pageSize = 10;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        List<Word> emptyWords = new ArrayList<>();
-        Page<Word> emptyWordPage = new PageImpl<>(emptyWords, pageable, 0);
-
-        when(wordRepository.findAll(pageable)).thenReturn(emptyWordPage);
-
-        // When
-        List<WordWithSenseDTO> result = wordService.getWordWithSensePaginated(pageNumber, pageSize);
-
-        // Then
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-
-        verify(wordRepository, times(1)).findAll(pageable);
-        verify(wordMapper, never()).toDTO(any(Word.class));
-        verify(wordSenseService, never()).getWordSensesByWordId(any());
-        verify(wordSenseWithoutWordMapper, never()).toDTO(any(WordSense.class));
-    }
-
-    @Test
-    void testGetWordWithSensePaginated_WordWithoutSenses() {
-        // Given
-        Integer pageNumber = 0;
-        Integer pageSize = 1;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        List<Word> words = Arrays.asList(verb1);
-        Page<Word> wordPage = new PageImpl<>(words, pageable, words.size());
-
-        List<WordSense> emptySenses = new ArrayList<>();
-
-        when(wordRepository.findAll(pageable)).thenReturn(wordPage);
-        when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
-        when(wordSenseService.getWordSensesByWordId(verbDTO1.getId())).thenReturn(emptySenses);
-
-        // When
-        List<WordWithSenseDTO> result = wordService.getWordWithSensePaginated(pageNumber, pageSize);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        WordWithSenseDTO wordWithSense = result.get(0);
-        assertEquals("run", wordWithSense.getWord().getName());
-        assertTrue(wordWithSense.getWordSenses().isEmpty());
-
-        verify(wordRepository, times(1)).findAll(pageable);
-        verify(wordMapper, times(1)).toDTO(verb1);
-        verify(wordSenseService, times(1)).getWordSensesByWordId(verbDTO1.getId());
-        verify(wordSenseWithoutWordMapper, never()).toDTO(any(WordSense.class));
-    }
-
-    @Test
-    void testGetWordWithSensePaginated_WordWithMultipleSenses() {
-        // Given
-        Integer pageNumber = 0;
-        Integer pageSize = 1;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        List<Word> words = Arrays.asList(verb1);
-        Page<Word> wordPage = new PageImpl<>(words, pageable, words.size());
-
-        List<WordSense> multipleSenses = Arrays.asList(wordSense1, wordSense2);
-
-        when(wordRepository.findAll(pageable)).thenReturn(wordPage);
-        when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
-        when(wordSenseService.getWordSensesByWordId(verbDTO1.getId())).thenReturn(multipleSenses);
-        when(wordSenseWithoutWordMapper.toDTO(wordSense1)).thenReturn(wordSenseDTO1);
-        when(wordSenseWithoutWordMapper.toDTO(wordSense2)).thenReturn(wordSenseDTO2);
-
-        // When
-        List<WordWithSenseDTO> result = wordService.getWordWithSensePaginated(pageNumber, pageSize);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        WordWithSenseDTO wordWithSense = result.get(0);
-        assertEquals("run", wordWithSense.getWord().getName());
-        assertEquals(2, wordWithSense.getWordSenses().size());
-        assertEquals(wordSenseDTO1.getId(), wordWithSense.getWordSenses().get(0).getId());
-        assertEquals(wordSenseDTO2.getId(), wordWithSense.getWordSenses().get(1).getId());
-
-        verify(wordRepository, times(1)).findAll(pageable);
-        verify(wordMapper, times(1)).toDTO(verb1);
-        verify(wordSenseService, times(1)).getWordSensesByWordId(verbDTO1.getId());
-        verify(wordSenseWithoutWordMapper, times(2)).toDTO(any(WordSense.class));
-    }
-
-    @Test
-    void testGetWordWithSensePaginated_DifferentPageSizes() {
-        // Given
-        Integer pageNumber = 1;
-        Integer pageSize = 1;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        List<Word> words = Arrays.asList(verb2);
-        Page<Word> wordPage = new PageImpl<>(words, pageable, 2);
-
-        List<WordSense> wordSenses = Arrays.asList(wordSense2);
-
-        when(wordRepository.findAll(pageable)).thenReturn(wordPage);
-        when(wordMapper.toDTO(verb2)).thenReturn(verbDTO2);
-        when(wordSenseService.getWordSensesByWordId(verbDTO2.getId())).thenReturn(wordSenses);
-        when(wordSenseWithoutWordMapper.toDTO(wordSense2)).thenReturn(wordSenseDTO2);
-
-        // When
-        List<WordWithSenseDTO> result = wordService.getWordWithSensePaginated(pageNumber, pageSize);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("jump", result.get(0).getWord().getName());
-
-        verify(wordRepository, times(1)).findAll(pageable);
-    }
-
 
     @Test
     void testGetAllWordFilterSuccess() {
@@ -585,5 +457,238 @@ public class WordServiceImplTest {
 
         verifyNoMoreInteractions(partSpeechService, levelService, categoryService,
                 personService, genderService, numberService, tenseService);
+    }
+
+    @Test
+    void testGetWordWithSensePaginatedAplyingWordFilter_WithoutFilters() {
+        // Given
+        Integer pageNumber = 0;
+        Integer pageSize = 10;
+        Integer userId = 1;
+        wordFilterRequest = mock(WordFilterRequestDTO.class);
+
+        List<Word> words = Arrays.asList(verb1, verb2);
+        List<UserHistorial> userHistorials1 = Arrays.asList(userHistorial1);
+        List<UserHistorial> userHistorials2 = Arrays.asList(userHistorial2);
+
+        // When
+        when(wordFilterRequest.hasAnyFilter()).thenReturn(false);
+        when(wordRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(words));
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb1.getId())).thenReturn(userHistorials1);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb2.getId())).thenReturn(userHistorials2);
+        when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
+        when(wordMapper.toDTO(verb2)).thenReturn(verbDTO2);
+
+        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithSensePaginatedAplyingWordFilter(pageNumber, pageSize, wordFilterRequest, userId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getAttempts());
+        assertEquals(1.0, result.get(0).getSuccess());
+        assertEquals(1, result.get(1).getAttempts());
+        assertEquals(0.5, result.get(1).getSuccess());
+        verify(wordRepository, times(1)).findAll(any(org.springframework.data.jpa.domain.Specification.class), any(Pageable.class));
+        verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb1.getId());
+        verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb2.getId());
+    }
+
+    @Test
+    void testGetWordWithAttemptsAndSuccessPaginated() {
+        // Given
+        Integer pageNumber = 0;
+        Integer pageSize = 10;
+        Integer userId = 1;
+
+        List<Word> words = Arrays.asList(verb1, verb2);
+        List<UserHistorial> userHistorials1 = Arrays.asList(userHistorial1, userHistorial2);
+        List<UserHistorial> userHistorials2 = Arrays.asList(userHistorial1);
+
+        // When
+        when(wordRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(words));
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb1.getId())).thenReturn(userHistorials1);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb2.getId())).thenReturn(userHistorials2);
+        when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
+        when(wordMapper.toDTO(verb2)).thenReturn(verbDTO2);
+
+        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithAttemptsAndSuccessPaginated(pageNumber, pageSize, userId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(2, result.get(0).getAttempts());
+        assertEquals(1.5, result.get(0).getSuccess());
+        assertEquals(1, result.get(1).getAttempts());
+        assertEquals(1.0, result.get(1).getSuccess());
+        verify(wordRepository, times(1)).findAll(any(Pageable.class));
+        verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb1.getId());
+        verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb2.getId());
+    }
+
+    @Test
+    void testGetWordWithAttemptsAndSuccessPaginated_EmptyResults() {
+        // Given
+        Integer pageNumber = 0;
+        Integer pageSize = 10;
+        Integer userId = 1;
+
+        List<Word> emptyWords = new ArrayList<>();
+
+        // When
+        when(wordRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(emptyWords));
+
+        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithAttemptsAndSuccessPaginated(pageNumber, pageSize, userId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(wordRepository, times(1)).findAll(any(Pageable.class));
+        verify(userHistorialService, never()).getUserHistorialsByUserIdAndWordId(anyInt(), anyInt());
+    }
+
+    @Test
+    void testGetWordSenseInfosWithoutWordByWordId() {
+        // Given
+        Integer wordId = 1;
+        Integer userId = 1;
+
+        List<WordSense> wordSenses = Arrays.asList(wordSense1, wordSense2);
+        List<UserHistorial> userHistorials1 = Arrays.asList(userHistorial1, userHistorial2);
+        List<UserHistorial> userHistorials2 = Arrays.asList(userHistorial1);
+        List<Category> categories = Arrays.asList(category1);
+        List<CategoryDTO> categoryDTOs = Arrays.asList(categoryDTO1);
+
+        // When
+        when(wordSenseService.getWordSensesByWordId(wordId)).thenReturn(wordSenses);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordSense1.getId())).thenReturn(userHistorials1);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordSense2.getId())).thenReturn(userHistorials2);
+        when(wordSenseCategoryService.getCategoryByWordSenseId(wordSense1.getId())).thenReturn(categories);
+        when(wordSenseCategoryService.getCategoryByWordSenseId(wordSense2.getId())).thenReturn(categories);
+        when(categoryMapper.toDTO(category1)).thenReturn(categoryDTO1);
+        when(wordSenseWithoutWordMapper.toDTO(wordSense1)).thenReturn(wordSenseDTO1);
+        when(wordSenseWithoutWordMapper.toDTO(wordSense2)).thenReturn(wordSenseDTO2);
+
+        List<WordSenseInfoWithoutWordDTO> result = wordService.getWordSenseInfosWithoutWordByWordId(wordId, userId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(2, result.get(0).getAttempts());
+        assertEquals(1.5, result.get(0).getSuccess());
+        assertEquals(1, result.get(1).getAttempts());
+        assertEquals(1.0, result.get(1).getSuccess());
+        verify(wordSenseService, times(1)).getWordSensesByWordId(wordId);
+        verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, wordSense1.getId());
+        verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, wordSense2.getId());
+        verify(wordSenseCategoryService, times(2)).getCategoryByWordSenseId(anyInt());
+    }
+
+    @Test
+    void testGetWordSenseInfosWithoutWordByWordId_NoHistorial() {
+        // Given
+        Integer wordId = 1;
+        Integer userId = 1;
+
+        List<WordSense> wordSenses = Arrays.asList(wordSense1);
+        List<UserHistorial> emptyHistorials = new ArrayList<>();
+        List<Category> categories = Arrays.asList(category1);
+
+        // When
+        when(wordSenseService.getWordSensesByWordId(wordId)).thenReturn(wordSenses);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordSense1.getId())).thenReturn(emptyHistorials);
+        when(wordSenseCategoryService.getCategoryByWordSenseId(wordSense1.getId())).thenReturn(categories);
+        when(categoryMapper.toDTO(category1)).thenReturn(categoryDTO1);
+        when(wordSenseWithoutWordMapper.toDTO(wordSense1)).thenReturn(wordSenseDTO1);
+
+        List<WordSenseInfoWithoutWordDTO> result = wordService.getWordSenseInfosWithoutWordByWordId(wordId, userId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(0, result.get(0).getAttempts());
+        assertEquals(0.0, result.get(0).getSuccess());
+        verify(wordSenseService, times(1)).getWordSensesByWordId(wordId);
+        verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, wordSense1.getId());
+    }
+
+    @Test
+    void testGetWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters_WithoutFilters() {
+        // Given
+        Integer wordId = 1;
+        Integer userId = 1;
+        wordSenseFilterRequest = mock(WordSenseFilterRequestDTO.class);
+
+        List<WordSense> wordSenses = Arrays.asList(wordSense1);
+        List<UserHistorial> userHistorials = Arrays.asList(userHistorial1);
+        List<Category> categories = Arrays.asList(category1);
+
+        // When
+        when(wordSenseFilterRequest.hasAnyFilter()).thenReturn(false);
+        when(wordSenseService.getWordSensesByWordId(wordId)).thenReturn(wordSenses);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordSense1.getId())).thenReturn(userHistorials);
+        when(wordSenseCategoryService.getCategoryByWordSenseId(wordSense1.getId())).thenReturn(categories);
+        when(categoryMapper.toDTO(category1)).thenReturn(categoryDTO1);
+        when(wordSenseWithoutWordMapper.toDTO(wordSense1)).thenReturn(wordSenseDTO1);
+
+        List<WordSenseInfoWithoutWordDTO> result = wordService.getWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters(wordId, wordSenseFilterRequest, userId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(wordSenseService, times(1)).getWordSensesByWordId(wordId);
+        verify(wordSenseService, never()).getWordSensesByWordIdWithSpecification(any(), anyInt());
+    }
+
+    @Test
+    void testGetWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters_WithFilters() {
+        // Given
+        Integer wordId = 1;
+        Integer userId = 1;
+        wordSenseFilterRequest = mock(WordSenseFilterRequestDTO.class);
+
+        List<WordSense> wordSenses = Arrays.asList(wordSense1);
+        List<UserHistorial> userHistorials = Arrays.asList(userHistorial1);
+        List<Category> categories = Arrays.asList(category1);
+
+        // When
+        when(wordSenseFilterRequest.hasAnyFilter()).thenReturn(true);
+        when(wordSenseService.getWordSensesByWordIdWithSpecification(any(), eq(wordId))).thenReturn(wordSenses);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordSense1.getId())).thenReturn(userHistorials);
+        when(wordSenseCategoryService.getCategoryByWordSenseId(wordSense1.getId())).thenReturn(categories);
+        when(categoryMapper.toDTO(category1)).thenReturn(categoryDTO1);
+        when(wordSenseWithoutWordMapper.toDTO(wordSense1)).thenReturn(wordSenseDTO1);
+
+        List<WordSenseInfoWithoutWordDTO> result = wordService.getWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters(wordId, wordSenseFilterRequest, userId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getAttempts());
+        assertEquals(1.0, result.get(0).getSuccess());
+        verify(wordSenseService, times(1)).getWordSensesByWordIdWithSpecification(any(), eq(wordId));
+        verify(wordSenseService, never()).getWordSensesByWordId(wordId);
+    }
+
+    @Test
+    void testGetWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters_EmptyResults() {
+        // Given
+        Integer wordId = 1;
+        Integer userId = 1;
+        wordSenseFilterRequest = mock(WordSenseFilterRequestDTO.class);
+
+        List<WordSense> emptyWordSenses = new ArrayList<>();
+
+        // When
+        when(wordSenseFilterRequest.hasAnyFilter()).thenReturn(true);
+        when(wordSenseService.getWordSensesByWordIdWithSpecification(any(), eq(wordId))).thenReturn(emptyWordSenses);
+
+        List<WordSenseInfoWithoutWordDTO> result = wordService.getWordSenseInfosWithoutWordByWordIdAplyingWordSenseFilters(wordId, wordSenseFilterRequest, userId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(wordSenseService, times(1)).getWordSensesByWordIdWithSpecification(any(), eq(wordId));
+        verify(userHistorialService, never()).getUserHistorialsByUserIdAndWordId(anyInt(), anyInt());
     }
 }
