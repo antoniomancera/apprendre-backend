@@ -396,5 +396,22 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(CourseNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCourseNotFoundException(CourseNotFoundException ex, WebRequest request) {
+        logger.warn("CourseNotFoundException: {} - Path: {}", ex.getMessage(), request.getDescription(false));
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.COURSE_NOT_FOUND,
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
+
+    }
+
 
 }
