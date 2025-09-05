@@ -65,15 +65,15 @@ public class WordController {
      * @return HTTP respond with a List<WordWithAttemptsAndSuccessDTO>
      */
     @PostMapping(path = "applyFilters/paginated/{pageNumber}/{pageSize}")
-    public @ResponseBody ResponseEntity<List<WordWithAttemptsAndSuccessDTO>> getWordWithAttemptsAndSuccessesPaginatedAplyingWordFilter(
+    public @ResponseBody ResponseEntity<List<WordWithAttemptsAndSuccessDTO>> getWordWithSensePaginatedByLanguageCodeAplyingWordFilter(
             @PathVariable int pageNumber,
             @PathVariable int pageSize,
             @RequestBody WordFilterRequestDTO wordFilterRequest
     ) {
-        logger.info("Called getWordWithAttemptsAndSuccessesPaginatedAplyingWordFilter() in WordController for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
+        logger.info("Called getWordWithSensePaginatedByLanguageCodeAplyingWordFilter() in WordController for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
 
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        List<WordWithAttemptsAndSuccessDTO> words = wordService.getWordWithSensePaginatedAplyingWordFilter(pageNumber, pageSize, wordFilterRequest, userInfo.getId());
+        List<WordWithAttemptsAndSuccessDTO> words = wordService.getWordWithSensePaginatedByLanguageCodeAplyingWordFilter(pageNumber, pageSize, wordFilterRequest, userInfo.getId(), userInfo.getCurrentCourse().getTargetLanguage().getCode());
         return ResponseEntity.ok(words);
     }
 
@@ -86,14 +86,14 @@ public class WordController {
      * @return HTTP respond with a List<WordWithAttemptsAndSuccessDTO>
      */
     @GetMapping(path = "withAttemptsAndSuccesses/paginated/{pageNumber}/{pageSize}")
-    public @ResponseBody ResponseEntity<List<WordWithAttemptsAndSuccessDTO>> getWordWithAttemptsAndSuccessPaginated(
+    public @ResponseBody ResponseEntity<List<WordWithAttemptsAndSuccessDTO>> getWordWithAttemptsAndSuccessPaginatedByLanguageCode(
             @PathVariable int pageNumber,
             @PathVariable int pageSize
     ) {
-        logger.info("Called getWordWithAttemptsAndSuccessPaginated() in WordController for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
+        logger.info("Called getWordWithAttemptsAndSuccessPaginatedByLanguageCode() in WordController for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
 
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        List<WordWithAttemptsAndSuccessDTO> wordWithAttemptsAndSuccesses = wordService.getWordWithAttemptsAndSuccessPaginated(pageNumber, pageSize, userInfo.getId());
+        List<WordWithAttemptsAndSuccessDTO> wordWithAttemptsAndSuccesses = wordService.getWordWithAttemptsAndSuccessPaginatedByLanguageCode(pageNumber, pageSize, userInfo.getId(), userInfo.getCurrentCourse().getTargetLanguage().getCode());
         return ResponseEntity.ok(wordWithAttemptsAndSuccesses);
     }
 

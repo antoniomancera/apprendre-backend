@@ -18,6 +18,10 @@ public class Deck {
     @JoinColumn(name = "user_id")
     private UserInfo userInfo;
 
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
+
     private String name;
     private String description;
     private Long beginDate;

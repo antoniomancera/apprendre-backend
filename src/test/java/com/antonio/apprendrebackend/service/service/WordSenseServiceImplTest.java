@@ -275,8 +275,8 @@ public class WordSenseServiceImplTest {
         List<WordSense> wordSenses = Arrays.asList(wordSense1, wordSense2, wordSense3);
 
         // When
-        when(wordSenseRepository.findByDeckId(deckId)).thenReturn(wordSenses);
-        List<WordSense> result = wordSenseService.getWordSensesByDeckId(deckId);
+        when(wordSenseRepository.findTargetLanguageWordSensesByDeckId(deckId)).thenReturn(wordSenses);
+        List<WordSense> result = wordSenseService.getTargetLanguageWordSensesByDeckId(deckId);
 
         // Then
         assertNotNull(result);
@@ -284,7 +284,7 @@ public class WordSenseServiceImplTest {
         assertEquals(wordSense1.getId(), result.get(0).getId());
         assertEquals(wordSense2.getId(), result.get(1).getId());
         assertEquals(wordSense3.getId(), result.get(2).getId());
-        verify(wordSenseRepository, times(1)).findByDeckId(deckId);
+        verify(wordSenseRepository, times(1)).findTargetLanguageWordSensesByDeckId(deckId);
     }
 
     @Test
@@ -294,13 +294,13 @@ public class WordSenseServiceImplTest {
         List<WordSense> emptyWordSenses = new ArrayList<>();
 
         // When
-        when(wordSenseRepository.findByDeckId(deckId)).thenReturn(emptyWordSenses);
-        List<WordSense> result = wordSenseService.getWordSensesByDeckId(deckId);
+        when(wordSenseRepository.findTargetLanguageWordSensesByDeckId(deckId)).thenReturn(emptyWordSenses);
+        List<WordSense> result = wordSenseService.getTargetLanguageWordSensesByDeckId(deckId);
 
         // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(wordSenseRepository, times(1)).findByDeckId(deckId);
+        verify(wordSenseRepository, times(1)).findTargetLanguageWordSensesByDeckId(deckId);
     }
 
     @Test
@@ -309,13 +309,13 @@ public class WordSenseServiceImplTest {
         Integer deckId = null;
 
         // When
-        when(wordSenseRepository.findByDeckId(deckId)).thenReturn(new ArrayList<>());
-        List<WordSense> result = wordSenseService.getWordSensesByDeckId(deckId);
+        when(wordSenseRepository.findTargetLanguageWordSensesByDeckId(deckId)).thenReturn(new ArrayList<>());
+        List<WordSense> result = wordSenseService.getTargetLanguageWordSensesByDeckId(deckId);
 
         // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(wordSenseRepository, times(1)).findByDeckId(deckId);
+        verify(wordSenseRepository, times(1)).findTargetLanguageWordSensesByDeckId(deckId);
     }
 
     @Test

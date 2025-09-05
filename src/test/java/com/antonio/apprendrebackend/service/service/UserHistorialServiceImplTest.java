@@ -320,7 +320,7 @@ public class UserHistorialServiceImplTest {
         List<UserHistorial> historialList = Arrays.asList(userHistorial1, userHistorial2);
 
         // When
-        when(userHistorialRespository.findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+        when(userHistorialRespository.findByUserInfoIdAndWordId(
                 userId, wordId)).thenReturn(historialList);
 
         List<UserHistorial> result = userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordId);
@@ -331,7 +331,7 @@ public class UserHistorialServiceImplTest {
         assertEquals(1, result.get(0).getId());
         assertEquals(2, result.get(1).getId());
         verify(userHistorialRespository, times(1))
-                .findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+                .findByUserInfoIdAndWordId(userId, wordId);
     }
 
     @Test
@@ -342,7 +342,7 @@ public class UserHistorialServiceImplTest {
         List<UserHistorial> emptyList = new ArrayList<>();
 
         // When
-        when(userHistorialRespository.findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+        when(userHistorialRespository.findByUserInfoIdAndWordId(
                 userId, wordId)).thenReturn(emptyList);
 
         List<UserHistorial> result = userHistorialService.getUserHistorialsByUserIdAndWordId(userId, wordId);
@@ -351,7 +351,7 @@ public class UserHistorialServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(userHistorialRespository, times(1))
-                .findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+                .findByUserInfoIdAndWordId(userId, wordId);
     }
 
     @Test
@@ -362,7 +362,7 @@ public class UserHistorialServiceImplTest {
         List<UserHistorial> historialList = Arrays.asList(userHistorial1, userHistorial2);
 
         // When
-        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+        when(userHistorialRespository.findByDeckIdAndWordId(
                 deckId, wordId)).thenReturn(historialList);
 
         List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordId(deckId, wordId);
@@ -373,7 +373,7 @@ public class UserHistorialServiceImplTest {
         assertEquals(1, result.get(0).getId());
         assertEquals(2, result.get(1).getId());
         verify(userHistorialRespository, times(1))
-                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+                .findByDeckIdAndWordId(deckId, wordId);
     }
 
     @Test
@@ -384,7 +384,7 @@ public class UserHistorialServiceImplTest {
         List<UserHistorial> emptyList = new ArrayList<>();
 
         // When
-        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(
+        when(userHistorialRespository.findByDeckIdAndWordId(
                 deckId, wordId)).thenReturn(emptyList);
 
         List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordId(deckId, wordId);
@@ -393,7 +393,7 @@ public class UserHistorialServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(userHistorialRespository, times(1))
-                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+                .findByDeckIdAndWordId(deckId, wordId);
     }
 
     @Test
@@ -404,7 +404,7 @@ public class UserHistorialServiceImplTest {
         List<UserHistorial> historialList = Arrays.asList(userHistorial1, userHistorial2);
 
         // When
-        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(
+        when(userHistorialRespository.findByDeckIdAndWordSenseId(
                 deckId, wordSenseId)).thenReturn(historialList);
 
         List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordSenseId(deckId, wordSenseId);
@@ -415,7 +415,7 @@ public class UserHistorialServiceImplTest {
         assertEquals(1, result.get(0).getId());
         assertEquals(2, result.get(1).getId());
         verify(userHistorialRespository, times(1))
-                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
+                .findByDeckIdAndWordSenseId(deckId, wordSenseId);
     }
 
     @Test
@@ -426,7 +426,7 @@ public class UserHistorialServiceImplTest {
         List<UserHistorial> emptyList = new ArrayList<>();
 
         // When
-        when(userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(
+        when(userHistorialRespository.findByDeckIdAndWordSenseId(
                 deckId, wordSenseId)).thenReturn(emptyList);
 
         List<UserHistorial> result = userHistorialService.getUserHistorialsByDeckIdAndWordSenseId(deckId, wordSenseId);
@@ -435,7 +435,7 @@ public class UserHistorialServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(userHistorialRespository, times(1))
-                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
+                .findByDeckIdAndWordSenseId(deckId, wordSenseId);
     }
 
     @Test
@@ -450,7 +450,7 @@ public class UserHistorialServiceImplTest {
         });
 
         verify(userHistorialRespository, times(1))
-                .findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+                .findByUserInfoIdAndWordId(userId, wordId);
     }
 
     @Test
@@ -465,7 +465,7 @@ public class UserHistorialServiceImplTest {
         });
 
         verify(userHistorialRespository, times(1))
-                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+                .findByDeckIdAndWordId(deckId, wordId);
     }
 
     @Test
@@ -480,6 +480,6 @@ public class UserHistorialServiceImplTest {
         });
 
         verify(userHistorialRespository, times(1))
-                .findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
+                .findByDeckIdAndWordSenseId(deckId, wordSenseId);
     }
 }

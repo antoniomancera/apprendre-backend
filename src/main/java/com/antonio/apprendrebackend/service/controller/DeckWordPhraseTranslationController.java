@@ -125,11 +125,11 @@ public class DeckWordPhraseTranslationController {
      * @return HTTP respond with DeckEditInitInfoDTO
      */
     @GetMapping(path = "deckEditInit/{deckId}/{pageSize}")
-    public @ResponseBody ResponseEntity<DeckEditInitInfoDTO> getDeckEditInit(
+    public @ResponseBody ResponseEntity<DeckEditInitInfoDTO> getDeckEditInitInfo(
             @PathVariable int deckId,
             @PathVariable int pageSize
     ) {
-        logger.info("Called getDeckEditInit() in DeckWordPhraseTranslationController for deck-{}, and pageSize-{}", deckId, pageSize);
+        logger.info("Called getDeckEditInitInfo() in DeckWordPhraseTranslationController for deck-{}, and pageSize-{}", deckId, pageSize);
 
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
         DeckEditInitInfoDTO wordWithAttemptsAndSuccesses = deckWordPhraseTranslationService.getDeckEditInitInfo(deckId, pageSize, userInfo.getId());

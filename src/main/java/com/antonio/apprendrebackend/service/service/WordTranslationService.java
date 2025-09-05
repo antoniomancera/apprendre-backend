@@ -4,6 +4,7 @@ import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhraseTranslationsDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
+import com.antonio.apprendrebackend.service.model.Language;
 
 import java.util.List;
 
@@ -18,12 +19,13 @@ public interface WordTranslationService {
     List<WordTranslationWithPhraseTranslationsDTO> getAllWordTranslationsWithPhrasesByDeck(Integer deckId);
 
     /**
-     * Get the page pageNumber of WordTranslationDTO with pageSize elements
+     * Get the page pageNumber of WordTranslationDTO with pageSize elements of a language
      *
      * @param pageNumber
      * @param pageSize
+     * @param language
      * @return List<WordTranslationDTO>
      * @throws WordTranslationNotFoundException if not exist any WordTranslation
      */
-    List<WordTranslationDTO> getAllWordTranslations(Integer pageNumber, Integer pageSize);
+    List<WordTranslationDTO> getAllWordTranslations(Integer pageNumber, Integer pageSize, Language language);
 }

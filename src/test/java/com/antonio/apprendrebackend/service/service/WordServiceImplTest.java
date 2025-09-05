@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +68,8 @@ public class WordServiceImplTest {
     private WordMapper wordMapper;
     @Mock
     private CategoryMapper categoryMapper;
-
+    @Mock
+    private WordFilterRequestDTO wordFilterRequest;
     private PartSpeech verbPartSpeech;
     private Word verb1;
     private Word verb2;
@@ -83,10 +85,10 @@ public class WordServiceImplTest {
     private Success success2;
     private Category category1;
     private CategoryDTO categoryDTO1;
-    private WordFilterRequestDTO wordFilterRequest;
     private WordSenseFilterRequestDTO wordSenseFilterRequest;
     private Pageable pageable;
     private Page<Word> wordPage;
+    private Language language;
 
     @BeforeEach
     void setUp() {
@@ -96,10 +98,14 @@ public class WordServiceImplTest {
         verbPartSpeech.setId(1);
         verbPartSpeech.setCode(PartSpeech.PartSpeechEnum.VERB);
 
+        language = new Language();
+        language.setCode(Language.LanguageEnum.FR);
+
         verb1 = new Word();
         verb1.setId(1);
         verb1.setName("run");
         verb1.setPartSpeech(verbPartSpeech);
+        verb1.setLanguage(language);
 
         verb2 = new Word();
         verb2.setId(2);
@@ -147,11 +153,11 @@ public class WordServiceImplTest {
         categoryDTO1 = new CategoryDTO();
         categoryDTO1.setName("Animals");
 
-        wordFilterRequest = new WordFilterRequestDTO();
         wordSenseFilterRequest = new WordSenseFilterRequestDTO();
 
         pageable = PageRequest.of(0, 10);
         wordPage = new PageImpl<>(Arrays.asList(verb1, verb2));
+
     }
 
     @Test
@@ -465,22 +471,29 @@ public class WordServiceImplTest {
         Integer pageNumber = 0;
         Integer pageSize = 10;
         Integer userId = 1;
-        wordFilterRequest = mock(WordFilterRequestDTO.class);
+        Language.LanguageEnum code = Language.LanguageEnum.FR;
 
         List<Word> words = Arrays.asList(verb1, verb2);
         List<UserHistorial> userHistorials1 = Arrays.asList(userHistorial1);
         List<UserHistorial> userHistorials2 = Arrays.asList(userHistorial2);
 
+        doReturn(false).when(wordFilterRequest).hasAnyFilter();
+
         // When
-        when(wordFilterRequest.hasAnyFilter()).thenReturn(false);
-        when(wordRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(words));
-        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb1.getId())).thenReturn(userHistorials1);
-        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb2.getId())).thenReturn(userHistorials2);
+        when(wordRepository.findByLanguageCode(
+                eq(code),
+                any(Specification.class),
+                any(Pageable.class))
+        ).thenReturn(new PageImpl<>(words));
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb1.getId()))
+                .thenReturn(userHistorials1);
+        when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb2.getId()))
+                .thenReturn(userHistorials2);
         when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
         when(wordMapper.toDTO(verb2)).thenReturn(verbDTO2);
 
-        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithSensePaginatedAplyingWordFilter(pageNumber, pageSize, wordFilterRequest, userId);
+        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithSensePaginatedByLanguageCodeAplyingWordFilter(
+                pageNumber, pageSize, wordFilterRequest, userId, code);
 
         // Then
         assertNotNull(result);
@@ -489,7 +502,10 @@ public class WordServiceImplTest {
         assertEquals(1.0, result.get(0).getSuccess());
         assertEquals(1, result.get(1).getAttempts());
         assertEquals(0.5, result.get(1).getSuccess());
-        verify(wordRepository, times(1)).findAll(any(org.springframework.data.jpa.domain.Specification.class), any(Pageable.class));
+        verify(wordRepository, times(1)).findByLanguageCode(
+                any(Language.LanguageEnum.class),
+                any(Specification.class),
+                any(Pageable.class));
         verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb1.getId());
         verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb2.getId());
     }
@@ -500,19 +516,21 @@ public class WordServiceImplTest {
         Integer pageNumber = 0;
         Integer pageSize = 10;
         Integer userId = 1;
+        Language.LanguageEnum code = Language.LanguageEnum.FR;
 
         List<Word> words = Arrays.asList(verb1, verb2);
         List<UserHistorial> userHistorials1 = Arrays.asList(userHistorial1, userHistorial2);
         List<UserHistorial> userHistorials2 = Arrays.asList(userHistorial1);
 
         // When
-        when(wordRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(words));
+        when(wordRepository.findByLanguageCode(eq(code), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(words));
         when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb1.getId())).thenReturn(userHistorials1);
         when(userHistorialService.getUserHistorialsByUserIdAndWordId(userId, verb2.getId())).thenReturn(userHistorials2);
         when(wordMapper.toDTO(verb1)).thenReturn(verbDTO1);
         when(wordMapper.toDTO(verb2)).thenReturn(verbDTO2);
 
-        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithAttemptsAndSuccessPaginated(pageNumber, pageSize, userId);
+        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithAttemptsAndSuccessPaginatedByLanguageCode(pageNumber, pageSize, userId, code);
 
         // Then
         assertNotNull(result);
@@ -521,7 +539,7 @@ public class WordServiceImplTest {
         assertEquals(1.5, result.get(0).getSuccess());
         assertEquals(1, result.get(1).getAttempts());
         assertEquals(1.0, result.get(1).getSuccess());
-        verify(wordRepository, times(1)).findAll(any(Pageable.class));
+        verify(wordRepository, times(1)).findByLanguageCode(any(Language.LanguageEnum.class), any(Pageable.class));
         verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb1.getId());
         verify(userHistorialService, times(1)).getUserHistorialsByUserIdAndWordId(userId, verb2.getId());
     }
@@ -532,18 +550,20 @@ public class WordServiceImplTest {
         Integer pageNumber = 0;
         Integer pageSize = 10;
         Integer userId = 1;
+        Language.LanguageEnum code = Language.LanguageEnum.FR;
 
         List<Word> emptyWords = new ArrayList<>();
 
         // When
-        when(wordRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(emptyWords));
+        when(wordRepository.findByLanguageCode(eq(code), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(emptyWords));
 
-        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithAttemptsAndSuccessPaginated(pageNumber, pageSize, userId);
+        List<WordWithAttemptsAndSuccessDTO> result = wordService.getWordWithAttemptsAndSuccessPaginatedByLanguageCode(pageNumber, pageSize, userId, code);
 
         // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(wordRepository, times(1)).findAll(any(Pageable.class));
+        verify(wordRepository, times(1)).findByLanguageCode(any(Language.LanguageEnum.class), any(Pageable.class));
         verify(userHistorialService, never()).getUserHistorialsByUserIdAndWordId(anyInt(), anyInt());
     }
 

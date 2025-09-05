@@ -21,5 +21,5 @@ public class Language {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private LanguageEnum languageEnum;
+    private LanguageEnum code;
 }

@@ -2,6 +2,7 @@ package com.antonio.apprendrebackend.service.repository;
 
 import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.UserInfo;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -24,11 +25,86 @@ public interface UserHistorialRespository extends CrudRepository<UserHistorial, 
      */
     Optional<UserHistorial> findFirstByUserInfoOrderByDateDesc(UserInfo userInfo);
 
-    List<UserHistorial> findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(Integer userId, Integer wordId);
+    /**
+     * Return the UserHistorial of a word and an user
+     *
+     * @param userId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    @Query(value = """
+            SELECT DISTINCT uh
+            FROM UserHistorial uh
+            JOIN uh.deckWordPhraseTranslation dwpt
+            JOIN dwpt.wordPhraseTranslation wpt
+            JOIN wpt.wordTranslation wt
+            JOIN wt.wordSenseA ws
+            WHERE uh.userInfo.id = :userId
+            AND ws.word.id = :wordId
+            UNION
+            SELECT DISTINCT uh
+            FROM UserHistorial uh
+            JOIN uh.deckWordPhraseTranslation dwpt
+            JOIN dwpt.wordPhraseTranslation wpt
+            JOIN wpt.wordTranslation wt
+            JOIN wt.wordSenseB ws
+            WHERE uh.userInfo.id = :userId
+            AND ws.word.id = :wordId
+            """)
+    List<UserHistorial> findByUserInfoIdAndWordId(Integer userId, Integer wordId);
 
-    List<UserHistorial> findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(Integer deckId, Integer wordId);
+    /**
+     * Return all the UserHistorials of a word in a deck
+     *
+     * @param deckId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    @Query(value = """
+            SELECT DISTINCT uh
+            FROM UserHistorial uh
+            JOIN uh.deckWordPhraseTranslation dwpt
+            JOIN dwpt.wordPhraseTranslation wpt
+            JOIN wpt.wordTranslation wt
+            JOIN wt.wordSenseA ws
+            WHERE dwpt.deck.id = :deckId
+            AND ws.word.id = :wordId
+            UNION
+            SELECT DISTINCT uh
+            FROM UserHistorial uh
+            JOIN uh.deckWordPhraseTranslation dwpt
+            JOIN dwpt.wordPhraseTranslation wpt
+            JOIN wpt.wordTranslation wt
+            JOIN wt.wordSenseB ws
+            WHERE dwpt.deck.id = :deckId
+            AND ws.word.id = :wordId
+            """)
+    List<UserHistorial> findByDeckIdAndWordId(Integer deckId, Integer wordId);
 
-    List<UserHistorial> findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(Integer deckId, Integer wordSensId);
-
+    /**
+     * Return all the UserHistorials of a wordSense in a deck
+     *
+     * @param deckId
+     * @param wordSenseId
+     * @return List<UserHistorial>
+     */
+    @Query(value = """
+            SELECT DISTINCT uh
+            FROM UserHistorial uh
+            JOIN uh.deckWordPhraseTranslation dwpt
+            JOIN dwpt.wordPhraseTranslation wpt
+            JOIN wpt.wordTranslation wt
+            WHERE dwpt.deck.id = :deckId
+            AND wt.wordSenseA.id = :wordSenseId
+            UNION
+            SELECT DISTINCT uh
+            FROM UserHistorial uh
+            JOIN uh.deckWordPhraseTranslation dwpt
+            JOIN dwpt.wordPhraseTranslation wpt
+            JOIN wpt.wordTranslation wt
+            WHERE dwpt.deck.id = :deckId
+            AND wt.wordSenseB.id = :wordSenseId
+            """)
+    List<UserHistorial> findByDeckIdAndWordSenseId(Integer deckId, Integer wordSenseId);
 }
 

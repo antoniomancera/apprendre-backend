@@ -16,12 +16,12 @@ public class WordTranslation {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "word_sense_fr_id")
-    private WordSense wordSenseFr;
+    @JoinColumn(name = "word_sense_a_id")
+    private WordSense wordSenseA;
 
     @ManyToOne
-    @JoinColumn(name = "word_sense_sp_id")
-    private WordSense wordSenseSp;
+    @JoinColumn(name = "word_sense_b_id")
+    private WordSense wordSenseB;
 
     @ManyToOne
     @JoinColumn(name = "word_inflection_id")
@@ -31,8 +31,8 @@ public class WordTranslation {
 
     private Integer baseWeight;
 
-    public WordTranslation(WordSense wordSenseFr, WordSense wordSenseSp) {
-        this.wordSenseFr = wordSenseFr;
-        this.wordSenseSp = wordSenseSp;
+    public WordTranslation(WordSense wordSenseA, WordSense wordSenseB) {
+        this.wordSenseA = wordSenseA;
+        this.wordSenseB = wordSenseB;
     }
 }

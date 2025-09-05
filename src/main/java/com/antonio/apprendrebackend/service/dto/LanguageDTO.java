@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LanguageDTO {
-    private String name;
+    private String code;
 }

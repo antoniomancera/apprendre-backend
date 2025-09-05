@@ -1,18 +1,10 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
-import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.WordPhraseTranslationNotFoundException;
-import com.antonio.apprendrebackend.service.model.PhraseTranslation;
-import com.antonio.apprendrebackend.service.model.UserInfo;
-import com.antonio.apprendrebackend.service.model.WordPhraseTranslation;
-import com.antonio.apprendrebackend.service.model.WordTranslation;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.antonio.apprendrebackend.service.model.*;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface WordPhraseTranslationService {
 
@@ -39,9 +31,10 @@ public interface WordPhraseTranslationService {
      * Get all WordTranslation associated to a phraseTranslation of a Deck
      *
      * @param senseIds
-     * @return List<WordTranslation>
+     * @param course
+     * @return List<WordPhraseTranslationDTO>
      */
-    List<WordPhraseTranslationDTO> getAllWordPhraseTranslationByWordSense(List<Integer> senseIds);
+    List<WordPhraseTranslationDTO> getAllCurrentCourseWordPhraseTranslationByWordSenseIds(List<Integer> senseIds, Course course);
 
     /**
      * Get a WordPhraseTranslation given their id

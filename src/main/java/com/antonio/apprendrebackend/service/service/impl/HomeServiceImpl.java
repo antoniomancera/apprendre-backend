@@ -3,6 +3,7 @@ package com.antonio.apprendrebackend.service.service.impl;
 import com.antonio.apprendrebackend.service.exception.HomeNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.DeckMapper;
 import com.antonio.apprendrebackend.service.mapper.GoalMapper;
+import com.antonio.apprendrebackend.service.mapper.UserInfoMapper;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.Home;
@@ -21,17 +22,19 @@ public class HomeServiceImpl implements HomeService {
     private static final Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
 
     @Autowired
-    GoalService goalService;
+    private GoalService goalService;
     @Autowired
-    DeckService deckService;
+    private DeckService deckService;
     @Autowired
-    UserHistorialService userHistorialService;
+    private UserHistorialService userHistorialService;
     @Autowired
-    StatsService statsService;
+    private StatsService statsService;
     @Autowired
-    GoalMapper goalMapper;
+    private GoalMapper goalMapper;
     @Autowired
-    DeckMapper deckMapper;
+    private DeckMapper deckMapper;
+    @Autowired
+    private UserInfoMapper userInfoMapper;
 
     /**
      * Returns the information to be displayed in home
@@ -41,8 +44,8 @@ public class HomeServiceImpl implements HomeService {
      */
     @Override
     public Home getHome(UserInfo userInfo) {
-        logger.debug("Getting all the information related to home page for the user");
-        
+        logger.debug("Called getHome in HomeService for user-{}", userInfo);
+
         Home home = new Home();
         home.setWeekStats(statsService.getDailyStatsLastWeek(userInfo));
         home.setGoal(goalMapper.toDTO(goalService.getActiveGoal(userInfo)));
@@ -50,7 +53,7 @@ public class HomeServiceImpl implements HomeService {
                 .orElse(Collections.emptyList()).stream()
                 .map(deck -> deckMapper.toDTO(deck))
                 .collect(Collectors.toList()));
-
+        home.setUserInfo(userInfoMapper.toDTO(userInfo));
         home.setLastDeck(userHistorialService.getLastUserHistorial(userInfo)
                 .map(UserHistorial::getDeck)
                 .map(deck -> deckMapper.toDTO(deck))
