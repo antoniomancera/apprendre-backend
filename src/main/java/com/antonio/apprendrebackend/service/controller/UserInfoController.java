@@ -38,6 +38,12 @@ public class UserInfoController {
         return ResponseEntity.ok(userInfo);
     }
 
+    /**
+     * Update an UserInfo with a course
+     *
+     * @param courseCode
+     * @return HTTP respond with the UserInfo updated with the new course
+     */
     @PutMapping(path = "setCurrentCourse/{courseCode}")
     public @ResponseBody ResponseEntity<UserInfo> setCurrentCourse(
             @PathVariable String courseCode
