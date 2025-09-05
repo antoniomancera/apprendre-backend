@@ -4,6 +4,7 @@ import com.antonio.apprendrebackend.service.dto.DeckDTO;
 import com.antonio.apprendrebackend.service.dto.GoalDTO;
 import com.antonio.apprendrebackend.service.mapper.DeckMapper;
 import com.antonio.apprendrebackend.service.mapper.GoalMapper;
+import com.antonio.apprendrebackend.service.mapper.UserInfoMapper;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.service.impl.HomeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,8 @@ public class HomeServiceImplTest {
 
     @Mock
     private DeckMapper deckMapper;
+    @Mock
+    private UserInfoMapper userInfoMapper;
 
     private UserInfo userInfo;
 
