@@ -6,6 +6,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UserInfoDTO {
-    private String supabaseId;
     private String userName;
+    private CourseDTO currentCourse;
 }

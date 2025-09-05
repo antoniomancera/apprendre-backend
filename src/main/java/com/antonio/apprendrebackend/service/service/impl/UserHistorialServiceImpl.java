@@ -25,10 +25,10 @@ public class UserHistorialServiceImpl implements UserHistorialService {
     private static final Logger logger = LoggerFactory.getLogger(UserHistorialServiceImpl.class);
 
     @Autowired
-    UserHistorialRespository userHistorialRespository;
+    private UserHistorialRespository userHistorialRespository;
 
     @Autowired
-    UserHistorialMapper userHistorialMapper;
+    private UserHistorialMapper userHistorialMapper;
 
     /**
      * Get the userHistorial of the last week
@@ -121,7 +121,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
     public List<UserHistorial> getUserHistorialsByUserIdAndWordId(Integer userId, Integer wordId) {
         logger.debug("Called postUserHistorial() in UserHistorailService for userHistorial-{} and word-{}", userId, wordId);
 
-        return userHistorialRespository.findByUserInfoIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(userId, wordId);
+        return userHistorialRespository.findByUserInfoIdAndWordId(userId, wordId);
     }
 
     /**
@@ -135,7 +135,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
     public List<UserHistorial> getUserHistorialsByDeckIdAndWordId(Integer deckId, Integer wordId) {
         logger.debug("Called postUserHistorial() in UserHistorailService for deck-{} and word-{}", deckId, wordId);
 
-        return userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrWordId(deckId, wordId);
+        return userHistorialRespository.findByDeckIdAndWordId(deckId, wordId);
     }
 
     /**
@@ -149,6 +149,7 @@ public class UserHistorialServiceImpl implements UserHistorialService {
     public List<UserHistorial> getUserHistorialsByDeckIdAndWordSenseId(Integer deckId, Integer wordSenseId) {
         logger.debug("Called postUserHistorial() in UserHistorailService for deck-{} and wordSense-{}", deckId, wordSenseId);
 
-        return userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
+        return userHistorialRespository.findByDeckIdAndWordSenseId(deckId, wordSenseId);
+        //return userHistorialRespository.findByDeckWordPhraseTranslationDeckIdAndDeckWordPhraseTranslationWordPhraseTranslationWordTranslationWordSenseFrId(deckId, wordSenseId);
     }
 }
