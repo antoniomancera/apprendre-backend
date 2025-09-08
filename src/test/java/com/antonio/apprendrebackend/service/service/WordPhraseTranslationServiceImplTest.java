@@ -3,9 +3,7 @@ package com.antonio.apprendrebackend.service.service;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.WordPhraseTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.WordPhraseTranslationMapper;
-import com.antonio.apprendrebackend.service.model.PhraseTranslation;
-import com.antonio.apprendrebackend.service.model.WordPhraseTranslation;
-import com.antonio.apprendrebackend.service.model.WordTranslation;
+import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.WordPhraseTranslationRepository;
 import com.antonio.apprendrebackend.service.service.impl.WordPhraseTranslationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +29,9 @@ public class WordPhraseTranslationServiceImplTest {
 
     @Mock
     private WordPhraseTranslationRepository wordPhraseTranslationRepository;
+    private Language languageFr;
+    private Language languageSp;
+    private Course course;
 
     private PhraseTranslation phraseTranslation1;
     private PhraseTranslation phraseTranslation2;
@@ -45,21 +46,28 @@ public class WordPhraseTranslationServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Setup PhraseTranslation objects
+        languageFr = new Language();
+        languageFr.setCode(Language.LanguageEnum.FR);
+
+        languageSp = new Language();
+        languageSp.setCode(Language.LanguageEnum.ES);
+
+        course = new Course();
+        course.setTargetLanguage(languageFr);
+        course.setBaseLanguage(languageSp);
+
         phraseTranslation1 = new PhraseTranslation();
         phraseTranslation1.setId(1);
 
         phraseTranslation2 = new PhraseTranslation();
         phraseTranslation2.setId(2);
 
-        // Setup WordTranslation objects
         wordTranslation1 = new WordTranslation();
         wordTranslation1.setId(101);
 
         wordTranslation2 = new WordTranslation();
         wordTranslation2.setId(102);
 
-        // Setup WordPhraseTranslation objects
         wordPhraseTranslation1 = new WordPhraseTranslation();
         wordPhraseTranslation1.setId(1001);
         wordPhraseTranslation1.setWordTranslation(wordTranslation1);
@@ -68,7 +76,6 @@ public class WordPhraseTranslationServiceImplTest {
         wordPhraseTranslation2.setId(1002);
         wordPhraseTranslation2.setWordTranslation(wordTranslation2);
 
-        // Setup WordPhraseTranslationDTO objects
         wordPhraseTranslationDTO1 = new WordPhraseTranslationDTO();
         wordPhraseTranslationDTO1.setId(1001);
 
@@ -168,24 +175,24 @@ public class WordPhraseTranslationServiceImplTest {
         List<Integer> senseIds = Arrays.asList(201, 202, 203);
         List<WordPhraseTranslation> wordPhraseTranslations = Arrays.asList(wordPhraseTranslation1, wordPhraseTranslation2);
 
-        when(wordPhraseTranslationRepository.findByWordSenseIds(senseIds))
+        when(wordPhraseTranslationRepository.findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode()))
                 .thenReturn(wordPhraseTranslations);
-        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation1))
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation1, languageFr))
                 .thenReturn(wordPhraseTranslationDTO1);
-        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation2))
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation2, languageFr))
                 .thenReturn(wordPhraseTranslationDTO2);
 
         // When
         List<WordPhraseTranslationDTO> result = wordPhraseTranslationService
-                .getAllWordPhraseTranslationByWordSense(senseIds);
+                .getAllCurrentCourseWordPhraseTranslationByWordSenseIds(senseIds, course);
 
         // Then
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(wordPhraseTranslationDTO1.getId(), result.get(0).getId());
         assertEquals(wordPhraseTranslationDTO2.getId(), result.get(1).getId());
-        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIds(senseIds);
-        verify(wordPhraseTranslationMapper, times(2)).toDTO(any(WordPhraseTranslation.class));
+        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode());
+        verify(wordPhraseTranslationMapper, times(2)).toDTO(any(WordPhraseTranslation.class), languageFr);
     }
 
     @Test
@@ -193,18 +200,18 @@ public class WordPhraseTranslationServiceImplTest {
         // Given
         List<Integer> senseIds = Arrays.asList(999, 998);
 
-        when(wordPhraseTranslationRepository.findByWordSenseIds(senseIds))
+        when(wordPhraseTranslationRepository.findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode()))
                 .thenReturn(Collections.emptyList());
 
         // When
         List<WordPhraseTranslationDTO> result = wordPhraseTranslationService
-                .getAllWordPhraseTranslationByWordSense(senseIds);
+                .getAllCurrentCourseWordPhraseTranslationByWordSenseIds(senseIds, course);
 
         // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIds(senseIds);
-        verify(wordPhraseTranslationMapper, never()).toDTO(any(WordPhraseTranslation.class));
+        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode());
+        verify(wordPhraseTranslationMapper, never()).toDTO(any(WordPhraseTranslation.class), isNull());
     }
 
     @Test
@@ -212,18 +219,18 @@ public class WordPhraseTranslationServiceImplTest {
         // Given
         List<Integer> senseIds = Collections.emptyList();
 
-        when(wordPhraseTranslationRepository.findByWordSenseIds(senseIds))
+        when(wordPhraseTranslationRepository.findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode()))
                 .thenReturn(Collections.emptyList());
 
         // When
         List<WordPhraseTranslationDTO> result = wordPhraseTranslationService
-                .getAllWordPhraseTranslationByWordSense(senseIds);
+                .getAllCurrentCourseWordPhraseTranslationByWordSenseIds(senseIds, eq(course));
 
         // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIds(senseIds);
-        verify(wordPhraseTranslationMapper, never()).toDTO(any(WordPhraseTranslation.class));
+        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode());
+        verify(wordPhraseTranslationMapper, never()).toDTO(any(WordPhraseTranslation.class), eq(languageFr));
     }
 
     @Test
@@ -287,20 +294,20 @@ public class WordPhraseTranslationServiceImplTest {
         List<Integer> senseIds = Arrays.asList(201);
         List<WordPhraseTranslation> wordPhraseTranslations = Arrays.asList(wordPhraseTranslation1);
 
-        when(wordPhraseTranslationRepository.findByWordSenseIds(senseIds))
+        when(wordPhraseTranslationRepository.findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode()))
                 .thenReturn(wordPhraseTranslations);
-        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation1))
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation1, languageFr))
                 .thenReturn(wordPhraseTranslationDTO1);
 
         // When
         List<WordPhraseTranslationDTO> result = wordPhraseTranslationService
-                .getAllWordPhraseTranslationByWordSense(senseIds);
+                .getAllCurrentCourseWordPhraseTranslationByWordSenseIds(senseIds, course);
 
         // Then
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(wordPhraseTranslationDTO1.getId(), result.get(0).getId());
-        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIds(senseIds);
-        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation1);
+        verify(wordPhraseTranslationRepository, times(1)).findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, course.getBaseLanguage().getCode(), course.getTargetLanguage().getCode());
+        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation1, languageFr);
     }
 }

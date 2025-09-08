@@ -51,7 +51,9 @@ public class DeckWordPhraseTranslationServiceImplTest {
     @Mock
     private CategoryMapper categoryMapper;
 
-
+    private Language languageFr;
+    private Language languageSp;
+    private Course course;
     private UserInfo userInfo;
     private DeckWordPhraseTranslation deckWordPhraseTranslation;
     private Word word;
@@ -80,6 +82,17 @@ public class DeckWordPhraseTranslationServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        languageFr = new Language();
+        languageFr.setCode(Language.LanguageEnum.FR);
+
+        languageSp = new Language();
+        languageSp.setCode(Language.LanguageEnum.ES);
+
+        course = new Course();
+        course.setBaseLanguage(languageSp);
+        course.setTargetLanguage(languageFr);
+
         userInfo = new UserInfo();
         userInfo.setId(1);
         userInfo.setUserName("testUser");
@@ -94,7 +107,7 @@ public class DeckWordPhraseTranslationServiceImplTest {
 
         wordTranslation = new WordTranslation();
         wordTranslation.setId(301);
-        wordTranslation.setWordSenseFr(wordSenseFr);
+        wordTranslation.setWordSenseA(wordSenseFr);
         wordTranslation.setBaseWeight(1);
 
         wordPhraseTranslation = new WordPhraseTranslation();
@@ -111,6 +124,7 @@ public class DeckWordPhraseTranslationServiceImplTest {
         deck.setId(1);
         deck.setName("Test Deck");
         deck.setUserInfo(userInfo);
+        deck.setCourse(course);
 
         success = new Success();
         success.setId(1);
@@ -152,10 +166,10 @@ public class DeckWordPhraseTranslationServiceImplTest {
         category2.setName("Science");
 
         wordTranslation1 = new WordTranslation();
-        wordTranslation1.setWordSenseFr(wordSense1);
+        wordTranslation1.setWordSenseA(wordSense1);
 
         wordTranslation2 = new WordTranslation();
-        wordTranslation2.setWordSenseFr(wordSense2);
+        wordTranslation2.setWordSenseA(wordSense2);
 
         wordPhraseTranslation1 = new WordPhraseTranslation();
         wordPhraseTranslation1.setWordTranslation(wordTranslation1);
@@ -365,8 +379,8 @@ public class DeckWordPhraseTranslationServiceImplTest {
 
         when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId))
                 .thenReturn(Optional.of(deckWordPhraseTranslation));
-        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
-
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation, languageFr)).thenReturn(expectedDto);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
         // When
         WordPhraseTranslationDTO result = deckWordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
 
@@ -375,7 +389,7 @@ public class DeckWordPhraseTranslationServiceImplTest {
         assertEquals(401, result.getId());
         verify(deckWordPhraseTranslationRespository, times(1))
                 .findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
-        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation);
+        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation, languageFr);
     }
 
     @Test
@@ -387,8 +401,8 @@ public class DeckWordPhraseTranslationServiceImplTest {
 
         when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId()))
                 .thenReturn(Optional.of(deckWordPhraseTranslation));
-        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(expectedDto);
-
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation, languageFr)).thenReturn(expectedDto);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
         // When
         WordPhraseTranslationDTO result = deckWordPhraseTranslationService.getRandomWordPhraseTranslation(userInfo, deckId);
 
@@ -397,7 +411,7 @@ public class DeckWordPhraseTranslationServiceImplTest {
         assertEquals(401, result.getId());
         verify(deckWordPhraseTranslationRespository, times(1))
                 .findRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId());
-        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation);
+        verify(wordPhraseTranslationMapper, times(1)).toDTO(wordPhraseTranslation, languageFr);
     }
 
 
@@ -418,7 +432,7 @@ public class DeckWordPhraseTranslationServiceImplTest {
 
         when(deckWordPhraseTranslationRespository.findRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId))
                 .thenReturn(Optional.of(deckWordPhraseTranslation));
-        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation)).thenReturn(nextWordDto);
+        when(wordPhraseTranslationMapper.toDTO(wordPhraseTranslation, languageFr)).thenReturn(nextWordDto);
 
         // When
         AttemptResultDTO result = deckWordPhraseTranslationService
@@ -728,6 +742,7 @@ public class DeckWordPhraseTranslationServiceImplTest {
         Integer deckId = 1;
         Integer pageSize = 10;
         Integer userId = 1;
+        Language.LanguageEnum languageCode = Language.LanguageEnum.FR;
 
         List<WordSense> wordSenses = Arrays.asList(wordSense1, wordSense2);
         List<WordWithAttemptsAndSuccessDTO> wordWithAttemptsAndSuccesses = Arrays.asList(
@@ -736,9 +751,10 @@ public class DeckWordPhraseTranslationServiceImplTest {
         );
 
         // When
-        when(wordSenseService.getWordSensesByDeckId(deckId)).thenReturn(wordSenses);
-        when(wordService.getWordWithAttemptsAndSuccessPaginated(0, pageSize, userId))
+        when(wordSenseService.getTargetLanguageWordSensesByDeckId(deckId)).thenReturn(wordSenses);
+        when(wordService.getWordWithAttemptsAndSuccessPaginatedByLanguageCode(0, pageSize, userId, languageCode))
                 .thenReturn(wordWithAttemptsAndSuccesses);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
 
         DeckEditInitInfoDTO result = deckWordPhraseTranslationService.getDeckEditInitInfo(deckId, pageSize, userId);
 
@@ -755,8 +771,8 @@ public class DeckWordPhraseTranslationServiceImplTest {
 
         assertEquals(2, result.getWordWithAttemptsAndSuccesses().size());
 
-        verify(wordSenseService, times(1)).getWordSensesByDeckId(deckId);
-        verify(wordService, times(1)).getWordWithAttemptsAndSuccessPaginated(0, pageSize, userId);
+        verify(wordSenseService, times(1)).getTargetLanguageWordSensesByDeckId(deckId);
+        verify(wordService, times(1)).getWordWithAttemptsAndSuccessPaginatedByLanguageCode(0, pageSize, userId, languageCode);
     }
 
     @Test
@@ -765,15 +781,17 @@ public class DeckWordPhraseTranslationServiceImplTest {
         Integer deckId = 1;
         Integer pageSize = 10;
         Integer userId = 1;
+        Language.LanguageEnum languageCode = Language.LanguageEnum.FR;
 
         List<WordWithAttemptsAndSuccessDTO> wordWithAttemptsAndSuccesses = Arrays.asList(
                 new WordWithAttemptsAndSuccessDTO(new WordDTO(), 5, 3.0)
         );
 
         // When
-        when(wordSenseService.getWordSensesByDeckId(deckId)).thenReturn(Collections.emptyList());
-        when(wordService.getWordWithAttemptsAndSuccessPaginated(0, pageSize, userId))
+        when(wordSenseService.getTargetLanguageWordSensesByDeckId(deckId)).thenReturn(Collections.emptyList());
+        when(wordService.getWordWithAttemptsAndSuccessPaginatedByLanguageCode(0, pageSize, userId, languageCode))
                 .thenReturn(wordWithAttemptsAndSuccesses);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
 
         DeckEditInitInfoDTO result = deckWordPhraseTranslationService.getDeckEditInitInfo(deckId, pageSize, userId);
 
@@ -784,8 +802,8 @@ public class DeckWordPhraseTranslationServiceImplTest {
         assertNotNull(result.getWordWithAttemptsAndSuccesses());
         assertEquals(1, result.getWordWithAttemptsAndSuccesses().size());
 
-        verify(wordSenseService, times(1)).getWordSensesByDeckId(deckId);
-        verify(wordService, times(1)).getWordWithAttemptsAndSuccessPaginated(0, pageSize, userId);
+        verify(wordSenseService, times(1)).getTargetLanguageWordSensesByDeckId(deckId);
+        verify(wordService, times(1)).getWordWithAttemptsAndSuccessPaginatedByLanguageCode(0, pageSize, userId, languageCode);
     }
 
     @Test

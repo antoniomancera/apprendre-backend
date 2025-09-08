@@ -6,13 +6,18 @@ import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhraseTransla
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
+import com.antonio.apprendrebackend.service.model.Deck;
+import com.antonio.apprendrebackend.service.model.Language;
 import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
 import com.antonio.apprendrebackend.service.repository.WordTranslationRepository;
+import com.antonio.apprendrebackend.service.service.DeckService;
 import com.antonio.apprendrebackend.service.service.DeckWordPhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.WordPhraseTranslationService;
 import com.antonio.apprendrebackend.service.service.WordTranslationService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,19 +29,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class WordTranslationServiceImpl implements WordTranslationService {
+    private static final Logger logger = LoggerFactory.getLogger(WordTranslationServiceImpl.class);
     @Autowired
-    WordTranslationRepository wordTranslationRepository;
+    private WordTranslationRepository wordTranslationRepository;
     @Autowired
-    WordPhraseTranslationService wordPhraseTranslationService;
+    private WordPhraseTranslationService wordPhraseTranslationService;
     @Autowired
-    WordTranslationMapper wordTranslationMapper;
-
+    private WordTranslationMapper wordTranslationMapper;
     @Autowired
-    PhraseTranslationMapper phraseTranslationMapper;
-
-
+    private DeckService deckService;
     @Autowired
-    DeckWordPhraseTranslationService deckWordPhraseTranslationService;
+    private PhraseTranslationMapper phraseTranslationMapper;
+    @Autowired
+    private DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     /**
      * Get All WordTranslation and their Phrases associated given a deck
@@ -47,21 +52,23 @@ public class WordTranslationServiceImpl implements WordTranslationService {
      */
     @Override
     public List<WordTranslationWithPhraseTranslationsDTO> getAllWordTranslationsWithPhrasesByDeck(Integer deckId) {
-        System.out.println(deckId);
+        logger.debug("Called getAllWordTranslationsWithPhrasesByDeck() in WordTranslationService for deck-{}", deckId);
+
         List<WordTranslation> wordTranslations = deckWordPhraseTranslationService.getWordTranslationsByDeckId(deckId);
         if (wordTranslations.isEmpty() || wordTranslations.size() == 0) {
             throw new WordTranslationNotFoundException("Not found any wordTranslation");
         }
 
+        Deck deck = deckService.getDeckbyId(deckId);
 
         return wordTranslations.stream().map(word -> {
             List<PhraseTranslation> phrases = wordPhraseTranslationService.getPhrasesByDeckIdAndWordTranslationId(deckId, word.getId());
             List<PhraseTranslationDTO> phrasesDTO = phrases.stream()
-                    .map(phraseTranslationMapper::toDTO)
+                    .map(phraseTranslation -> phraseTranslationMapper.toDTO(phraseTranslation, deck.getCourse().getTargetLanguage()))
                     .collect(Collectors.toList());
 
             return new WordTranslationWithPhraseTranslationsDTO(
-                    wordTranslationMapper.toDTO(word),
+                    wordTranslationMapper.toDTO(word, deck.getCourse().getTargetLanguage()),
                     phrasesDTO
             );
         }).collect(Collectors.toList());
@@ -70,20 +77,23 @@ public class WordTranslationServiceImpl implements WordTranslationService {
     }
 
     /**
-     * Get the page pageNumber of WordTranslationDTO with pageSize elements
+     * Get the page pageNumber of WordTranslationDTO with pageSize elements of a language
      *
      * @param pageNumber
      * @param pageSize
+     * @param language
      * @return List<WordTranslationDTO>
      * @throws WordTranslationNotFoundException if not exist any WordTranslation
      */
     @Override
-    public List<WordTranslationDTO> getAllWordTranslations(Integer pageNumber, Integer pageSize) {
+    public List<WordTranslationDTO> getAllWordTranslations(Integer pageNumber, Integer pageSize, Language language) {
+        logger.debug("Called getAllWordTranslations() in WordTranslationService for pageNumber-{}, pageSize-{}, and language-{}", pageNumber, pageSize, language);
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<WordTranslationDTO> words = wordTranslationRepository
                 .findAll(pageable)
                 .stream()
-                .map(wordTranslationMapper::toDTO)
+                .map(wordTranslation -> wordTranslationMapper.toDTO(wordTranslation, language))
                 .collect(Collectors.toList());
 
         if (words.isEmpty()) {

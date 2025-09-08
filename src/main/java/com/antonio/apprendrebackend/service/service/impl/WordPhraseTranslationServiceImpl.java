@@ -1,10 +1,7 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
-import com.antonio.apprendrebackend.service.dto.AttemptResultDTO;
 import com.antonio.apprendrebackend.service.dto.WordPhraseTranslationDTO;
-import com.antonio.apprendrebackend.service.exception.DeckWordPhraseTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.exception.WordPhraseTranslationNotFoundException;
-import com.antonio.apprendrebackend.service.exception.WordSenseNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.WordPhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.WordPhraseTranslationRepository;
@@ -59,15 +56,19 @@ public class WordPhraseTranslationServiceImpl implements WordPhraseTranslationSe
      * Get all WordTranslation associated to a phraseTranslation of a Deck
      *
      * @param senseIds
-     * @return List<WordTranslation>
+     * @param course
+     * @return List<WordPhraseTranslationDTO>
      */
     @Override
-    public List<WordPhraseTranslationDTO> getAllWordPhraseTranslationByWordSense(List<Integer> senseIds) {
-        logger.debug("Get all the WOrdPhraseTranslation given a list of wordSenses");
+    public List<WordPhraseTranslationDTO> getAllCurrentCourseWordPhraseTranslationByWordSenseIds(List<Integer> senseIds, Course course) {
+        logger.debug("Called getAllCurrentCourseWordPhraseTranslationByWordSenseIds() in WordPhraseTranslationService for senseIds-{}, course-{}", senseIds, course);
 
-        return wordPhraseTranslationRepository.findByWordSenseIds(senseIds)
+        Language.LanguageEnum baseLanguageCode = course.getBaseLanguage().getCode();
+        Language targetLanguage = course.getTargetLanguage();
+
+        return wordPhraseTranslationRepository.findByWordSenseIdsAndTargetAndBaseLanguage(senseIds, baseLanguageCode, targetLanguage.getCode())
                 .stream()
-                .map(wordPhraseTranslationMapper::toDTO)
+                .map(wordPhraseTranslation -> wordPhraseTranslationMapper.toDTO(wordPhraseTranslation, targetLanguage))
                 .collect(Collectors.toList());
     }
 
@@ -81,7 +82,7 @@ public class WordPhraseTranslationServiceImpl implements WordPhraseTranslationSe
     @Override
     public WordPhraseTranslation getWordPhraseTranslationById(Integer wordPhraseTranslationId) {
         logger.debug("Get a WordPhraseTranslation given with id: %d", wordPhraseTranslationId);
-        
+
         return wordPhraseTranslationRepository.findById(wordPhraseTranslationId).orElseThrow(() -> new WordPhraseTranslationNotFoundException(String.format("Not found any wordPhraseTranslation with id: %s", wordPhraseTranslationId)));
     }
 

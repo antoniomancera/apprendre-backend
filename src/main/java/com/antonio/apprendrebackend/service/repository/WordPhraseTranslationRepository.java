@@ -1,17 +1,14 @@
 package com.antonio.apprendrebackend.service.repository;
 
+import com.antonio.apprendrebackend.service.model.Language;
 import com.antonio.apprendrebackend.service.model.PhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordPhraseTranslation;
 import com.antonio.apprendrebackend.service.model.WordTranslation;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface WordPhraseTranslationRepository extends CrudRepository<WordPhraseTranslation, Integer> {
     /**
@@ -45,18 +42,28 @@ public interface WordPhraseTranslationRepository extends CrudRepository<WordPhra
                   AND wpt.phraseTranslation.id = :phraseTranslationId
             """)
     List<WordTranslation> findWordTranslationsByDeckIdPhraseTranslationId(@Param("deckId") Integer deckId, @Param("phraseTranslationId") Integer phraseTranslationId);
-
-
+    
     /**
-     * Get all WordPhraseTranslation associated to a list of senses
+     * Get all WordPhraseTranslation associated to a list of senses given a base and targetLanguage
      *
      * @param senseIds
+     * @param baseLanguageCode
+     * @param targetLanguageCode
      * @return List<WordTranslation>
      */
     @Query("""
-                SELECT wpt
+                SELECT DISTINCT wpt
                 FROM WordPhraseTranslation wpt
-                WHERE wpt.wordTranslation.wordSenseFr.id IN (:senseIds)
+                WHERE
+                (
+                    (wpt.wordTranslation.wordSenseA.id IN (:senseIds)
+                    AND wpt.wordTranslation.wordSenseB.word.language.code = :baseLanguageCode
+                    AND wpt.wordTranslation.wordSenseA.word.language.code = :targetLanguageCode)
+                    OR
+                    (wpt.wordTranslation.wordSenseB.id IN (:senseIds)
+                    AND wpt.wordTranslation.wordSenseA.word.language.code = :baseLanguageCode
+                    AND wpt.wordTranslation.wordSenseB.word.language.code = :targetLanguageCode)
+                )
             """)
-    List<WordPhraseTranslation> findByWordSenseIds(@Param("senseIds") List<Integer> senseIds);
+    List<WordPhraseTranslation> findByWordSenseIdsAndTargetAndBaseLanguage(@Param("senseIds") List<Integer> senseIds, @Param("baseLanguageCode") Language.LanguageEnum baseLanguageCode, @Param("targetLanguageCode") Language.LanguageEnum targetLanguageCode);
 }

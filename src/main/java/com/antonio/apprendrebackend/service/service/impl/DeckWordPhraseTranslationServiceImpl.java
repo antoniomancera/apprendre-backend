@@ -160,9 +160,9 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
 
         DeckWordPhraseTranslation deckWordPhraseTranslation = getByDeckIdAndWordPhraseTranslationId(deckId, wordPhraseId);
         Deck deck = deckService.getDeckbyId(deckId);
-        Boolean hasSuccess = deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseFr().getWord().getName().equals(attempt);
+        Boolean hasSuccess = deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseA().getWord().getName().equals(attempt);
         updateStats(hasSuccess, deckWordPhraseTranslation);
-        userHistorialService.postUserHistorial(new UserHistorial(deckWordPhraseTranslation, userInfo, successService.getSuccessByAttemptAndWordSense(attempt, deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseFr()), deck));
+        userHistorialService.postUserHistorial(new UserHistorial(deckWordPhraseTranslation, userInfo, successService.getSuccessByAttemptAndWordSense(attempt, deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseA()), deck));
         if (hasSuccess) {
             return new AttemptResultDTO(true, getRandomWordPhraseTranslation(userInfo, deckId));
         }
@@ -211,7 +211,7 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
         List<DeckWordPhraseTranslation> deckWordPhraseTranslations = deckWordPhraseTranslationRespository.findByDeckId(pageable, deckId);
 
         List<Word> words = deckWordPhraseTranslations.stream()
-                .map(deckWordPhraseTranslation -> deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseFr().getWord())
+                .map(deckWordPhraseTranslation -> deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseA().getWord())
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -274,7 +274,7 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
     public DeckEditInitInfoDTO getDeckEditInitInfo(Integer deckId, Integer pageSize, Integer userId) {
         logger.debug("Called getDeckEditInit() in DeckWordPhraseTranslationService for deck-{}, and pageSize-{}", deckId, pageSize);
 
-        List<WordSense> wordSenses = wordSenseService.getWordSensesByDeckId(deckId);
+        List<WordSense> wordSenses = wordSenseService.getTargetLanguageWordSensesByDeckId(deckId);
 
         Map<Integer, List<Integer>> wordToWordSensesIdMap = wordSenses.stream()
                 .collect(Collectors.groupingBy(
@@ -282,7 +282,7 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
                         Collectors.mapping(WordSense::getId, Collectors.toList())
                 ));
 
-        return new DeckEditInitInfoDTO(wordToWordSensesIdMap, wordService.getWordWithAttemptsAndSuccessPaginated(0, pageSize, userId));
+        return new DeckEditInitInfoDTO(wordToWordSensesIdMap, wordService.getWordWithAttemptsAndSuccessPaginatedByLanguageCode(0, pageSize, userId, deckService.getDeckbyId(deckId).getCourse().getTargetLanguage().getCode()));
     }
 
     /**
@@ -296,12 +296,13 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
         logger.debug("Called getRandomWordPhraseTranslation() in DeckWordPhraseTranslationService for deck-{}", deckId);
 
         DeckWordPhraseTranslation deckWordTranslation;
+        Deck deck = deckService.getDeckbyId(deckId);
         if (deckId != null) {
             deckWordTranslation = getRandomUserDeckWordPhraseTranslationWithByDeckAndUser(deckId);
         } else {
             deckWordTranslation = getRandomUserDeckWordPhraseTranslationWithByUser(userInfo.getId());
         }
-        return wordPhraseTranslationMapper.toDTO(deckWordTranslation.getWordPhraseTranslation());
+        return wordPhraseTranslationMapper.toDTO(deckWordTranslation.getWordPhraseTranslation(), deck.getCourse().getTargetLanguage());
     }
 
     private static void updateStats(boolean success, DeckWordPhraseTranslation deckWordPhraseTranslation) {

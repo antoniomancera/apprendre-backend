@@ -7,8 +7,7 @@ import com.antonio.apprendrebackend.service.dto.WordTranslationWithPhraseTransla
 import com.antonio.apprendrebackend.service.exception.WordTranslationNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
-import com.antonio.apprendrebackend.service.model.PhraseTranslation;
-import com.antonio.apprendrebackend.service.model.WordTranslation;
+import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.WordTranslationRepository;
 import com.antonio.apprendrebackend.service.service.impl.WordTranslationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +37,9 @@ class WordTranslationServiceImplTest {
     private WordPhraseTranslationService wordPhraseTranslationService;
 
     @Mock
+    private DeckService deckService;
+
+    @Mock
     private WordTranslationMapper wordTranslationMapper;
 
     @Mock
@@ -48,11 +50,29 @@ class WordTranslationServiceImplTest {
 
     @InjectMocks
     private WordTranslationServiceImpl wordTranslationService;
+    private Language languageFr;
+    private Language languageSp;
+    private Deck deck;
+    private Course course;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        languageFr = new Language();
+        languageFr.setCode(Language.LanguageEnum.FR);
+
+        languageSp = new Language();
+        languageSp.setCode(Language.LanguageEnum.ES);
+
+        course = new Course();
+        course.setTargetLanguage(languageFr);
+        course.setBaseLanguage(languageSp);
+
+        deck = new Deck();
+        deck.setId(1);
+        deck.setCourse(course);
     }
+
 
     @Test
     void testGetAllWordTranslationsWithPhrasesByDeck() {
@@ -97,11 +117,12 @@ class WordTranslationServiceImplTest {
         when(wordPhraseTranslationService.getPhrasesByDeckIdAndWordTranslationId(eq(deckId), eq(102)))
                 .thenReturn(phrasesForWord2);
 
-        when(wordTranslationMapper.toDTO(wordTranslation1)).thenReturn(wordTranslationDTO1);
-        when(wordTranslationMapper.toDTO(wordTranslation2)).thenReturn(wordTranslationDTO2);
+        when(wordTranslationMapper.toDTO(wordTranslation1, languageFr)).thenReturn(wordTranslationDTO1);
+        when(wordTranslationMapper.toDTO(wordTranslation2, languageFr)).thenReturn(wordTranslationDTO2);
 
-        when(phraseTranslationMapper.toDTO(phraseTranslation1)).thenReturn(phraseTranslationDTO1);
-        when(phraseTranslationMapper.toDTO(phraseTranslation2)).thenReturn(phraseTranslationDTO2);
+        when(phraseTranslationMapper.toDTO(phraseTranslation1, languageFr)).thenReturn(phraseTranslationDTO1);
+        when(phraseTranslationMapper.toDTO(phraseTranslation2, languageFr)).thenReturn(phraseTranslationDTO2);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
 
         List<WordTranslationWithPhraseTranslationsDTO> result = wordTranslationService.getAllWordTranslationsWithPhrasesByDeck(deckId);
 
@@ -166,10 +187,10 @@ class WordTranslationServiceImplTest {
 
         // When
         when(wordTranslationRepository.findAll(pageable)).thenReturn(wordTranslationPage);
-        when(wordTranslationMapper.toDTO(wordTranslation1)).thenReturn(wordTranslationDTO1);
-        when(wordTranslationMapper.toDTO(wordTranslation2)).thenReturn(wordTranslationDTO2);
+        when(wordTranslationMapper.toDTO(wordTranslation1, languageFr)).thenReturn(wordTranslationDTO1);
+        when(wordTranslationMapper.toDTO(wordTranslation2, languageFr)).thenReturn(wordTranslationDTO2);
 
-        List<WordTranslationDTO> result = wordTranslationService.getAllWordTranslations(pageNumber, pageSize);
+        List<WordTranslationDTO> result = wordTranslationService.getAllWordTranslations(pageNumber, pageSize, languageFr);
 
         // Then
         assertNotNull(result);
@@ -178,8 +199,8 @@ class WordTranslationServiceImplTest {
         assertEquals(102, result.get(1).getId());
 
         verify(wordTranslationRepository, times(1)).findAll(pageable);
-        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation1);
-        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation2);
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation1, languageFr);
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation2, languageFr);
     }
 
     @Test
@@ -187,6 +208,7 @@ class WordTranslationServiceImplTest {
         // Given
         Integer pageNumber = 0;
         Integer pageSize = 10;
+        Integer deckId = 1;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         List<WordTranslation> emptyList = new ArrayList<>();
@@ -194,14 +216,15 @@ class WordTranslationServiceImplTest {
 
         // When
         when(wordTranslationRepository.findAll(pageable)).thenReturn(emptyPage);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
 
         // Then
         WordTranslationNotFoundException exception = assertThrows(WordTranslationNotFoundException.class, () -> {
-            wordTranslationService.getAllWordTranslations(pageNumber, pageSize);
+            wordTranslationService.getAllWordTranslations(pageNumber, pageSize, languageFr);
         });
 
         assertEquals("Not found any phrase", exception.getMessage());
         verify(wordTranslationRepository, times(1)).findAll(pageable);
-        verify(wordTranslationMapper, never()).toDTO(any());
+        verify(wordTranslationMapper, never()).toDTO(any(), isNull());
     }
 }

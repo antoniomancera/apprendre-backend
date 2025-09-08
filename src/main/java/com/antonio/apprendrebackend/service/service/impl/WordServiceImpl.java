@@ -144,43 +144,45 @@ public class WordServiceImpl implements WordService {
     }
 
     /**
-     * Returns a page of WordWithAttemptsAndSuccess applying filter if exists, that is a list of Words with their number
+     * Returns a page of WordWithAttemptsAndSuccess applying filter if exists of a language, that is a list of Words with their number
      * of attempts and accuracy
      *
      * @param pageNumber
      * @param pageSize
      * @param wordFilterRequest
+     * @param code
      * @return List<WordWithAttemptsAndSuccessDTO>
      */
     @Override
-    public List<WordWithAttemptsAndSuccessDTO> getWordWithSensePaginatedAplyingWordFilter(Integer pageNumber, Integer pageSize, WordFilterRequestDTO wordFilterRequest, Integer userId) {
-        logger.debug("Called getWordWithSensePaginatedAplyingWordFilter() in WordService for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
+    public List<WordWithAttemptsAndSuccessDTO> getWordWithSensePaginatedByLanguageCodeAplyingWordFilter(Integer pageNumber, Integer pageSize, WordFilterRequestDTO wordFilterRequest, Integer userId, Language.LanguageEnum code) {
+        logger.debug("Called getWordWithSensePaginatedByLanguageCodeAplyingWordFilter() in WordService for pageSize-{}, pageNumber-{}, and language-{}", pageSize, pageNumber, code);
 
         if (wordFilterRequest.hasAnyFilter()) {
-            getWordWithAttemptsAndSuccessPaginated(pageNumber, pageSize, userId);
+            getWordWithAttemptsAndSuccessPaginatedByLanguageCode(pageNumber, pageSize, userId, code);
         }
 
         Specification<Word> spec = WordSpecification.withFilters(wordFilterRequest);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<Word> words = wordRepository.findAll(spec, pageable).getContent().stream().collect(Collectors.toList());
+        List<Word> words = wordRepository.findByLanguageCode(code, spec, pageable).getContent().stream().collect(Collectors.toList());
 
         return getAttemptsAndSuccessesByWords(words, userId);
     }
 
     /**
-     * Returns a page of WordWithAttemptsAndSuccess, that is a list of Words with their number
+     * Returns a page of WordWithAttemptsAndSuccess of a language, that is a list of Words with their number
      * of attempts and accuracy
      *
      * @param pageNumber
      * @param pageSize
+     * @param code
      * @return List<WordWithAttemptsAndSuccessDTO>
      */
     @Override
-    public List<WordWithAttemptsAndSuccessDTO> getWordWithAttemptsAndSuccessPaginated(Integer pageNumber, Integer pageSize, Integer userId) {
-        logger.info("Called getWordWithAttemptsAndSuccessPaginated() in WordService for pageSize-{}, and pageNumber-{}", pageSize, pageNumber);
+    public List<WordWithAttemptsAndSuccessDTO> getWordWithAttemptsAndSuccessPaginatedByLanguageCode(Integer pageNumber, Integer pageSize, Integer userId, Language.LanguageEnum code) {
+        logger.info("Called getWordWithAttemptsAndSuccessPaginatedByLanguageCode() in WordService for pageSize-{}, pageNumber-{}, and language-{}", pageSize, pageNumber, code);
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<Word> words = wordRepository.findAll(pageable).getContent().stream().collect(Collectors.toList());
+        List<Word> words = wordRepository.findByLanguageCode(code, pageable).getContent().stream().collect(Collectors.toList());
 
         return getAttemptsAndSuccessesByWords(words, userId);
     }

@@ -3,6 +3,7 @@ package com.antonio.apprendrebackend.service.service;
 import com.antonio.apprendrebackend.service.dto.PhraseTranslationDTO;
 import com.antonio.apprendrebackend.service.dto.PhraseTranslationWithWordTranslationsDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
+import com.antonio.apprendrebackend.service.model.Language;
 
 import java.util.List;
 
@@ -18,12 +19,13 @@ public interface PhraseTranslationService {
     List<PhraseTranslationWithWordTranslationsDTO> getAllPhrasesWithWordTranslationsByDeck(Integer deckId);
 
     /**
-     * Get the page pageNumber of PhraseTranslationDTO with pageSize elements
+     * Get the page pageNumber of PhraseTranslationDTO with pageSize elements of a target language
      *
      * @param pageNumber
      * @param pageSize
+     * @param language
      * @return List<PhraseDTO>
      * @throws PhraseNotFoundException if not exist any Phrase
      */
-    List<PhraseTranslationDTO> getAllPhrases(Integer pageNumber, Integer pageSize);
+    List<PhraseTranslationDTO> getAllTargetLanguagePhrases(Integer pageNumber, Integer pageSize, Language language);
 }

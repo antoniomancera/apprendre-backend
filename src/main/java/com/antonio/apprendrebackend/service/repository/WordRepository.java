@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.repository;
 
+import com.antonio.apprendrebackend.service.model.Language;
 import com.antonio.apprendrebackend.service.model.PartSpeech;
 import com.antonio.apprendrebackend.service.model.Word;
 import org.springframework.data.domain.Page;
@@ -19,4 +20,8 @@ public interface WordRepository extends CrudRepository<Word, Integer>, JpaSpecif
     Page<Word> findAll(Pageable pageable);
 
     Page<Word> findAll(Specification spec, Pageable pageable);
+
+    Page<Word> findByLanguageCode(Language.LanguageEnum code, Specification spec, Pageable pageable);
+
+    Page<Word> findByLanguageCode(Language.LanguageEnum code, Pageable pageable);
 }

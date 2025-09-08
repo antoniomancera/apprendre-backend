@@ -49,6 +49,6 @@ public interface WordSenseService {
      * @param deckId
      * @return List<WordSense>
      */
-    List<WordSense> getWordSensesByDeckId(Integer deckId);
+    List<WordSense> getTargetLanguageWordSensesByDeckId(Integer deckId);
 
 }

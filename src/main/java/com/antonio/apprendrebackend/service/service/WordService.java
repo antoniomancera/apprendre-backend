@@ -3,6 +3,7 @@ package com.antonio.apprendrebackend.service.service;
 import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.PartSpeechFoundException;
 import com.antonio.apprendrebackend.service.exception.WordNotFoundException;
+import com.antonio.apprendrebackend.service.model.Language;
 import com.antonio.apprendrebackend.service.model.Word;
 
 import java.util.List;
@@ -45,25 +46,27 @@ public interface WordService {
     WordFilterOptionsDTO getAllWordFilterOptions();
 
     /**
-     * Returns a page of WordWithAttemptsAndSuccess applying filter if exists, that is a list of Words with their number
+     * Returns a page of WordWithAttemptsAndSuccess applying filter if exists of a language, that is a list of Words with their number
      * of attempts and accuracy
      *
      * @param pageNumber
      * @param pageSize
      * @param wordFilterRequest
+     * @param code
      * @return List<WordWithAttemptsAndSuccessDTO>
      */
-    List<WordWithAttemptsAndSuccessDTO> getWordWithSensePaginatedAplyingWordFilter(Integer pageNumber, Integer pageSize, WordFilterRequestDTO wordFilterRequest, Integer userId);
+    List<WordWithAttemptsAndSuccessDTO> getWordWithSensePaginatedByLanguageCodeAplyingWordFilter(Integer pageNumber, Integer pageSize, WordFilterRequestDTO wordFilterRequest, Integer userId, Language.LanguageEnum code);
 
     /**
-     * Returns a page of WordWithAttemptsAndSuccess, that is a list of Words with their number
+     * Returns a page of WordWithAttemptsAndSuccess of a language, that is a list of Words with their number
      * of attempts and accuracy
      *
      * @param pageNumber
      * @param pageSize
+     * @param code
      * @return List<WordWithAttemptsAndSuccessDTO>
      */
-    List<WordWithAttemptsAndSuccessDTO> getWordWithAttemptsAndSuccessPaginated(Integer pageNumber, Integer pageSize, Integer userId);
+    List<WordWithAttemptsAndSuccessDTO> getWordWithAttemptsAndSuccessPaginatedByLanguageCode(Integer pageNumber, Integer pageSize, Integer userId, Language.LanguageEnum code);
 
     /**
      * Get the senses with Info of a word

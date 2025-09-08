@@ -108,6 +108,7 @@ public interface DeckWordPhraseTranslationService {
      *
      * @param deckId
      * @param pageSize
+     * @param userId
      * @return DeckEditInitInfoDTO
      */
     DeckEditInitInfoDTO getDeckEditInitInfo(Integer deckId, Integer pageSize, Integer userId);

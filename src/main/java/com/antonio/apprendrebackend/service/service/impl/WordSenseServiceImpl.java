@@ -84,9 +84,9 @@ public class WordSenseServiceImpl implements WordSenseService {
      * @return List<WordSense>
      */
     @Override
-    public List<WordSense> getWordSensesByDeckId(Integer deckId) {
-        logger.debug("Called getWordSensesByDeckId() in WordSenseService for deck-{}", deckId);
+    public List<WordSense> getTargetLanguageWordSensesByDeckId(Integer deckId) {
+        logger.debug("Called getTargetLanguageWordSensesByDeckId() in WordSenseService for deck-{}", deckId);
 
-        return wordSenseRepository.findByDeckId(deckId);
+        return wordSenseRepository.findTargetLanguageWordSensesByDeckId(deckId);
     }
 }
