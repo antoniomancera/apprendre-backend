@@ -7,9 +7,7 @@ import com.antonio.apprendrebackend.service.dto.WordTranslationDTO;
 import com.antonio.apprendrebackend.service.exception.PhraseNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.PhraseTranslationMapper;
 import com.antonio.apprendrebackend.service.mapper.WordTranslationMapper;
-import com.antonio.apprendrebackend.service.model.Phrase;
-import com.antonio.apprendrebackend.service.model.PhraseTranslation;
-import com.antonio.apprendrebackend.service.model.WordTranslation;
+import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.repository.PhraseTranslationRepository;
 import com.antonio.apprendrebackend.service.service.impl.PhraseTranslationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class PhraseTranslationServiceImplTest {
-
-
     @InjectMocks
     private PhraseTranslationServiceImpl phraseTranslationService;
 
@@ -42,6 +38,9 @@ public class PhraseTranslationServiceImplTest {
     private WordPhraseTranslationService wordPhraseTranslationService;
 
     @Mock
+    private DeckService deckService;
+
+    @Mock
     private DeckWordPhraseTranslationService deckWordPhraseTranslationService;
 
     @Mock
@@ -49,34 +48,69 @@ public class PhraseTranslationServiceImplTest {
 
     @Mock
     private PhraseTranslationMapper phraseTranslationMapper;
+    private Integer deckId;
+    private Phrase phraseFr1;
+    private Phrase phraseFr2;
+    private Phrase phraseSp1;
+    private Phrase phraseSp2;
+
+    private Language languageFr;
+    private Language languageSp;
+    private Deck deck;
+    private Course course;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        languageFr = new Language();
+        languageFr.setCode(Language.LanguageEnum.FR);
+
+        languageSp = new Language();
+        languageSp.setCode(Language.LanguageEnum.ES);
+
+        deckId = 1;
+
+        phraseFr1 = new Phrase();
+        phraseFr1.setPhrase("Bonjour tout le monde");
+        phraseFr1.setLanguage(languageFr);
+
+        phraseFr2 = new Phrase();
+        phraseFr2.setPhrase("Comment ça va?");
+        phraseFr2.setLanguage(languageFr);
+
+        phraseSp1 = new Phrase();
+        phraseSp1.setPhrase("Hola a todos");
+        phraseSp1.setLanguage(languageSp);
+
+        phraseSp2 = new Phrase();
+        phraseSp2.setPhrase("¿Cómo estás?");
+        phraseSp2.setLanguage(languageSp);
+
+        course = new Course();
+        course.setTargetLanguage(languageFr);
+        course.setBaseLanguage(languageSp);
+
+        deck = new Deck();
+        deck.setId(deckId);
+        deck.setName("general");
+        deck.setCourse(course);
     }
 
     @Test
     void testGetAllPhrasesWithWordTranslationsByDeck_ReturnsPhrases() {
         // Given
-        Integer deckId = 1;
-        Phrase phraseFr1 = new Phrase();
-        phraseFr1.setPhrase("Bonjour tout le monde");
-        Phrase phraseFr2 = new Phrase();
-        phraseFr2.setPhrase("Comment ça va?");
-        Phrase phraseSp1 = new Phrase();
-        phraseSp1.setPhrase("Hola a todos");
-        Phrase phraseSp2 = new Phrase();
-        phraseSp2.setPhrase("¿Cómo estás?");
+
 
         PhraseTranslation phraseTranslation1 = new PhraseTranslation();
         phraseTranslation1.setId(1);
-        phraseTranslation1.setPhraseFr(phraseFr1);
-        phraseTranslation1.setPhraseSp(phraseSp1);
+        phraseTranslation1.setPhraseA(phraseFr1);
+        phraseTranslation1.setPhraseB(phraseSp1);
 
         PhraseTranslation phraseTranslation2 = new PhraseTranslation();
         phraseTranslation2.setId(2);
-        phraseTranslation2.setPhraseFr(phraseFr2);
-        phraseTranslation2.setPhraseSp(phraseSp2);
+        phraseTranslation2.setPhraseA(phraseFr2);
+        phraseTranslation2.setPhraseB(phraseSp2);
 
         List<PhraseTranslation> phrases = Arrays.asList(phraseTranslation1, phraseTranslation2);
 
@@ -104,10 +138,11 @@ public class PhraseTranslationServiceImplTest {
         when(deckWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(phrases);
         when(wordPhraseTranslationService.getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1)).thenReturn(wordTranslations1);
         when(wordPhraseTranslationService.getWordTranslationsByDeckIdPhraseTranslationId(deckId, 2)).thenReturn(wordTranslations2);
-        when(phraseTranslationMapper.toDTO(phraseTranslation1)).thenReturn(phraseDTO1);
-        when(phraseTranslationMapper.toDTO(phraseTranslation2)).thenReturn(phraseDTO2);
-        when(wordTranslationMapper.toDTO(wordTranslation1)).thenReturn(wordTranslationDTO1);
-        when(wordTranslationMapper.toDTO(wordTranslation2)).thenReturn(wordTranslationDTO2);
+        when(phraseTranslationMapper.toDTO(phraseTranslation1, languageFr)).thenReturn(phraseDTO1);
+        when(phraseTranslationMapper.toDTO(phraseTranslation2, languageFr)).thenReturn(phraseDTO2);
+        when(wordTranslationMapper.toDTO(wordTranslation1, languageFr)).thenReturn(wordTranslationDTO1);
+        when(wordTranslationMapper.toDTO(wordTranslation2, languageFr)).thenReturn(wordTranslationDTO2);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
 
         // When
         List<PhraseTranslationWithWordTranslationsDTO> result = phraseTranslationService.getAllPhrasesWithWordTranslationsByDeck(deckId);
@@ -125,10 +160,10 @@ public class PhraseTranslationServiceImplTest {
         verify(deckWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
         verify(wordPhraseTranslationService, times(1)).getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1);
         verify(wordPhraseTranslationService, times(1)).getWordTranslationsByDeckIdPhraseTranslationId(deckId, 2);
-        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation1);
-        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation2);
-        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation1);
-        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation2);
+        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation1, languageFr);
+        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation2, languageFr);
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation1, languageFr);
+        verify(wordTranslationMapper, times(1)).toDTO(wordTranslation2, languageFr);
     }
 
     @Test
@@ -167,13 +202,13 @@ public class PhraseTranslationServiceImplTest {
 
         PhraseTranslation phraseTranslation1 = new PhraseTranslation();
         phraseTranslation1.setId(1);
-        phraseTranslation1.setPhraseFr(phraseFr1);
-        phraseTranslation1.setPhraseSp(phraseSp1);
+        phraseTranslation1.setPhraseA(phraseFr1);
+        phraseTranslation1.setPhraseB(phraseSp1);
 
         PhraseTranslation phraseTranslation2 = new PhraseTranslation();
         phraseTranslation2.setId(2);
-        phraseTranslation2.setPhraseFr(phraseFr2);
-        phraseTranslation2.setPhraseSp(phraseSp2);
+        phraseTranslation2.setPhraseA(phraseFr2);
+        phraseTranslation2.setPhraseB(phraseSp2);
 
 
         List<PhraseTranslation> phrases = Arrays.asList(phraseTranslation1, phraseTranslation2);
@@ -186,11 +221,11 @@ public class PhraseTranslationServiceImplTest {
         phraseDTO2.setId(2);
 
         when(phraseTranslationRepository.findAll(pageable)).thenReturn(phrasePage);
-        when(phraseTranslationMapper.toDTO(phraseTranslation1)).thenReturn(phraseDTO1);
-        when(phraseTranslationMapper.toDTO(phraseTranslation2)).thenReturn(phraseDTO2);
+        when(phraseTranslationMapper.toDTO(phraseTranslation1, languageFr)).thenReturn(phraseDTO1);
+        when(phraseTranslationMapper.toDTO(phraseTranslation2, languageFr)).thenReturn(phraseDTO2);
 
         // When
-        List<PhraseTranslationDTO> result = phraseTranslationService.getAllPhrases(pageNumber, pageSize);
+        List<PhraseTranslationDTO> result = phraseTranslationService.getAllTargetLanguagePhrases(pageNumber, pageSize, languageFr);
 
         // Then
         assertNotNull(result);
@@ -199,8 +234,8 @@ public class PhraseTranslationServiceImplTest {
         assertEquals(phraseDTO2, result.get(1));
 
         verify(phraseTranslationRepository, times(1)).findAll(pageable);
-        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation1);
-        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation2);
+        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation1, languageFr);
+        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation2, languageFr);
     }
 
     @Test
@@ -218,12 +253,12 @@ public class PhraseTranslationServiceImplTest {
         // When / Then
         PhraseNotFoundException exception = assertThrows(
                 PhraseNotFoundException.class,
-                () -> phraseTranslationService.getAllPhrases(pageNumber, pageSize)
+                () -> phraseTranslationService.getAllTargetLanguagePhrases(pageNumber, pageSize, languageFr)
         );
 
         assertEquals("Not found any phrase", exception.getMessage());
         verify(phraseTranslationRepository, times(1)).findAll(pageable);
-        verify(phraseTranslationMapper, never()).toDTO(any());
+        verify(phraseTranslationMapper, never()).toDTO(any(), isNull());
     }
 
     @Test
@@ -240,13 +275,11 @@ public class PhraseTranslationServiceImplTest {
 
         PhraseTranslation phraseTranslation = new PhraseTranslation();
         phraseTranslation.setId(1);
-        phraseTranslation.setPhraseFr(phraseFr);
-        phraseTranslation.setPhraseSp(phraseSp);
+        phraseTranslation.setPhraseA(phraseFr);
+        phraseTranslation.setPhraseB(phraseSp);
 
 
         List<PhraseTranslation> phrases = List.of(phraseTranslation);
-
-        // Empty word translations list
         List<WordTranslation> emptyWordTranslations = Collections.emptyList();
 
         PhraseTranslationDTO phraseDTO = new PhraseTranslationDTO();
@@ -254,7 +287,8 @@ public class PhraseTranslationServiceImplTest {
 
         when(deckWordPhraseTranslationService.getPhraseTranslationsByDeckId(deckId)).thenReturn(phrases);
         when(wordPhraseTranslationService.getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1)).thenReturn(emptyWordTranslations);
-        when(phraseTranslationMapper.toDTO(phraseTranslation)).thenReturn(phraseDTO);
+        when(phraseTranslationMapper.toDTO(phraseTranslation, languageFr)).thenReturn(phraseDTO);
+        when(deckService.getDeckbyId(deckId)).thenReturn(deck);
 
         // When
         List<PhraseTranslationWithWordTranslationsDTO> result = phraseTranslationService.getAllPhrasesWithWordTranslationsByDeck(deckId);
@@ -267,8 +301,8 @@ public class PhraseTranslationServiceImplTest {
 
         verify(deckWordPhraseTranslationService, times(1)).getPhraseTranslationsByDeckId(deckId);
         verify(wordPhraseTranslationService, times(1)).getWordTranslationsByDeckIdPhraseTranslationId(deckId, 1);
-        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation);
-        verify(wordTranslationMapper, never()).toDTO(any());
+        verify(phraseTranslationMapper, times(1)).toDTO(phraseTranslation, languageFr);
+        verify(wordTranslationMapper, never()).toDTO(any(), isNull());
     }
 
     @Test
@@ -288,10 +322,10 @@ public class PhraseTranslationServiceImplTest {
         phraseDTO.setId(1);
 
         when(phraseTranslationRepository.findAll(pageable)).thenReturn(phrasePage);
-        when(phraseTranslationMapper.toDTO(phrase)).thenReturn(phraseDTO);
+        when(phraseTranslationMapper.toDTO(phrase, languageFr)).thenReturn(phraseDTO);
 
         // When
-        List<PhraseTranslationDTO> result = phraseTranslationService.getAllPhrases(pageNumber, pageSize);
+        List<PhraseTranslationDTO> result = phraseTranslationService.getAllTargetLanguagePhrases(pageNumber, pageSize, languageFr);
 
         // Then
         assertNotNull(result);
@@ -299,6 +333,6 @@ public class PhraseTranslationServiceImplTest {
         assertEquals(phraseDTO, result.get(0));
 
         verify(phraseTranslationRepository, times(1)).findAll(pageable);
-        verify(phraseTranslationMapper, times(1)).toDTO(phrase);
+        verify(phraseTranslationMapper, times(1)).toDTO(phrase, languageFr);
     }
 }

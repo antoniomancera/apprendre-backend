@@ -193,7 +193,7 @@ public class ConjugationVerbServiceImplTest {
         // Setup Tense
         Tense tense = new Tense();
         tense.setId(1);
-        tense.setTenseEnum(Tense.TenseEnum.PRE_INF_FR);
+        tense.setCode(Tense.TenseEnum.PRE_INF_FR);
         List<Tense> tenses = Arrays.asList(tense);
 
         // Setup PersonGenderNumber
@@ -280,7 +280,7 @@ public class ConjugationVerbServiceImplTest {
 
         Tense tense = new Tense();
         tense.setId(1);
-        tense.setTenseEnum(Tense.TenseEnum.PRE_INF_FR);
+        tense.setCode(Tense.TenseEnum.PRE_INF_FR);
         List<Tense> tenses = Arrays.asList(tense);
 
         // Setup irregular conjugation

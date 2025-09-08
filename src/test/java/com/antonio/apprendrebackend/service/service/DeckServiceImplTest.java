@@ -3,6 +3,7 @@ package com.antonio.apprendrebackend.service.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.antonio.apprendrebackend.service.exception.DeckAlreadyExistsException;
 import com.antonio.apprendrebackend.service.model.Deck;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.repository.DeckRepository;
@@ -91,5 +92,98 @@ public class DeckServiceImplTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(deckRepository, times(1)).findByEndDateNullAndUserInfo(userInfo);
+    }
+
+    @Test
+    void testCreateDeckSuccess() {
+        // Given
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(1);
+        userInfo.setUserName("testUser");
+
+        Deck newDeck = new Deck();
+        newDeck.setName("New Deck");
+        newDeck.setUserInfo(userInfo);
+
+        Deck savedDeck = new Deck();
+        savedDeck.setId(1);
+        savedDeck.setName("New Deck");
+        savedDeck.setUserInfo(userInfo);
+
+        // When
+        when(deckRepository.findByName("New Deck")).thenReturn(Arrays.asList());
+        when(deckRepository.save(newDeck)).thenReturn(savedDeck);
+
+        Deck result = deckService.createDeck(newDeck);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals("New Deck", result.getName());
+        assertEquals(userInfo, result.getUserInfo());
+        verify(deckRepository, times(1)).findByName("New Deck");
+        verify(deckRepository, times(1)).save(newDeck);
+    }
+
+    @Test
+    void testCreateDeckWhenNameAlreadyExists() {
+        // Given
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(1);
+        userInfo.setUserName("testUser");
+
+        Deck newDeck = new Deck();
+        newDeck.setName("Existing Deck");
+        newDeck.setUserInfo(userInfo);
+
+        Deck existingDeck = new Deck();
+        existingDeck.setId(1);
+        existingDeck.setName("Existing Deck");
+        existingDeck.setUserInfo(userInfo);
+
+        List<Deck> existingDecks = Arrays.asList(existingDeck);
+
+        // When
+        when(deckRepository.findByName("Existing Deck")).thenReturn(existingDecks);
+
+        // Then
+        DeckAlreadyExistsException exception = assertThrows(
+                DeckAlreadyExistsException.class,
+                () -> deckService.createDeck(newDeck)
+        );
+
+        assertEquals("A deck with name: Existing Deck already exists", exception.getMessage());
+        verify(deckRepository, times(1)).findByName("Existing Deck");
+        verify(deckRepository, never()).save(any(Deck.class));
+    }
+
+    @Test
+    void testCreateDeckWhenFindByNameReturnsNull() {
+        // Given
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(1);
+        userInfo.setUserName("testUser");
+
+        Deck newDeck = new Deck();
+        newDeck.setName("New Deck");
+        newDeck.setUserInfo(userInfo);
+
+        Deck savedDeck = new Deck();
+        savedDeck.setId(1);
+        savedDeck.setName("New Deck");
+        savedDeck.setUserInfo(userInfo);
+
+        // When
+        when(deckRepository.findByName("New Deck")).thenReturn(null);
+        when(deckRepository.save(newDeck)).thenReturn(savedDeck);
+
+        Deck result = deckService.createDeck(newDeck);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals("New Deck", result.getName());
+        verify(deckRepository, times(1)).findByName("New Deck");
+        verify(deckRepository, times(1)).save(newDeck);
     }
 }

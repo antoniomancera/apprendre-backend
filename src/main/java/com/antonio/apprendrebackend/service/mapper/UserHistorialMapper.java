@@ -11,7 +11,7 @@ public interface UserHistorialMapper {
     @Mapping(target = "deckWordPhraseTranslation", source = "deckWordPhraseTranslation")
     @Mapping(target = "date", source = "date")
     @Mapping(target = "success", source = "success")
-    @Mapping(target = "deckId", source = "deckId")
+    @Mapping(target = "deck", source = "deck")
     @Mapping(target = "attempts", ignore = true)
     UserHistorialDTO toDTO(UserHistorial userHistorial);
 }

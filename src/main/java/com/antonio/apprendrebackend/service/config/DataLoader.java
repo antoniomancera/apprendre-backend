@@ -1,9 +1,9 @@
 package com.antonio.apprendrebackend.service.config;
 
 import com.antonio.apprendrebackend.service.model.Level;
-import com.antonio.apprendrebackend.service.model.Type;
+import com.antonio.apprendrebackend.service.model.PartSpeech;
 import com.antonio.apprendrebackend.service.repository.LevelRepository;
-import com.antonio.apprendrebackend.service.repository.TypeRepository;
+import com.antonio.apprendrebackend.service.repository.PartSpeechRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataLoader {
     @Autowired
-    private TypeRepository typeRepository;
+    private PartSpeechRepository partSpeechRepository;
 
     @Autowired
     private LevelRepository levelRepository;
@@ -20,15 +20,15 @@ public class DataLoader {
     @Bean
     public CommandLineRunner loadData() {
         return args -> {
-            if (typeRepository.count() == 0) {
-                typeRepository.save(new Type(Type.TypeEnum.SUSTANTIVE));
-                typeRepository.save(new Type(Type.TypeEnum.VERB));
-                typeRepository.save(new Type(Type.TypeEnum.ADJECTIVE));
-                typeRepository.save(new Type(Type.TypeEnum.ADVERB));
-                typeRepository.save(new Type(Type.TypeEnum.PRONOUN));
-                typeRepository.save(new Type(Type.TypeEnum.PREPOSITION));
-                typeRepository.save(new Type(Type.TypeEnum.CONJUNCTION));
-                typeRepository.save(new Type(Type.TypeEnum.INTERJECTION));
+            if (partSpeechRepository.count() == 0) {
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.SUSTANTIVE));
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.VERB));
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.ADJECTIVE));
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.ADVERB));
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.PRONOUN));
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.PREPOSITION));
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.CONJUNCTION));
+                partSpeechRepository.save(new PartSpeech(PartSpeech.PartSpeechEnum.INTERJECTION));
             }
 
             if (levelRepository.count() == 0) {

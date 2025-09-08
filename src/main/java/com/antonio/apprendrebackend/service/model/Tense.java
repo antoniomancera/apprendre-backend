@@ -40,7 +40,7 @@ public class Tense {
     private Language language;
 
     @Enumerated(EnumType.STRING)
-    private TenseEnum tenseEnum;
+    private TenseEnum code;
 
     private String name;
 

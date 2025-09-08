@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.util.List;
 
 
+//TODO cambiar a homeDTO
 @Setter
 @Getter
 @NoArgsConstructor
@@ -18,5 +19,5 @@ public class Home {
     GoalDTO goal;
     UserInfoDTO userInfo;
     List<DeckDTO> decks;
-    Integer lastDeckId;
+    DeckDTO lastDeck;
 }

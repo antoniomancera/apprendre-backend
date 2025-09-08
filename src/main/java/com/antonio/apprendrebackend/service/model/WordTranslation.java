@@ -2,46 +2,37 @@ package com.antonio.apprendrebackend.service.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//TODO refactor Wordtranslation to WordSenseTransation
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class WordTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "word_sense_fr_id")
-    private WordSense wordSenseFr;
+    @JoinColumn(name = "word_sense_a_id")
+    private WordSense wordSenseA;
 
     @ManyToOne
-    @JoinColumn(name = "word_sense_sp_id")
-    private WordSense wordSenseSp;
+    @JoinColumn(name = "word_sense_b_id")
+    private WordSense wordSenseB;
 
     @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
+    @JoinColumn(name = "word_inflection_id")
+    private WordInflection wordInflection;
 
-    @ManyToOne
-    @JoinColumn(name = "conjugation_verb_form_id")
-    private ConjugationVerbForm conjugationVerbForm;
-
-    private Integer attempts;
-    private Integer successes;
     private Integer importanceIndex;
 
+    private Integer baseWeight;
 
-    public WordTranslation() {
-        this.attempts = 0;
-        this.successes = 0;
-    }
-
-    public WordTranslation(WordSense wordSenseFr, WordSense wordSenseSp) {
-        this.wordSenseFr = wordSenseFr;
-        this.wordSenseSp = wordSenseSp;
-        this.attempts = 0;
-        this.successes = 0;
+    public WordTranslation(WordSense wordSenseA, WordSense wordSenseB) {
+        this.wordSenseA = wordSenseA;
+        this.wordSenseB = wordSenseB;
     }
 }

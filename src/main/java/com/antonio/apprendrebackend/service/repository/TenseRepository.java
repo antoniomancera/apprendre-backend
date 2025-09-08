@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface TenseRepository extends CrudRepository<Tense, Integer> {
     List<Tense> findByLanguage(Language language);
+
+    List<Tense> findAll();
 }

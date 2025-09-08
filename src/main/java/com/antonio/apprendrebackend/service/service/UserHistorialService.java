@@ -39,4 +39,33 @@ public interface UserHistorialService {
      * @returnUserHistorial
      */
     UserHistorial postUserHistorial(UserHistorial userHistorial);
+
+    /**
+     * Get all the UserHistorials of a word for a user
+     *
+     * @param userId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    List<UserHistorial> getUserHistorialsByUserIdAndWordId(Integer userId, Integer wordId);
+
+    /**
+     * Get all the UserHistorials of a word in a deck
+     *
+     * @param deckId
+     * @param wordId
+     * @return List<UserHistorial>
+     */
+    List<UserHistorial> getUserHistorialsByDeckIdAndWordId(Integer deckId, Integer wordId);
+
+    /**
+     * Get all the UserHistorials of a wordSense in a deck
+     *
+     * @param deckId
+     * @param wordSenseId
+     * @return List<UserHistorial>
+     */
+    List<UserHistorial> getUserHistorialsByDeckIdAndWordSenseId(Integer deckId, Integer wordSenseId);
+
+
 }

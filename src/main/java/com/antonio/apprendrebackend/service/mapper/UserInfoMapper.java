@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface UserInfoMapper {
     UserInfoMapper INSTANCE = Mappers.getMapper(UserInfoMapper.class);
 
-    @Mapping(target = "supabaseId", source = "supabaseId")
     @Mapping(target = "userName", source = "userName")
+    @Mapping(target = "currentCourse", source = "currentCourse")
     UserInfoDTO toDTO(UserInfo userInfo);
 }

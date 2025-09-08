@@ -13,14 +13,14 @@ public class PhraseTranslation {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "phrase_fr_id")
-    private Phrase phraseFr;
+    @JoinColumn(name = "phrase_a_id")
+    private Phrase phraseA;
 
     @ManyToOne
-    @JoinColumn(name = "phrase_sp_id")
-    private Phrase phraseSp;
+    @JoinColumn(name = "phrase_b_id")
+    private Phrase phraseB;
 
     private String description;
-    private Integer attempts;
-    private Integer successes;
+
+    private Integer baseWeight;
 }

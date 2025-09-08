@@ -5,6 +5,8 @@ import com.antonio.apprendrebackend.service.model.UserHistorial;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.StatsService;
 import com.antonio.apprendrebackend.service.service.UserHistorialService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.*;
 
 @Service
 public class StatsServiceImpl implements StatsService {
+    private static final Logger logger = LoggerFactory.getLogger(StatsServiceImpl.class);
 
     @Autowired
     UserHistorialService userHistorialService;
@@ -26,6 +29,8 @@ public class StatsServiceImpl implements StatsService {
      */
     @Override
     public List<DailyStats> getDailyStatsLastWeek(UserInfo userInfo) {
+        logger.debug("Getting the stats for logged user");
+
         List<UserHistorial> historialLastWeek = userHistorialService.getUserHistorialLastWeek(userInfo);
 
         Map<LocalDate, DailyStats> dailyStatsMap = new HashMap<>();
@@ -36,7 +41,7 @@ public class StatsServiceImpl implements StatsService {
 
             DailyStats stat = dailyStatsMap.computeIfAbsent(date, k -> new DailyStats(date));
             stat.setTotalAttempts(stat.getTotalAttempts() + 1);
-            stat.setTotalSuccesses(stat.getTotalSuccesses() + historialDay.getSuccess());
+            stat.setTotalSuccesses((int) (stat.getTotalSuccesses() + historialDay.getSuccess().getScore()));
         }
 
         LocalDate today = LocalDate.now();

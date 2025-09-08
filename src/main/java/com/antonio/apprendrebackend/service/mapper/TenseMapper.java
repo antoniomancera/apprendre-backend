@@ -14,7 +14,7 @@ public interface TenseMapper {
 
     @Mapping(target = "mood", source = "mood")
     @Mapping(target = "language", source = "language")
-    @Mapping(target = "tenseEnum", source = "tenseEnum")
+    @Mapping(target = "code", source = "code")
     @Mapping(target = "name", source = "name")
     TenseDTO toDTO(Tense tense);
 }
