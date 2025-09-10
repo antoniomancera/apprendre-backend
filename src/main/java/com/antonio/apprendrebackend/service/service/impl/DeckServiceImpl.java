@@ -14,13 +14,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.antonio.apprendrebackend.service.util.GeneralConstants.MAX_DECKS;
+
 @Service
 public class DeckServiceImpl implements DeckService {
     private static final Logger logger = LoggerFactory.getLogger(DeckServiceImpl.class);
 
     @Autowired
-    DeckRepository deckRepository;
-
+    private DeckRepository deckRepository;
 
     @Autowired
     private DeckMapper deckMapper;
@@ -32,7 +33,7 @@ public class DeckServiceImpl implements DeckService {
      */
     @Override
     public List<Deck> getActiveDecks(UserInfo userInfo) {
-        logger.debug("Getting all the active deck for logged user");
+        logger.debug("Calle getActiveDecks in DeckService for user-{}", userInfo);
 
         return deckRepository.findByEndDateNullAndUserInfo(userInfo);
     }
@@ -46,7 +47,7 @@ public class DeckServiceImpl implements DeckService {
      */
     @Override
     public Deck getDeckbyId(Integer deckId) {
-        logger.debug("Getting the deck by id: %d", deckId);
+        logger.debug("Called getDeckbyId in DeckService for deck-{}", deckId);
 
         return deckRepository.findById(deckId).orElseThrow(() -> new DeckNotFoundException(String.format("Not found any deck with id: %s", deckId)));
     }
@@ -60,11 +61,25 @@ public class DeckServiceImpl implements DeckService {
      */
     @Override
     public Deck createDeck(Deck deck) {
+        logger.debug("Calle createDeck in DeckService for deck-{}", deck);
+
         List<Deck> sameNameDecks = deckRepository.findByName(deck.getName());
         if (sameNameDecks != null && sameNameDecks.size() > 0) {
             throw new DeckAlreadyExistsException(String.format("A deck with name: %s already exists", deck.getName()));
         }
 
         return deckRepository.save(deck);
+    }
+
+    /**
+     * Get if the user has reached the  of decks already in use
+     *
+     * @return Boolean
+     */
+    @Override
+    public Boolean isDeckLimitNotReached(Integer userId) {
+        logger.debug("Calle createDeck in isDeckLimitNotReached for user-{}", userId);
+
+        return deckRepository.countByUserIdAndEndDateNull(userId) < MAX_DECKS;
     }
 }

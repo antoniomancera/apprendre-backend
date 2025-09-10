@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import static com.antonio.apprendrebackend.service.util.GeneralConstants.MAX_DECKS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -185,5 +186,80 @@ public class DeckServiceImplTest {
         assertEquals("New Deck", result.getName());
         verify(deckRepository, times(1)).findByName("New Deck");
         verify(deckRepository, times(1)).save(newDeck);
+    }
+
+    @Test
+    void testIsDeckLimitNotReachedWhenBelowLimit() {
+        // Given
+        Integer userId = 1;
+        int currentDeckCount = 3;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(currentDeckCount);
+        Boolean result = deckService.isDeckLimitNotReached(userId);
+
+        // Then
+        assertTrue(result);
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+    }
+
+    @Test
+    void testIsDeckLimitNotReachedWhenAtLimit() {
+        // Given
+        Integer userId = 1;
+        int currentDeckCount = MAX_DECKS;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(currentDeckCount);
+        Boolean result = deckService.isDeckLimitNotReached(userId);
+
+        // Then
+        assertFalse(result);
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+    }
+
+    @Test
+    void testIsDeckLimitNotReachedWhenExceedsLimit() {
+        // Given
+        Integer userId = 1;
+        int currentDeckCount = MAX_DECKS + 1;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(currentDeckCount);
+        Boolean result = deckService.isDeckLimitNotReached(userId);
+
+        // Then
+        assertFalse(result);
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+    }
+
+    @Test
+    void testIsDeckLimitNotReachedWhenZeroDecks() {
+        // Given
+        Integer userId = 1;
+        int currentDeckCount = 0;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(currentDeckCount);
+        Boolean result = deckService.isDeckLimitNotReached(userId);
+
+        // Then
+        assertTrue(result);
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+    }
+
+    @Test
+    void testIsDeckLimitNotReachedWithNullUserId() {
+        // Given
+        Integer userId = null;
+        int currentDeckCount = 0;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(currentDeckCount);
+        Boolean result = deckService.isDeckLimitNotReached(userId);
+
+        // Then
+        assertTrue(result);
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
     }
 }
