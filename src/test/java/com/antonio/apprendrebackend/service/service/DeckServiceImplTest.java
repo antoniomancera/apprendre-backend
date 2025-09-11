@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.antonio.apprendrebackend.service.exception.DeckAlreadyExistsException;
+import com.antonio.apprendrebackend.service.exception.DeckNotFoundException;
 import com.antonio.apprendrebackend.service.model.Deck;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.repository.DeckRepository;
@@ -261,5 +262,141 @@ public class DeckServiceImplTest {
         // Then
         assertTrue(result);
         verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+    }
+
+    @Test
+    void testUpdateDeckEndDateSuccess() {
+        // Given
+        Integer deckId = 1;
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(1);
+        userInfo.setUserName("testUser");
+
+        Deck existingDeck = new Deck();
+        existingDeck.setId(deckId);
+        existingDeck.setName("Test Deck");
+        existingDeck.setUserInfo(userInfo);
+        existingDeck.setEndDate(null);
+
+        Deck updatedDeck = new Deck();
+        updatedDeck.setId(deckId);
+        updatedDeck.setName("Test Deck");
+        updatedDeck.setUserInfo(userInfo);
+        updatedDeck.setEndDate(System.currentTimeMillis());
+
+        // When
+        when(deckRepository.findById(deckId)).thenReturn(java.util.Optional.of(existingDeck));
+        when(deckRepository.save(any(Deck.class))).thenReturn(updatedDeck);
+
+        Deck result = deckService.updateDeckEndDate(deckId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(deckId, result.getId());
+        assertEquals("Test Deck", result.getName());
+        assertNotNull(result.getEndDate());
+        assertTrue(result.getEndDate() > 0);
+        verify(deckRepository, times(1)).findById(deckId);
+        verify(deckRepository, times(1)).save(any(Deck.class));
+    }
+
+    @Test
+    void testUpdateDeckEndDateWhenDeckNotFound() {
+        // Given
+        Integer deckId = 999;
+
+        // When
+        when(deckRepository.findById(deckId)).thenReturn(java.util.Optional.empty());
+
+        // Then
+        DeckNotFoundException exception = assertThrows(
+                DeckNotFoundException.class,
+                () -> deckService.updateDeckEndDate(deckId)
+        );
+
+        assertEquals("Not found any deck with id: 999", exception.getMessage());
+        verify(deckRepository, times(1)).findById(deckId);
+        verify(deckRepository, never()).save(any(Deck.class));
+    }
+
+    @Test
+    void testUpdateDeckEndDateWithNullDeckId() {
+        // Given
+        Integer deckId = null;
+
+        // When
+        when(deckRepository.findById(deckId)).thenReturn(java.util.Optional.empty());
+
+        // Then
+        DeckNotFoundException exception = assertThrows(
+                DeckNotFoundException.class,
+                () -> deckService.updateDeckEndDate(deckId)
+        );
+
+        assertEquals("Not found any deck with id: null", exception.getMessage());
+        verify(deckRepository, times(1)).findById(deckId);
+        verify(deckRepository, never()).save(any(Deck.class));
+    }
+
+    @Test
+    void testUpdateDeckEndDateSetsCurrentTimestamp() {
+        // Given
+        Integer deckId = 1;
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(1);
+
+        Deck existingDeck = new Deck();
+        existingDeck.setId(deckId);
+        existingDeck.setName("Test Deck");
+        existingDeck.setUserInfo(userInfo);
+        existingDeck.setEndDate(null);
+
+        long beforeCall = System.currentTimeMillis();
+
+        // When
+        when(deckRepository.findById(deckId)).thenReturn(java.util.Optional.of(existingDeck));
+        when(deckRepository.save(any(Deck.class))).thenAnswer(invocation -> {
+            Deck savedDeck = invocation.getArgument(0);
+            return savedDeck;
+        });
+
+        Deck result = deckService.updateDeckEndDate(deckId);
+        long afterCall = System.currentTimeMillis();
+
+        // Then
+        assertNotNull(result.getEndDate());
+        assertTrue(result.getEndDate() >= beforeCall);
+        assertTrue(result.getEndDate() <= afterCall);
+        verify(deckRepository, times(1)).findById(deckId);
+        verify(deckRepository, times(1)).save(existingDeck);
+    }
+
+    @Test
+    void testUpdateDeckEndDatePreservesOtherFields() {
+        // Given
+        Integer deckId = 1;
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(1);
+        userInfo.setUserName("testUser");
+
+        Deck existingDeck = new Deck();
+        existingDeck.setId(deckId);
+        existingDeck.setName("Original Deck Name");
+        existingDeck.setUserInfo(userInfo);
+        existingDeck.setEndDate(null);
+
+        // When
+        when(deckRepository.findById(deckId)).thenReturn(java.util.Optional.of(existingDeck));
+        when(deckRepository.save(any(Deck.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Deck result = deckService.updateDeckEndDate(deckId);
+
+        // Then
+        assertEquals(deckId, result.getId());
+        assertEquals("Original Deck Name", result.getName());
+        assertEquals(userInfo, result.getUserInfo());
+        assertNotNull(result.getEndDate());
+        verify(deckRepository, times(1)).findById(deckId);
+        verify(deckRepository, times(1)).save(existingDeck);
     }
 }

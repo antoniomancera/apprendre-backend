@@ -159,6 +159,7 @@ public class DeckWordPhraseTranslationServiceImpl implements DeckWordPhraseTrans
         logger.debug("Called attemptsWordPhraseTranslation() in DeckWordPhraseTranslationService for deck-{}, attempt-{}, and wordPhrase", deckId, attempt, wordPhraseId);
 
         DeckWordPhraseTranslation deckWordPhraseTranslation = getByDeckIdAndWordPhraseTranslationId(deckId, wordPhraseId);
+        //TODO obtener el deck de deckWordPhraseTranslation
         Deck deck = deckService.getDeckbyId(deckId);
         Boolean hasSuccess = deckWordPhraseTranslation.getWordPhraseTranslation().getWordTranslation().getWordSenseA().getWord().getName().equals(attempt);
         updateStats(hasSuccess, deckWordPhraseTranslation);

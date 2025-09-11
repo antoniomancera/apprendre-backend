@@ -32,12 +32,19 @@ public interface DeckService {
      * @throws DeckAlreadyExistsException if exists a Deck with the same name
      */
     Deck createDeck(Deck deck);
-
-
+    
     /**
      * Get if the user has reached the  of decks already in use
      *
      * @return Boolean
      */
     Boolean isDeckLimitNotReached(Integer userId);
+
+    /**
+     * Updated endDate of a Deck to now
+     *
+     * @param deckId
+     * @return Deck
+     */
+    Deck updateDeckEndDate(Integer deckId);
 }
