@@ -82,4 +82,19 @@ public class DeckServiceImpl implements DeckService {
 
         return deckRepository.countByUserIdAndEndDateNull(userId) < MAX_DECKS;
     }
+
+    /**
+     * Updated endDate of a Deck to now
+     *
+     * @param deckId
+     * @return Deck
+     */
+    @Override
+    public Deck updateDeckEndDate(Integer deckId) {
+        logger.debug("Called updateDeckEndDate in isDeckLimitNotReached for deck-{}", deckId);
+
+        Deck deck = getDeckbyId(deckId);
+        deck.setEndDate(System.currentTimeMillis());
+        return deckRepository.save(deck);
+    }
 }
