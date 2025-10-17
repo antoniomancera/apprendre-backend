@@ -1,6 +1,10 @@
 package com.antonio.apprendrebackend.service.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,20 +13,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WordSense {
+@AllArgsConstructor
+public class SoundIpa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "word_id")
-    private Word word;
-
-    @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
-
-    private int order;
-
-    private String sense;
+    private String name;
 }

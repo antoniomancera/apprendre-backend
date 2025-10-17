@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PartSpeechLanguageVariation {
+public class PartSpeechLanguageInflection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,5 +27,5 @@ public class PartSpeechLanguageVariation {
     private Language language;
 
     private boolean hasConjugation;
-    private boolean hasInflection;
+    private boolean hasDeclension;
 }

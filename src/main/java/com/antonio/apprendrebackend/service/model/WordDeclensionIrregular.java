@@ -9,20 +9,23 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WordSense {
+public class WordDeclensionIrregular {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "word_id")
-    private Word word;
+    @JoinColumn(name = "word_declension_variation_id")
+    private WordDeclensionVariation wordDeclensionVariation;
 
     @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
+    @JoinColumn(name = "gender_id")
+    private Gender gender;
 
-    private int order;
+    @ManyToOne
+    @JoinColumn(name = "number_id")
+    private Number number;
 
-    private String sense;
+    private String name;
+
 }

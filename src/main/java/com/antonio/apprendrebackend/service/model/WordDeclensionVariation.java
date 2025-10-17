@@ -9,20 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WordSense {
+public class WordDeclensionVariation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "word_id")
     private Word word;
 
-    @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
-
-    private int order;
-
-    private String sense;
+    private boolean isInvariable;
 }

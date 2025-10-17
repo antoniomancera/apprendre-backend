@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WordSense {
+public class WordPartSpeechSubType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,10 +19,6 @@ public class WordSense {
     private Word word;
 
     @ManyToOne
-    @JoinColumn(name = "level_id")
-    private Level level;
-
-    private int order;
-
-    private String sense;
+    @JoinColumn(name = "part_speech_sub_type_id")
+    private PartSpeechSubType partSpeechSubType;
 }
