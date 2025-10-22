@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+//TOOD eliominar?
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

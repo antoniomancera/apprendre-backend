@@ -1,14 +1,13 @@
 package com.antonio.apprendrebackend.service.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-//TODO eliominar?
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-@Setter
-public class ConjugationRegularIrregularDTO {
-    private String conjugationRegular;
+public class ConjugationPositionIrregularDTO {
     private String conjugationIrregular;
+    private Integer position;
 }

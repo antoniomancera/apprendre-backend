@@ -1,14 +1,12 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.ConjugationTenseInfoDTO;
 import com.antonio.apprendrebackend.service.dto.ConjugationTenseDTO;
-import com.antonio.apprendrebackend.service.exception.ConjugationVerbNotFoundException;
+import com.antonio.apprendrebackend.service.dto.ConjugationVerbWithTensesInfoDTO;
 import com.antonio.apprendrebackend.service.model.ConjugationVerb;
-import com.antonio.apprendrebackend.service.model.ConjugationVerbWordWordSense;
-import com.antonio.apprendrebackend.service.model.WordSense;
 
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ConjugationVerbService {
     /**
@@ -34,4 +32,12 @@ public interface ConjugationVerbService {
      * @return ConjugationVerb
      */
     ConjugationVerb getConjugationVerbByWordSenseId(Integer wordSenseId);
+
+    /**
+     * Given a wordSense return the structure general of every tense Conjugation and their irregulars
+     *
+     * @param wordSenseId
+     * @return ConjugationVerbWithTensesInfoDTO
+     */
+    ConjugationVerbWithTensesInfoDTO getConjugationVerbWithTensesInfoDTOByWordSenseId(Integer wordSenseId);
 }
