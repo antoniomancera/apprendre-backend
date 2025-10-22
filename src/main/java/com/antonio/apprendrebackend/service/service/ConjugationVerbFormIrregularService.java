@@ -3,6 +3,7 @@ package com.antonio.apprendrebackend.service.service;
 import com.antonio.apprendrebackend.service.model.ConjugationVariation;
 import com.antonio.apprendrebackend.service.model.ConjugationVerbForm;
 import com.antonio.apprendrebackend.service.model.ConjugationVerbFormIrregular;
+import com.antonio.apprendrebackend.service.model.Tense;
 
 import java.util.List;
 
@@ -24,4 +25,12 @@ public interface ConjugationVerbFormIrregularService {
      */
     ConjugationVerbFormIrregular getConjugationVerbFormIrregularByConjugationVariationAndConjugationVerbForm(ConjugationVariation conjugationVariation, ConjugationVerbForm conjugationVerbForm);
 
+    /**
+     * Return the Irregular forms given a list of conjugationVerbForms
+     *
+     * @param conjugationVariation
+     * @param conjugationVerbForms
+     * @return List<ConjugationVerbFormIrregular>
+     */
+    List<ConjugationVerbFormIrregular> getConjugationVerbFormIrregularsByConjugationVariationAndConjugationVerbForms(ConjugationVariation conjugationVariation, List<ConjugationVerbForm> conjugationVerbForms);
 }

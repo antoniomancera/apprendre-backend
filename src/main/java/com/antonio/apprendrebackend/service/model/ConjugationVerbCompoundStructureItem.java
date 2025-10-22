@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.model;
 
+import com.antonio.apprendrebackend.service.util.AuxiliaryPrincipalVerbEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ConjugationVerbCompoundStructureItem {
-    public enum AuxiliarPrincipalVerb {
-        AUXILIAR,
-        PRINCIPAL
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,7 +22,7 @@ public class ConjugationVerbCompoundStructureItem {
     @ManyToOne
     @JoinColumn(name = "word_sense_id")
     private WordSense wordSense;
-
+    
     @ManyToOne
     @JoinColumn(name = "tense_id")
     private Tense tense;
@@ -36,7 +32,7 @@ public class ConjugationVerbCompoundStructureItem {
     private ConjugationVerbForm conjugationVerbForm;
 
     @Enumerated(EnumType.STRING)
-    private AuxiliarPrincipalVerb auxiliarPrincipalVerb;
+    private AuxiliaryPrincipalVerbEnum auxiliarPrincipalVerb;
 
     private Integer position;
 }

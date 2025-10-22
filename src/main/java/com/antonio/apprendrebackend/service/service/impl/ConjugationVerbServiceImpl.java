@@ -1,13 +1,13 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
-import com.antonio.apprendrebackend.service.dto.ConjugationTenseDTO;
-import com.antonio.apprendrebackend.service.dto.ConjugationRegularIrregularDTO;
-import com.antonio.apprendrebackend.service.dto.ConjugationWordPositionDTO;
+import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.ConjugationVerbNotFoundException;
+import com.antonio.apprendrebackend.service.mapper.ConjugationVerbMapper;
 import com.antonio.apprendrebackend.service.mapper.TenseMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseMapper;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.service.*;
+import com.antonio.apprendrebackend.service.util.AuxiliaryPrincipalVerbEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +42,13 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
     private ConjugationVerbWordWordSenseService conjugationVerbWordWordSenseService;
 
     @Autowired
+    private ConjugationVerbFormService conjugationVerbFormService;
+    @Autowired
     private TenseMapper tenseMapper;
     @Autowired
     private WordSenseMapper wordSenseMapper;
+    @Autowired
+    private ConjugationVerbMapper conjugationVerbMapper;
 
 
     /**
@@ -212,9 +216,90 @@ public class ConjugationVerbServiceImpl implements ConjugationVerbService {
         return getConjugationVerbByWordId(wordSense.getWord().getId());
     }
 
+    /**
+     * Given a wordSense return the structure general of every tense Conjugation and their irregulars
+     *
+     * @param wordSenseId
+     * @return ConjugationVerbWithTensesInfoDTO
+     */
+    @Override
+    public ConjugationVerbWithTensesInfoDTO getConjugationVerbWithTensesInfoDTOByWordSenseId(Integer wordSenseId) {
+        logger.debug("Called getConjugationVerbWithTensesInfoDTOByWordSenseId in ConjugationVerbService for wordSense-{}", wordSenseId);
+
+        ConjugationVerbWithTensesInfoDTO conjugationVerbWithTensesInfo = new ConjugationVerbWithTensesInfoDTO();
+
+        List<ConjugationTenseInfoDTO> conjugationStructureAndIrregularsList = new ArrayList<>();
+
+        WordSense verb = wordSenseService.getById(wordSenseId);
+        ConjugationVerb conjugationVerb = getConjugationVerbByWordSenseId(wordSenseId);
+        ConjugationVariation conjugationVariation = conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb);
+        conjugationVerbWithTensesInfo.setConjugationVerb(conjugationVerbMapper.toDTO(conjugationVerb));
+        List<Tense> tenses = tenseService.getByLanguage(verb.getWord().getLanguage());
+
+        tenses.forEach(tense -> {
+            ConjugationTenseInfoDTO conjugationStructureAndIrregulars = new ConjugationTenseInfoDTO(tenseMapper.toDTO(tense));
+
+            String regularTenseBase = conjugationRegularTenseBaseVariationService.getRegularTenseBase(verb, conjugationVerb, tense.getId());
+            conjugationStructureAndIrregulars.setRegularTenseBase(regularTenseBase);
+            List<ConjugationVerbCompoundStructureItem> items = conjugationVerbCompoundStructureItemService.getConjugationVerbCompoundStructureItemsByTenseId(tense.getId());
+
+            List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnums = getPersonGenderNumberEnumsByTense(tense);
+            conjugationStructureAndIrregulars.setPersonGenderNumberEnums(personGenderNumberEnums);
+            if (items != null && !items.isEmpty()) {
+                conjugationStructureAndIrregulars.setConjugationVerbCompoundStructureItems(items);
+            }
+
+            if (conjugationVariation != null) {
+                List<ConjugationVerbForm> conjugationNonExistVerbForms = conjugationNonExistService.getByConjugationNonExistByTenseAndPersonGenderNumber(tense, personGenderNumberEnums).stream().map(conj -> conj.getConjugationVerbForm()).collect(Collectors.toList());
+                List<PersonGenderNumber.PersonGenderNumberEnum> personGenderNumberEnumConjugationNonExists = conjugationNonExistVerbForms.stream().map(conj -> conj.getPersonGenderNumber().getPersonGenderNumberEnum()).collect(Collectors.toList());
+                conjugationStructureAndIrregulars.setPersonGenderNumberEnumConjugationNonExists(personGenderNumberEnumConjugationNonExists);
+
+                Map<PersonGenderNumber.PersonGenderNumberEnum, ConjugationPositionIrregularDTO> personGenderNumberConjugationIrregular = new HashMap<>();
+                if (items != null && !items.isEmpty()) {
+                    for (ConjugationVerbCompoundStructureItem item : items) {
+                        if (item.getConjugationVerbForm() != null && !tenses.contains(item.getConjugationVerbForm().getTense()) && item.getAuxiliarPrincipalVerb() == AuxiliaryPrincipalVerbEnum.PRINCIPAL) {
+                            ConjugationVerbFormIrregular conjugationVerbFormIrregular = conjugationVerbFormIrregularService.getConjugationVerbFormIrregularByConjugationVariationAndConjugationVerbForm(conjugationVariation, item.getConjugationVerbForm());
+                            if (conjugationVerbFormIrregular != null) {
+                                personGenderNumberConjugationIrregular.put(item.getConjugationVerbForm().getPersonGenderNumber().getPersonGenderNumberEnum(), new ConjugationPositionIrregularDTO(conjugationVerbFormIrregular.getName(), item.getPosition()));
+                            }
+                        } else if (item.getTense() != null && !tenses.contains(item.getTense()) && item.getAuxiliarPrincipalVerb() == AuxiliaryPrincipalVerbEnum.PRINCIPAL) {
+
+                            List<ConjugationVerbForm> conjugationVerbForms = conjugationVerbFormService.getConjugationVerbFormsByTenseAndPersonGenderNumberEnums(item.getTense(), personGenderNumberEnums);
+
+                            List<ConjugationVerbFormIrregular> conjugationVerbFormIrregulars = conjugationVerbFormIrregularService.getConjugationVerbFormIrregularsByConjugationVariationAndConjugationVerbForms(conjugationVariation, conjugationVerbForms);
+                            conjugationVerbFormIrregulars.forEach(conj ->
+                                    personGenderNumberConjugationIrregular.put(
+                                            conj.getConjugationVerbForm().getPersonGenderNumber().getPersonGenderNumberEnum(),
+                                            new ConjugationPositionIrregularDTO(conj.getName(), item.getPosition())
+                                    )
+                            );
+                        }
+                    }
+
+                } else {
+                    List<ConjugationVerbForm> conjugationVerbForms = conjugationVerbFormService.getConjugationVerbFormsByTenseAndPersonGenderNumberEnums(tense, personGenderNumberEnums);
+
+                    List<ConjugationVerbFormIrregular> conjugationVerbFormIrregulars = conjugationVerbFormIrregularService.getConjugationVerbFormIrregularsByConjugationVariationAndConjugationVerbForms(conjugationVariation, conjugationVerbForms);
+                    conjugationVerbFormIrregulars.forEach(conj ->
+                            personGenderNumberConjugationIrregular.put(
+                                    conj.getConjugationVerbForm().getPersonGenderNumber().getPersonGenderNumberEnum(),
+                                    new ConjugationPositionIrregularDTO(conj.getName(), -1)
+                            )
+                    );
+
+                }
+                conjugationStructureAndIrregulars.setPersonGenderNumberConjugationPositionIrregular(personGenderNumberConjugationIrregular);
+                conjugationStructureAndIrregularsList.add(conjugationStructureAndIrregulars);
+            }
+        });
+        conjugationVerbWithTensesInfo.setConjugationStructureAndIrregularsList(conjugationStructureAndIrregularsList);
+
+        return conjugationVerbWithTensesInfo;
+    }
+
     private Integer getVerbGroupId(ConjugationVerb conjugationVerb, ConjugationVerbCompoundStructureItem item) {
         Integer verbGroupId = conjugationVerb.getVerbGroupEnding().getVerbGroup().getId();
-        if (item.getAuxiliarPrincipalVerb().equals(ConjugationVerbCompoundStructureItem.AuxiliarPrincipalVerb.AUXILIAR)) {
+        if (item.getAuxiliarPrincipalVerb().equals(AuxiliaryPrincipalVerbEnum.AUXILIAR)) {
             verbGroupId = conjugationVerb.getVerbAuxiliary().getId();
         }
         return verbGroupId;

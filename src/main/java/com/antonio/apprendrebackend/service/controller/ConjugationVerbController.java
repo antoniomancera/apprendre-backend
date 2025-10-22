@@ -1,6 +1,7 @@
 package com.antonio.apprendrebackend.service.controller;
 
 import com.antonio.apprendrebackend.service.dto.ConjugationTenseDTO;
+import com.antonio.apprendrebackend.service.dto.ConjugationVerbWithTensesInfoDTO;
 import com.antonio.apprendrebackend.service.service.ConjugationVerbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ public class ConjugationVerbController {
 
     @Autowired
     private ConjugationVerbService conjugationVerbService;
-    
+
     /**
      * Given a wordSense return a list with the conjugationComplete(regular and irregular) with of all the tenses
      *
@@ -44,6 +45,22 @@ public class ConjugationVerbController {
     public @ResponseBody ResponseEntity<List<ConjugationTenseDTO>> getAllConjugationCompleteByWordId(@PathVariable Integer wordId) {
         logger.info(String.format("Get all the conjugations and te tenses of wordId:  %s", wordId));
         List<ConjugationTenseDTO> conjugationTenseDTOS = conjugationVerbService.getConjugationComplete(wordId);
+        return ResponseEntity.ok(conjugationTenseDTOS);
+    }
+
+
+    /**
+     * Given a wordSense return the structure general of every tense Conjugation and their irregulars
+     *
+     * @param wordSenseId
+     * @return HTTP respond with List<ConjugationVerbWithTensesInfoDTO>
+     * @throws ConjugationVariationFoundException if not exist a ConjugationVariation fo the verb
+     */
+    @GetMapping(path = "/structureIrregulars/wordSense/{wordSenseId}")
+    public @ResponseBody ResponseEntity<ConjugationVerbWithTensesInfoDTO> getConjugationVerbWithTensesInfoByWordSenseId(@PathVariable Integer wordSenseId) {
+        logger.info("Called getConjugationVerbWithTensesInfoByWordSenseId() in ConjugationVerbController for wordSense-{}", wordSenseId);
+
+        ConjugationVerbWithTensesInfoDTO conjugationTenseDTOS = conjugationVerbService.getConjugationVerbWithTensesInfoDTOByWordSenseId(wordSenseId);
         return ResponseEntity.ok(conjugationTenseDTOS);
     }
 }
