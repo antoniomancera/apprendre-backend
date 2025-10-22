@@ -1,13 +1,13 @@
 package com.antonio.apprendrebackend.service.service;
 
-import com.antonio.apprendrebackend.service.dto.ConjugationTenseDTO;
-import com.antonio.apprendrebackend.service.dto.ConjugationWordPositionDTO;
-import com.antonio.apprendrebackend.service.dto.TenseDTO;
+import com.antonio.apprendrebackend.service.dto.*;
 import com.antonio.apprendrebackend.service.exception.ConjugationVerbNotFoundException;
+import com.antonio.apprendrebackend.service.mapper.ConjugationVerbMapper;
 import com.antonio.apprendrebackend.service.mapper.TenseMapper;
 import com.antonio.apprendrebackend.service.mapper.WordSenseMapper;
 import com.antonio.apprendrebackend.service.model.*;
 import com.antonio.apprendrebackend.service.service.impl.ConjugationVerbServiceImpl;
+import com.antonio.apprendrebackend.service.util.AuxiliaryPrincipalVerbEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -41,9 +41,11 @@ public class ConjugationVerbServiceImplTest {
     @Mock
     private ConjugationVerbWordWordSenseService conjugationVerbWordWordSenseService;
     @Mock
+    private ConjugationVerbFormService conjugationVerbFormService;
+    @Mock
     private TenseMapper tenseMapper;
     @Mock
-    private WordSenseMapper wordSenseMapper;
+    private ConjugationVerbMapper conjugationVerbMapper;
 
     @InjectMocks
     private ConjugationVerbServiceImpl conjugationVerbService;
@@ -244,7 +246,6 @@ public class ConjugationVerbServiceImplTest {
         ConjugationTenseDTO conjugationTenseDTO = result.get(0);
         assertNotNull(conjugationTenseDTO.getTense());
 
-        // Verificar que el mapa contiene la entrada esperada
         Map<PersonGenderNumber.PersonGenderNumberEnum, List<ConjugationWordPositionDTO>> personGenderNumberConjugation =
                 conjugationTenseDTO.getPersonGenderNumberConjugation();
         assertNotNull(personGenderNumberConjugation);
@@ -261,7 +262,6 @@ public class ConjugationVerbServiceImplTest {
         assertNotNull(conjugationWordPosition.getConjugationRegularIrregular());
         assertEquals("hablo", conjugationWordPosition.getConjugationRegularIrregular().getConjugationRegular());
 
-        // Verify interactions
         verify(wordSenseService, times(1)).getById(wordSenseId);
         verify(conjugationVariationService, times(1)).getConjugationVariationByConjugationVerb(conjugationVerb);
         verify(tenseService, times(1)).getByLanguage(language);
@@ -272,7 +272,6 @@ public class ConjugationVerbServiceImplTest {
         // Given
         Integer wordSenseId = 1;
 
-        // Setup basic objects
         WordSense verb = createWordSense();
         ConjugationVerb conjugationVerb = createConjugationVerb();
         ConjugationVariation conjugationVariation = new ConjugationVariation();
@@ -283,7 +282,6 @@ public class ConjugationVerbServiceImplTest {
         tense.setCode(Tense.TenseEnum.PRE_INF_FR);
         List<Tense> tenses = Arrays.asList(tense);
 
-        // Setup irregular conjugation
         ConjugationVerbFormIrregular irregular = new ConjugationVerbFormIrregular();
         irregular.setName("soy");
         ConjugationVerbForm conjugationVerbForm = new ConjugationVerbForm();
@@ -295,7 +293,6 @@ public class ConjugationVerbServiceImplTest {
 
         List<ConjugationVerbFormIrregular> irregulars = Arrays.asList(irregular);
 
-        // Setup other required objects
         ConjugationTensePersonGenderNumber conjugationTensePersonGenderNumber = new ConjugationTensePersonGenderNumber();
         conjugationTensePersonGenderNumber.setPersonGenderNumber(personGenderNumber);
         List<ConjugationTensePersonGenderNumber> conjugationTensePersonGenderNumbers =
@@ -338,7 +335,6 @@ public class ConjugationVerbServiceImplTest {
 
         ConjugationTenseDTO conjugationTenseDTO = result.get(0);
 
-        // Verificar que el mapa contiene la entrada esperada para verbo irregular
         Map<PersonGenderNumber.PersonGenderNumberEnum, List<ConjugationWordPositionDTO>> personGenderNumberConjugation =
                 conjugationTenseDTO.getPersonGenderNumberConjugation();
         assertNotNull(personGenderNumberConjugation);
@@ -355,7 +351,248 @@ public class ConjugationVerbServiceImplTest {
         assertEquals("so", conjugationWordPosition.getConjugationRegularIrregular().getConjugationRegular());
     }
 
-    // Helper methods
+    @Test
+    void testGetConjugationVerbWithTensesInfoDTOByWordSenseId() {
+        // Given
+        Integer wordSenseId = 1;
+
+        // Setup WordSense
+        WordSense verb = new WordSense();
+        Word word = new Word();
+        Language language = new Language();
+        language.setId(1);
+        word.setLanguage(language);
+        verb.setWord(word);
+
+        // Setup ConjugationVerb
+        ConjugationVerb conjugationVerb = new ConjugationVerb();
+        conjugationVerb.setId(1);
+        VerbGroupEnding verbGroupEnding = new VerbGroupEnding();
+        VerbGroup verbGroup = new VerbGroup();
+        verbGroup.setId(1);
+        verbGroupEnding.setVerbGroup(verbGroup);
+        conjugationVerb.setVerbGroupEnding(verbGroupEnding);
+
+        // Setup ConjugationVariation
+        ConjugationVariation conjugationVariation = new ConjugationVariation();
+        conjugationVariation.setId(1);
+
+        // Setup Tenses
+        Tense presentTense = new Tense();
+        presentTense.setId(1);
+        presentTense.setCode(Tense.TenseEnum.PRE_INF_FR);
+
+        Tense pastTense = new Tense();
+        pastTense.setId(2);
+        pastTense.setCode(Tense.TenseEnum.PAS_COM_INF_FR);
+
+        List<Tense> tenses = Arrays.asList(presentTense, pastTense);
+
+        // Setup PersonGenderNumber
+        PersonGenderNumber personGenderNumber = new PersonGenderNumber();
+        personGenderNumber.setPersonGenderNumberEnum(PersonGenderNumber.PersonGenderNumberEnum.FIRST_PLURAL_NEUTRAL);
+
+        ConjugationTensePersonGenderNumber conjugationTensePersonGenderNumber = new ConjugationTensePersonGenderNumber();
+        conjugationTensePersonGenderNumber.setPersonGenderNumber(personGenderNumber);
+        List<ConjugationTensePersonGenderNumber> conjugationTensePersonGenderNumbers =
+                Arrays.asList(conjugationTensePersonGenderNumber);
+
+        // Setup ConjugationVerbForm for irregulars
+        ConjugationVerbForm conjugationVerbForm = new ConjugationVerbForm();
+        conjugationVerbForm.setTense(presentTense);
+        conjugationVerbForm.setPersonGenderNumber(personGenderNumber);
+
+        // Setup ConjugationVerbFormIrregular
+        ConjugationVerbFormIrregular conjugationVerbFormIrregular = new ConjugationVerbFormIrregular();
+        conjugationVerbFormIrregular.setName("soy");
+        conjugationVerbFormIrregular.setConjugationVerbForm(conjugationVerbForm);
+
+        List<ConjugationVerbFormIrregular> conjugationVerbFormIrregulars = Arrays.asList(conjugationVerbFormIrregular);
+
+        // Setup ConjugationNonExist
+        ConjugationNonExist conjugationNonExist = new ConjugationNonExist();
+        conjugationNonExist.setConjugationVerbForm(conjugationVerbForm);
+        List<ConjugationNonExist> conjugationNonExists = Arrays.asList(conjugationNonExist);
+
+        // Setup ConjugationVerbCompoundStructureItem for compound tense
+        ConjugationVerbCompoundStructureItem compoundItem = new ConjugationVerbCompoundStructureItem();
+        compoundItem.setPosition(1);
+        compoundItem.setAuxiliarPrincipalVerb(AuxiliaryPrincipalVerbEnum.PRINCIPAL);
+        compoundItem.setConjugationVerbForm(conjugationVerbForm);
+
+        List<ConjugationVerbCompoundStructureItem> compoundItemsForPastTense = Arrays.asList(compoundItem);
+        List<ConjugationVerbCompoundStructureItem> emptyCompoundItems = Collections.emptyList();
+
+        // When
+        when(wordSenseService.getById(wordSenseId)).thenReturn(verb);
+        when(conjugationVerbWordWordSenseService.getConjugationVerbWordWordSenseByWordSenseId(wordSenseId))
+                .thenReturn(Optional.of(createConjugationVerbWordWordSense(conjugationVerb)));
+        when(conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb))
+                .thenReturn(conjugationVariation);
+        when(tenseService.getByLanguage(language)).thenReturn(tenses);
+
+        when(conjugationVerbCompoundStructureItemService.getConjugationVerbCompoundStructureItemsByTenseId(presentTense.getId()))
+                .thenReturn(emptyCompoundItems);
+        when(conjugationVerbCompoundStructureItemService.getConjugationVerbCompoundStructureItemsByTenseId(pastTense.getId()))
+                .thenReturn(compoundItemsForPastTense);
+
+        when(conjugationRegularTenseBaseVariationService.getRegularTenseBase(verb, conjugationVerb, presentTense.getId()))
+                .thenReturn("habl");
+        when(conjugationRegularTenseBaseVariationService.getRegularTenseBase(verb, conjugationVerb, pastTense.getId()))
+                .thenReturn("hablado");
+
+        when(conjugationTensePersonGenderNumberService.getConjugationTensePersonGenderNumbersByTenseId(anyInt()))
+                .thenReturn(conjugationTensePersonGenderNumbers);
+
+        when(conjugationNonExistService.getByConjugationNonExistByTenseAndPersonGenderNumber(any(Tense.class), anyList()))
+                .thenReturn(conjugationNonExists);
+
+        when(conjugationVerbFormIrregularService.getConjugationVerbFormIrregularsByConjugationVariationAndConjugationVerbForms(
+                eq(conjugationVariation), anyList()))
+                .thenReturn(conjugationVerbFormIrregulars);
+
+        when(conjugationVerbFormIrregularService.getConjugationVerbFormIrregularByConjugationVariationAndConjugationVerbForm(
+                eq(conjugationVariation), any(ConjugationVerbForm.class)))
+                .thenReturn(conjugationVerbFormIrregular);
+
+        when(tenseMapper.toDTO(any(Tense.class))).thenAnswer(invocation -> {
+            Tense tense = invocation.getArgument(0);
+            TenseDTO dto = new TenseDTO();
+            dto.setCode(tense.getCode());
+            return dto;
+        });
+
+        when(conjugationVerbMapper.toDTO(conjugationVerb)).thenReturn(new ConjugationVerbDTO());
+
+        ConjugationVerbWithTensesInfoDTO result = conjugationVerbService.getConjugationVerbWithTensesInfoDTOByWordSenseId(wordSenseId);
+
+        // Then
+        assertNotNull(result);
+        assertNotNull(result.getConjugationVerb());
+        assertNotNull(result.getConjugationStructureAndIrregularsList());
+        assertEquals(2, result.getConjugationStructureAndIrregularsList().size());
+
+        ConjugationTenseInfoDTO presentTenseInfo = result.getConjugationStructureAndIrregularsList().stream()
+                .filter(info -> info.getTense().getCode().equals(presentTense.getCode()))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(presentTenseInfo);
+        assertEquals("habl", presentTenseInfo.getRegularTenseBase());
+        assertNotNull(presentTenseInfo.getPersonGenderNumberEnums());
+        assertFalse(presentTenseInfo.getPersonGenderNumberEnums().isEmpty());
+        assertNotNull(presentTenseInfo.getPersonGenderNumberEnumConjugationNonExists());
+        assertFalse(presentTenseInfo.getPersonGenderNumberEnumConjugationNonExists().isEmpty());
+        assertNotNull(presentTenseInfo.getPersonGenderNumberConjugationPositionIrregular());
+
+        ConjugationTenseInfoDTO pastTenseInfo = result.getConjugationStructureAndIrregularsList().stream()
+                .filter(info -> info.getTense().getCode().equals(pastTense.getCode()))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(pastTenseInfo);
+        assertEquals("hablado", pastTenseInfo.getRegularTenseBase());
+        assertNotNull(pastTenseInfo.getConjugationVerbCompoundStructureItems());
+        assertFalse(pastTenseInfo.getConjugationVerbCompoundStructureItems().isEmpty());
+        assertNotNull(pastTenseInfo.getPersonGenderNumberConjugationPositionIrregular());
+
+        verify(wordSenseService, times(1)).getById(wordSenseId);
+        verify(conjugationVariationService, times(1)).getConjugationVariationByConjugationVerb(conjugationVerb);
+        verify(tenseService, times(1)).getByLanguage(language);
+        verify(conjugationVerbCompoundStructureItemService, times(1)).getConjugationVerbCompoundStructureItemsByTenseId(presentTense.getId());
+        verify(conjugationVerbCompoundStructureItemService, times(1)).getConjugationVerbCompoundStructureItemsByTenseId(pastTense.getId());
+        verify(conjugationRegularTenseBaseVariationService, times(1)).getRegularTenseBase(verb, conjugationVerb, presentTense.getId());
+        verify(conjugationRegularTenseBaseVariationService, times(1)).getRegularTenseBase(verb, conjugationVerb, pastTense.getId());
+    }
+
+    @Test
+    void testGetConjugationVerbWithTensesInfoDTOByWordSenseIdWithoutConjugationVariation() {
+        // Given
+        Integer wordSenseId = 1;
+
+        // Setup WordSense
+        WordSense verb = createWordSense();
+        ConjugationVerb conjugationVerb = createConjugationVerb();
+
+        // Setup Tenses
+        Tense tense = new Tense();
+        tense.setId(1);
+        tense.setCode(Tense.TenseEnum.PRE_INF_FR);
+        List<Tense> tenses = Arrays.asList(tense);
+
+        // Setup PersonGenderNumber
+        PersonGenderNumber personGenderNumber = new PersonGenderNumber();
+        personGenderNumber.setPersonGenderNumberEnum(PersonGenderNumber.PersonGenderNumberEnum.FIRST_PLURAL_NEUTRAL);
+
+        ConjugationTensePersonGenderNumber conjugationTensePersonGenderNumber = new ConjugationTensePersonGenderNumber();
+        conjugationTensePersonGenderNumber.setPersonGenderNumber(personGenderNumber);
+        List<ConjugationTensePersonGenderNumber> conjugationTensePersonGenderNumbers =
+                Arrays.asList(conjugationTensePersonGenderNumber);
+
+        // When
+        when(wordSenseService.getById(wordSenseId)).thenReturn(verb);
+        when(conjugationVerbWordWordSenseService.getConjugationVerbWordWordSenseByWordSenseId(wordSenseId))
+                .thenReturn(Optional.of(createConjugationVerbWordWordSense(conjugationVerb)));
+        when(conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb))
+                .thenReturn(null);
+        when(tenseService.getByLanguage(verb.getWord().getLanguage())).thenReturn(tenses);
+        when(conjugationVerbCompoundStructureItemService.getConjugationVerbCompoundStructureItemsByTenseId(anyInt()))
+                .thenReturn(Collections.emptyList());
+        when(conjugationRegularTenseBaseVariationService.getRegularTenseBase(any(WordSense.class), any(ConjugationVerb.class), anyInt()))
+                .thenReturn("test");
+        when(conjugationTensePersonGenderNumberService.getConjugationTensePersonGenderNumbersByTenseId(anyInt()))
+                .thenReturn(conjugationTensePersonGenderNumbers);
+        when(tenseMapper.toDTO(any(Tense.class))).thenReturn(new TenseDTO());
+        when(conjugationVerbMapper.toDTO(conjugationVerb)).thenReturn(new ConjugationVerbDTO());
+
+        ConjugationVerbWithTensesInfoDTO result = conjugationVerbService.getConjugationVerbWithTensesInfoDTOByWordSenseId(wordSenseId);
+
+        assertNotNull(result);
+        assertNotNull(result.getConjugationVerb());
+        assertNotNull(result.getConjugationStructureAndIrregularsList());
+        assertEquals(0, result.getConjugationStructureAndIrregularsList().size());
+
+        verify(wordSenseService, times(1)).getById(wordSenseId);
+        verify(conjugationVariationService, times(1)).getConjugationVariationByConjugationVerb(conjugationVerb);
+        verify(conjugationVerbFormIrregularService, never()).getConjugationVerbFormIrregularsByConjugationVariationAndConjugationVerbForms(any(), any());
+    }
+
+    @Test
+    void testGetConjugationVerbWithTensesInfoDTOByWordSenseIdWithEmptyTenses() {
+        // Given
+        Integer wordSenseId = 1;
+
+        // Setup WordSense
+        WordSense verb = createWordSense();
+        ConjugationVerb conjugationVerb = createConjugationVerb();
+        ConjugationVariation conjugationVariation = new ConjugationVariation();
+        conjugationVariation.setId(1);
+
+        // Empty tenses list
+        List<Tense> emptyTenses = Collections.emptyList();
+
+        // When
+        when(wordSenseService.getById(wordSenseId)).thenReturn(verb);
+        when(conjugationVerbWordWordSenseService.getConjugationVerbWordWordSenseByWordSenseId(wordSenseId))
+                .thenReturn(Optional.of(createConjugationVerbWordWordSense(conjugationVerb)));
+        when(conjugationVariationService.getConjugationVariationByConjugationVerb(conjugationVerb))
+                .thenReturn(conjugationVariation);
+        when(tenseService.getByLanguage(verb.getWord().getLanguage())).thenReturn(emptyTenses);
+        when(conjugationVerbMapper.toDTO(conjugationVerb)).thenReturn(new ConjugationVerbDTO());
+
+        ConjugationVerbWithTensesInfoDTO result = conjugationVerbService.getConjugationVerbWithTensesInfoDTOByWordSenseId(wordSenseId);
+
+        assertNotNull(result);
+        assertNotNull(result.getConjugationVerb());
+        assertNotNull(result.getConjugationStructureAndIrregularsList());
+        assertTrue(result.getConjugationStructureAndIrregularsList().isEmpty());
+
+        verify(wordSenseService, times(1)).getById(wordSenseId);
+        verify(conjugationVariationService, times(1)).getConjugationVariationByConjugationVerb(conjugationVerb);
+        verify(tenseService, times(1)).getByLanguage(verb.getWord().getLanguage());
+        verify(conjugationVerbCompoundStructureItemService, never()).getConjugationVerbCompoundStructureItemsByTenseId(anyInt());
+    }
+
     private WordSense createWordSense() {
         WordSense verb = new WordSense();
         Word word = new Word();
