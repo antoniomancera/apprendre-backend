@@ -15,6 +15,9 @@ public interface DeckRepository extends CrudRepository<Deck, Integer> {
 
     List<Deck> findByName(String name);
 
+    boolean existsByEndDateNotNullAndUserInfoId(Integer userId);
+
+
     /**
      * Count the decks already in use(endDate null) for a user
      *

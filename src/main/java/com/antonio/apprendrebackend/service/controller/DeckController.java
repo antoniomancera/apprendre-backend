@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.controller;
 
+import com.antonio.apprendrebackend.service.dto.CreationOptionsAvailableDTO;
 import com.antonio.apprendrebackend.service.model.Deck;
 import com.antonio.apprendrebackend.service.model.UserInfo;
 import com.antonio.apprendrebackend.service.service.DeckService;
@@ -64,4 +65,20 @@ public class DeckController {
         List<Deck> decks = deckService.getActiveDecks(userInfo);
         return ResponseEntity.ok(decks);
     }
+
+
+    /**
+     * Return if is possible to create the different types of decks
+     *
+     * @return HTTP respond with a CreationOptionsAvailableDTO
+     */
+    @GetMapping(path = "/isDeckCreationOptionsAvailable")
+    public @ResponseBody ResponseEntity<CreationOptionsAvailableDTO> isDeckCreationOptionsAvailable() {
+        logger.info("Called isDeckCreationOptionsAvailable() in DeckController");
+
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        CreationOptionsAvailableDTO isDeckLimitNotReached = deckService.isDeckCreationOptionsAvailable(userInfo.getId());
+        return ResponseEntity.ok(isDeckLimitNotReached);
+    }
+
 }

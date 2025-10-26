@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service.impl;
 
+import com.antonio.apprendrebackend.service.dto.CreationOptionsAvailableDTO;
 import com.antonio.apprendrebackend.service.exception.DeckAlreadyExistsException;
 import com.antonio.apprendrebackend.service.exception.DeckNotFoundException;
 import com.antonio.apprendrebackend.service.mapper.DeckMapper;
@@ -96,5 +97,42 @@ public class DeckServiceImpl implements DeckService {
         Deck deck = getDeckbyId(deckId);
         deck.setEndDate(System.currentTimeMillis());
         return deckRepository.save(deck);
+    }
+
+    /**
+     * Return true if exist a deck already removed by the user
+     *
+     * @param userId
+     * @return boolean
+     */
+    @Override
+    public boolean existsDeckByEndDateNotNullAndUserInfo(Integer userId) {
+        logger.debug("Called existsDeckByEndDateNotNullAndUserInfo in isDeckLimitNotReached for user-{}", userId);
+
+        return deckRepository.existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    /**
+     * Return if is possible to create a new Deck o to recycle one already removed
+     *
+     * @param userId
+     * @return CreationOptionsAvailableDTO
+     */
+    @Override
+    public CreationOptionsAvailableDTO isDeckCreationOptionsAvailable(Integer userId) {
+        logger.debug("Called isDeckCreationOptionsAvailable in isDeckLimitNotReached for user-{}", userId);
+
+        CreationOptionsAvailableDTO creationOptionsAvailable = new CreationOptionsAvailableDTO();
+        if (!isDeckLimitNotReached(userId)) {
+            return creationOptionsAvailable;
+        } else {
+            creationOptionsAvailable.setCreationNewDeckAvailable(true);
+        }
+
+        if (existsDeckByEndDateNotNullAndUserInfo(userId)) {
+            creationOptionsAvailable.setRestoreDeckAvailable(true);
+        }
+
+        return creationOptionsAvailable;
     }
 }
