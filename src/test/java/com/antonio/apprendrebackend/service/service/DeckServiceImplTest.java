@@ -4,6 +4,7 @@ import static com.antonio.apprendrebackend.service.util.GeneralConstants.MAX_DEC
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.antonio.apprendrebackend.service.dto.CreationOptionsAvailableDTO;
 import com.antonio.apprendrebackend.service.exception.DeckAlreadyExistsException;
 import com.antonio.apprendrebackend.service.exception.DeckNotFoundException;
 import com.antonio.apprendrebackend.service.model.Deck;
@@ -398,5 +399,154 @@ public class DeckServiceImplTest {
         assertNotNull(result.getEndDate());
         verify(deckRepository, times(1)).findById(deckId);
         verify(deckRepository, times(1)).save(existingDeck);
+    }
+
+    @Test
+    void testExistsDeckByEndDateNotNullAndUserInfoWhenDecksExist() {
+        // Given
+        Integer userId = 1;
+
+        // When
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(true);
+        boolean result = deckService.existsDeckByEndDateNotNullAndUserInfo(userId);
+
+        // Then
+        assertTrue(result);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    @Test
+    void testExistsDeckByEndDateNotNullAndUserInfoWhenNoDecksExist() {
+        // Given
+        Integer userId = 1;
+
+        // When
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(false);
+        boolean result = deckService.existsDeckByEndDateNotNullAndUserInfo(userId);
+
+        // Then
+        assertFalse(result);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    @Test
+    void testExistsDeckByEndDateNotNullAndUserInfoWithNullUserId() {
+        // Given
+        Integer userId = null;
+
+        // When
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(false);
+        boolean result = deckService.existsDeckByEndDateNotNullAndUserInfo(userId);
+
+        // Then
+        assertFalse(result);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    @Test
+    void testIsDeckCreationOptionsAvailableWhenLimitReached() {
+        // Given
+        Integer userId = 1;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(MAX_DECKS);
+        CreationOptionsAvailableDTO result = deckService.isDeckCreationOptionsAvailable(userId);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.isCreationNewDeckAvailable());
+        assertFalse(result.isRestoreDeckAvailable());
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+        verify(deckRepository, never()).existsByEndDateNotNullAndUserInfoId(any());
+    }
+
+    @Test
+    void testIsDeckCreationOptionsAvailableWhenLimitNotReachedAndNoRemovedDecks() {
+        // Given
+        Integer userId = 1;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(2);
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(false);
+        CreationOptionsAvailableDTO result = deckService.isDeckCreationOptionsAvailable(userId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isCreationNewDeckAvailable());
+        assertFalse(result.isRestoreDeckAvailable());
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    @Test
+    void testIsDeckCreationOptionsAvailableWhenLimitNotReachedAndRemovedDecksExist() {
+        // Given
+        Integer userId = 1;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(3);
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(true);
+        CreationOptionsAvailableDTO result = deckService.isDeckCreationOptionsAvailable(userId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isCreationNewDeckAvailable());
+        assertTrue(result.isRestoreDeckAvailable());
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    @Test
+    void testIsDeckCreationOptionsAvailableWhenZeroDecksAndNoRemovedDecks() {
+        // Given
+        Integer userId = 1;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(0);
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(false);
+        CreationOptionsAvailableDTO result = deckService.isDeckCreationOptionsAvailable(userId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isCreationNewDeckAvailable());
+        assertFalse(result.isRestoreDeckAvailable());
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    @Test
+    void testIsDeckCreationOptionsAvailableWhenZeroDecksButRemovedDecksExist() {
+        // Given
+        Integer userId = 1;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(0);
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(true);
+        CreationOptionsAvailableDTO result = deckService.isDeckCreationOptionsAvailable(userId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isCreationNewDeckAvailable());
+        assertTrue(result.isRestoreDeckAvailable());
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
+    }
+
+    @Test
+    void testIsDeckCreationOptionsAvailableWithNullUserId() {
+        // Given
+        Integer userId = null;
+
+        // When
+        when(deckRepository.countByUserIdAndEndDateNull(userId)).thenReturn(0);
+        when(deckRepository.existsByEndDateNotNullAndUserInfoId(userId)).thenReturn(false);
+        CreationOptionsAvailableDTO result = deckService.isDeckCreationOptionsAvailable(userId);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isCreationNewDeckAvailable());
+        assertFalse(result.isRestoreDeckAvailable());
+        verify(deckRepository, times(1)).countByUserIdAndEndDateNull(userId);
+        verify(deckRepository, times(1)).existsByEndDateNotNullAndUserInfoId(userId);
     }
 }

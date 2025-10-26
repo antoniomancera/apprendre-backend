@@ -1,5 +1,6 @@
 package com.antonio.apprendrebackend.service.service;
 
+import com.antonio.apprendrebackend.service.dto.CreationOptionsAvailableDTO;
 import com.antonio.apprendrebackend.service.exception.DeckAlreadyExistsException;
 import com.antonio.apprendrebackend.service.exception.DeckNotFoundException;
 import com.antonio.apprendrebackend.service.model.Deck;
@@ -32,7 +33,7 @@ public interface DeckService {
      * @throws DeckAlreadyExistsException if exists a Deck with the same name
      */
     Deck createDeck(Deck deck);
-    
+
     /**
      * Get if the user has reached the  of decks already in use
      *
@@ -47,4 +48,20 @@ public interface DeckService {
      * @return Deck
      */
     Deck updateDeckEndDate(Integer deckId);
+
+    /**
+     * Return true if exist a deck already removed by the user
+     *
+     * @param userId
+     * @return boolean
+     */
+    boolean existsDeckByEndDateNotNullAndUserInfo(Integer userId);
+
+    /**
+     * Return if is possible to create a new Deck o to recycle one already removed
+     *
+     * @param userId
+     * @return CreationOptionsAvailableDTO
+     */
+    CreationOptionsAvailableDTO isDeckCreationOptionsAvailable(Integer userId);
 }
